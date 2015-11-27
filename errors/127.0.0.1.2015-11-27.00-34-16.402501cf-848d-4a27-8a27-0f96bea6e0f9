@@ -1,0 +1,21 @@
+(dp1
+S'output'
+p2
+S"<type 'exceptions.AttributeError'> 'str' object has no attribute 'application'"
+p3
+sS'layer'
+p4
+S'/home/jhallard/PycharmProjects/untitled1/web2py/applications/tinyML/views/default/index.html'
+p5
+sS'code'
+p6
+S'response.write(\'<style>\\n.demo-layout-transparent {\\n  background: url("\', escape=False)\nresponse.write(URL(\'default\', \'static\', \'images\', \'landing.jpg\'))\nresponse.write(\'") center / cover;\\n}\\n.demo-layout-transparent .mdl-layout__header,\\n.demo-layout-transparent .mdl-layout__drawer-button {\\n  /* This background is dark, so we set text to white. Use 87% black instead if\\n     your background is light. */\\n  color: white;\\n}\\n</style>\\n<head>\\n\\t<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">\\n\\t<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">\\n\\t<script language="JavaScript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>\\n\\t<script src=\\\'http://cdn.ractivejs.org/latest/ractive.min.js\\\'></script>\\n    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue_grey-red.min.css" />\\n    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>\\n    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">\\n    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">\\n</head>\\n<div class="demo-layout-transparent mdl-layout mdl-js-layout">\\n  <header class="mdl-layout__header mdl-layout__header--transparent">\\n    <div class="mdl-layout__header-row">\\n      <!-- Title -->\\n      <span class="mdl-layout-title">Title</span>\\n      <!-- Add spacer, to align navigation to the right -->\\n      <div class="mdl-layout-spacer"></div>\\n      <!-- Navigation -->\\n      <nav class="mdl-navigation">\\n        <a class="mdl-navigation__link" href="">Link</a>\\n        <a class="mdl-navigation__link" href="">Link</a>\\n        <a class="mdl-navigation__link" href="">Link</a>\\n        <a class="mdl-navigation__link" href="">Link</a>\\n      </nav>\\n    </div>\\n  </header>\\n  <div class="mdl-layout__drawer">\\n    <span class="mdl-layout-title">Title</span>\\n    <nav class="mdl-navigation">\\n      <a class="mdl-navigation__link" href="">Link</a>\\n      <a class="mdl-navigation__link" href="">Link</a>\\n      <a class="mdl-navigation__link" href="">Link</a>\\n      <a class="mdl-navigation__link" href="">Link</a>\\n    </nav>\\n  </div>\\n  <main class="mdl-layout__content">\\n  </main>\\n</div>\\n\\n\', escape=False)'
+p7
+sS'snapshot'
+p8
+(dp9
+sS'traceback'
+p10
+S'Traceback (most recent call last):\n  File "/home/jhallard/PycharmProjects/untitled1/web2py/gluon/restricted.py", line 227, in restricted\n    exec ccode in environment\n  File "/home/jhallard/PycharmProjects/untitled1/web2py/applications/tinyML/views/default/index.html", line 2, in <module>\n    .demo-layout-transparent {\n  File "/home/jhallard/PycharmProjects/untitled1/web2py/gluon/html.py", line 287, in URL\n    application = r.application\nAttributeError: \'str\' object has no attribute \'application\'\n'
+p11
+s.

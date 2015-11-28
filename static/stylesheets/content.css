@@ -1,0 +1,21 @@
+/* line 17, ../sass/_base.sass */
+.jumbo-card {
+  min-height: 200px;
+  min-width: 380px;
+  text-align: center;
+}
+/* line 21, ../sass/_base.sass */
+.jumbo-card h1 {
+  font-size: 68px;
+  font-weight: 40;
+  color: #37474f;
+}
+/* line 25, ../sass/_base.sass */
+.jumbo-card h2 {
+  font-size: 40px;
+}
+
+/* line 28, ../sass/_base.sass */
+.mdl-grid {
+  padding-top: 40px;
+}

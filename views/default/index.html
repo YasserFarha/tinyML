@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
 </head>
 
 
@@ -58,26 +60,51 @@
   <!-- main content -->
   <main class="mdl-layout__content">
     <div class="page-content">
-    <div class="card-post mdl-card mdl-shadow--2dp" style="width:100%">
+    <div class="mdl-grid">
+    
+    <!-- jumbo-tron card -->
+    <div class="mdl-cell mdl-cell--1-col"></div>
+    <div class="mdl-cell mdl-cell--10-col jumbo-card mdl-card mdl-shadow--2dp">
+         <h1>tinyML</h1>
+         <h2>Machine Learning Services</h2>
+    </div>
+    <div class="mdl-cell mdl-cell--1-col"></div>
+
+    <!-- explainer cards -->
+
+    <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
       <div class="mdl-card__title">
-         <h2 class="mdl-card__title-text">{% title %}</h2>
+         <h2 class="mdl-card__title-text">Choose a Model</h2>
       </div>
       <div class="mdl-card__supporting-text">
         <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
-            {% body %}
+            Create a customized machine learning model from scratch.
         </div>
       </div>
-      <div class="mdl-card__actions mdl-card--border" style="padding-bottom:0">
-          <div class="mdl-card__menu">
-            <button data-post-id="{% post_id %}" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="editPost">
-                  <i class="material-icons">create</i>
-                </button>
-                <button data-post-id="{% post_id %}" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="removePost">
-                  <i class="material-icons">clear</i>
-                </button>
-          </div>
-        </div>
     </div>
+
+    <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title">
+         <h2 class="mdl-card__title-text">Choose a Model</h2>
+      </div>
+      <div class="mdl-card__supporting-text">
+        <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+            Create a customized machine learning model from scratch.
+        </div>
+      </div>
+    </div>
+
+    <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title">
+         <h2 class="mdl-card__title-text">Choose a Model</h2>
+      </div>
+      <div class="mdl-card__supporting-text">
+        <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+            Create a customized machine learning model from scratch.
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 </script>

@@ -8,6 +8,10 @@ import theano, sys
 NUM_TRAIN = 100000
 NUM_TEST = 10000
 INDIM = 3
+EPOCHS=20
+
+mn = 0.1
+mx= 0.00001
 
 def myrand(a, b) :
     return (b)*(np.random.random_sample()-0.5)+a
@@ -41,8 +45,8 @@ if __name__ == '__main__' :
         WS = [2.0, 1.0, 0.5]
         XNO = 2.2
 
-    X_test, y_test = get_data(10000, WS, XNO, 10000, rweight=0.4)
-    X_train, y_train = get_data(100000, WS, XNO, 10000)
+    X_test, y_test = get_data(10000, WS, XNO, 10000, rweight=0.0)
+    X_train, y_train = get_data(100000, WS, XNO, 10000, rweight=0.3)
     # graph model with one input and two outputs
     graph = Graph()
     graph.add_input(name='input', input_shape=(INDIM,))

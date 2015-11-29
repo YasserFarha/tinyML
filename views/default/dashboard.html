@@ -30,7 +30,7 @@
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
 
-      <span class="mdl-layout-title">Home</span>
+      <span class="mdl-layout-title">Dashboard</span>
       <div class="mdl-layout-spacer"></div>
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
                   mdl-textfield--floating-label mdl-textfield--align-right">
@@ -43,21 +43,19 @@
     <span class="mdl-layout-title"><strong>tinyML</strong></span>
 	<hr>
     <nav class="mdl-navigation">
-      {% #if logged_in %}
+       <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
+             <i class="fa fa-pie-chart"></i> Models
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
+             <i class="fa fa-tasks"></i> Create
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
+             <i class="fa fa-book"></i> Tutorials 
+       </a>
+        <hr>
         <a class="mdl-navigation__link" href={{=URL('do_logout')}}>
              <i class="fa fa-sign-out"></i> Logout
        </a>
-        <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
-             <i class="fa fa-pie-chart"></i> Dashboard
-       </a>
-      {% else %}
-       <a class="mdl-navigation__link" href={{=URL('do_login')}}>
-             <i class="fa fa-sign-in"></i> Login
-       </a>
-        <a class="mdl-navigation__link" href={{=URL('do_register')}}>
-             <i class="fa fa-user-plus"></i> Register
-        </a>
-      {% /if %}
     </nav>
   </div>
 
@@ -68,18 +66,16 @@
     <div class="mdl-grid">
     
 		<!-- jumbo-tron card -->
-		<div class="mdl-cell mdl-cell--1-col"></div>
 		<div class="mdl-cell mdl-cell--10-col jumbotron">
-			 <h1>tinyML <small>Machine Learning Services</small></h1>
+			 <h1>Dashboard</h1>
 		</div>
-		<div class="mdl-cell mdl-cell--1-col"></div>
     </div>
 
     <div class="mdl-grid">
 
         <!-- explainer cards -->
         <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title customize-card landing-card">
+          <div class="mdl-card__title ">
           </div>
           <div class="mdl-card__supporting-text">
              <h1 class="mdl-card__title-text">Customize</h1>
@@ -91,7 +87,7 @@
         </div>
 
         <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title train-card landing-card">
+          <div class="mdl-card__title ">
           </div>
           <div class="mdl-card__supporting-text">
              <h1 class="mdl-card__title-text">Train</h1>
@@ -103,7 +99,7 @@
         </div>
 
         <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title predict-card landing-card">
+          <div class="mdl-card__title ">
           </div>
           <div class="mdl-card__supporting-text">
              <h1 class="mdl-card__title-text">Predict</h1>

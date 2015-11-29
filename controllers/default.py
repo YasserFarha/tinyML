@@ -10,8 +10,9 @@
 def home() :
     redirect(URL('default', 'boards'))
 
-@auth.requires_signature()
 def dashboard():
+	if not auth.user_id :
+		redirect('default', 404)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
                  user_id=auth.user_id if auth.user_id else -1)
 

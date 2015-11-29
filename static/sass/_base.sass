@@ -10,14 +10,15 @@ $colorLightGray: #EEF0F2
 $colorLightGray2: #E0E0E0
 $colorBlack: #111111
 $colorBlack: #242221
-$colorOffWhite: #ECF0EF
-$colorOffWhite: #F6FAF9
+$colorOffWhite3: #ECF0EF
+$colorOffWhite2: #F6FAF9
 $colorOffWhite: #EEF2F1
 
 .jumbotron
-  background-color: $colorLightGray
+  background-color: $colorWhite
   padding-top: 0px
   padding-bottom: 0px
+  margin-bottom: 10px
   min-height: 100px
   min-width: 320px
   width: 100%
@@ -29,34 +30,42 @@ $colorOffWhite: #EEF2F1
   h2
     font-size: 40px
 
+.mdl-layout-title
+  color: $colorOffWhite
+  font-size: 24px
+
+.mdl-grid
+  max-width: 1400px
+
 .mdl-card
   text-align: left
 
-  .mdl-card__title
+  .landing-card
     background-color: $colorLightBlue
     color: $colorOffWhite
-    min-height: 150px
+    min-height: 180px
+
+    .mdl-card__title-text
+      font-size: 36px
+
+    .mdl-card__supporting-text
+      min-height: 130px
+      h1
+        font-size: 36px
 
   .customize-card
-    background: url("../images/nnet_3.png") bottom 13% right 5% no-repeat #37474f
+    background: url("../images/nnet_6.png") top 50% left 100% no-repeat #37474f
+    background-size: 240px 240px
 
   .train-card
-    background: url("../images/data_1.png") bottom 6% right 75% no-repeat #37474f
+    background: url("../images/data_1.png") bottom 20% right 75% no-repeat #37474f
     color: $colorLightGray
 
   .predict-card
     background: url("../images/nnet_4.png") bottom 23% right 55% no-repeat #37474f
     color: $colorDarkBlue
 
-    
-
-.mdl-card__supporting-text
-  min-height: 230px
-
 .mdl-card__actions
   position: absolute
   right:    0
   bottom:   0
-
-.mdl-grid
-  max-width: 1400px

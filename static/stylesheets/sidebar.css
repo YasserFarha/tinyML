@@ -75,3 +75,23 @@
   right: 0;
   bottom: 0;
 }
+
+/* line 3, ../sass/sidebar.sass */
+hr {
+  color: #78909C;
+  border-top: 1px solid #616161;
+}
+
+/* line 7, ../sass/sidebar.sass */
+.mdl-layout__drawer {
+  background-color: #EEF0F2;
+}
+/* line 10, ../sass/sidebar.sass */
+.mdl-layout__drawer .mdl-layout-title {
+  color: #37474f;
+}
+/* line 15, ../sass/sidebar.sass */
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
+  font-size: 14px;
+  color: #37474f;
+}

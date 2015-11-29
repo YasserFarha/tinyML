@@ -32,7 +32,7 @@ if __name__ == '__main__' :
        EPOCHS = int(sys.argv[1])
        XNO = float(sys.argv[2])
        WS = [float(x) for x in sys.argv[3:]]
-       mx = max([abs(x) for x in (WS+[XNO])])
+       mx = 1#max([abs(x) for x in (WS+[XNO])])
        mn = min([abs(x) for x in (WS+[XNO])])
        mn = min(1, mn)
        WS = [float(x)/mx for x in WS]
@@ -48,12 +48,13 @@ if __name__ == '__main__' :
 
     model = Sequential()
     model.add(Dense(INDIM, input_dim=INDIM, init='uniform', activation='linear'))
-    # model.add(Dense(INDIM, input_dim=INDIM, init='uniform', activation='linear'))
+    model.add(Dense(INDIM, init='uniform', activation='linear'))
+    model.add(Dense(INDIM, init='uniform', activation='linear'))
     model.add(Dense(1, init='uniform'))
 
     # sgd = SGD(lr=0.1, decay=1e-6, momentum=0.1, nesterov=True)
     # model.compile(loss='mean_squared_error', optimizer=sgd)
-    model.compile(loss='mse', optimizer='adam')
+    model.compile(loss='mse', optimizer='rmsprop')
 
     pp = model.fit(X_train, y_train, batch_size=38,  shuffle=True, show_accuracy=True, nb_epoch=EPOCHS)
     print pp
@@ -64,9 +65,13 @@ if __name__ == '__main__' :
     predict_data = np.random.rand(100*100, INDIM)
     predictions = model.predict(predict_data)
 
+    pprint.pprint(dir(model))
+    # pprint.pprint(vars(model))
+
+    pprint.pprint(model.get_weights())
+
 
     pprint.pprint(model.to_yaml())
     model.save_weights('my_model.h5', overwrite=True)
     for x in range(len(predict_data)) :
-        pass
-        # print "%s --> %s" % (str(predict_data[x]), str(predictions[x]))
+        print "%s --> %s " % (str(predict_data[x]), str(predictions[x]))

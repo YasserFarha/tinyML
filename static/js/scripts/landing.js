@@ -7,8 +7,8 @@ $(function() {
         delimiters: ['{%', '%}'],
         tripleDelimiters: ['{%%', '%%}'],
         data: {
-            logged_in: false,
-            user_id: -1,
+            logged_in: logged_in,
+            user_id: user_id,
         },
     });
 });

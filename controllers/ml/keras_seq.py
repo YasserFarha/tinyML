@@ -23,17 +23,17 @@ model.compile(loss='mean_squared_error', optimizer=sgd)
 ws = np.random.rand(20, 2)
 print "weights : " + str(ws)
 
-xt = np.random.rand(10000, 20)
+xt = np.random.rand(1000, 20)
 yt = np.dot(xt, ws)
 
 print yt
 
 X_train = xt
 y_train = yt
-X_test  = np.random.rand(10000, 20)
+X_test  = np.random.rand(1000, 20)
 y_test  = np.dot(X_test, ws)
 
-model.fit(X_train, y_train, nb_epoch=20, batch_size=16)
+model.fit(X_train, y_train, nb_epoch=20000, batch_size=16)
 score = model.evaluate(X_test, y_test, batch_size=16, show_accuracy=True)
 
 print score

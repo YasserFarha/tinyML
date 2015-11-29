@@ -1,21 +1,62 @@
 /* line 17, ../sass/_base.sass */
-.jumbo-card {
-  min-height: 200px;
-  min-width: 380px;
+.jumbotron {
+  background-color: #EEF0F2;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  min-height: 100px;
+  min-width: 320px;
+  width: 100%;
   text-align: center;
 }
-/* line 21, ../sass/_base.sass */
-.jumbo-card h1 {
+/* line 25, ../sass/_base.sass */
+.jumbotron h1 {
   font-size: 68px;
   font-weight: 40;
   color: #37474f;
 }
-/* line 25, ../sass/_base.sass */
-.jumbo-card h2 {
+/* line 29, ../sass/_base.sass */
+.jumbotron h2 {
   font-size: 40px;
 }
 
-/* line 28, ../sass/_base.sass */
+/* line 32, ../sass/_base.sass */
+.mdl-card {
+  text-align: left;
+}
+/* line 35, ../sass/_base.sass */
+.mdl-card .mdl-card__title {
+  background-color: #78909C;
+  color: #EEF2F1;
+  min-height: 150px;
+}
+/* line 40, ../sass/_base.sass */
+.mdl-card .customize-card {
+  background: url("../images/nnet_3.png") bottom 13% right 5% no-repeat #37474f;
+}
+/* line 43, ../sass/_base.sass */
+.mdl-card .train-card {
+  background: url("../images/data_1.png") bottom 6% right 75% no-repeat #37474f;
+  color: #EEF0F2;
+}
+/* line 47, ../sass/_base.sass */
+.mdl-card .predict-card {
+  background: url("../images/nnet_4.png") bottom 23% right 55% no-repeat #37474f;
+  color: #37474f;
+}
+
+/* line 53, ../sass/_base.sass */
+.mdl-card__supporting-text {
+  min-height: 230px;
+}
+
+/* line 56, ../sass/_base.sass */
+.mdl-card__actions {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+/* line 61, ../sass/_base.sass */
 .mdl-grid {
-  padding-top: 40px;
+  max-width: 1400px;
 }

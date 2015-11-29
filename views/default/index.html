@@ -45,6 +45,9 @@
         <a class="mdl-navigation__link" href={{=URL('do_logout')}}>
              <i class="fa fa-sign-out"></i> Logout
        </a>
+        <a class="mdl-navigation__link" href={{=URL('go_dashboard')}}>
+             <i class="fa fa-pie-chart"></i> Dashboard
+       </a>
       {% else %}
        <a class="mdl-navigation__link" href={{=URL('do_login')}}>
              <i class="fa fa-sign-in"></i> Login
@@ -64,50 +67,71 @@
     
     <!-- jumbo-tron card -->
     <div class="mdl-cell mdl-cell--1-col"></div>
-    <div class="mdl-cell mdl-cell--10-col jumbo-card mdl-card mdl-shadow--2dp">
-         <h1>tinyML</h1>
-         <h2>Machine Learning Services</h2>
+    <div class="mdl-cell mdl-cell--10-col jumbotron">
+         <h1>tinyML <small>Machine Learning Services</small></h1>
     </div>
+    </div>
+    </div>
+
+        <div class="mdl-grid">
+
+        <!-- explainer cards -->
+        <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title customize-card">
+             <h2 class="mdl-card__title-text">Customize</h2>
+          </div>
+          <div class="mdl-card__supporting-text">
+            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+                Hand design the layout of your neural network. Below is a small list summarizing what
+                can be customized :
+                <ul style="padding-top:10px">
+                    <li> Number Inputs </li>
+                    <li> Number Outputs </li>
+                </ul>
+            </div>
+          </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Learn More</button>
+        </div>
+        </div>
+
+        <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title train-card">
+             <h2 class="mdl-card__title-text">Train</h2>
+          </div>
+          <div class="mdl-card__supporting-text">
+            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+                Once your model is setup, you can upload vast amounts of training data to our servers and we will we will initiate a training session. You can of course specify the parameters of the training, such as the number of epochs, batch size, validation withholding, etc. 
+            </div>
+          </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Learn More</button>
+        </div>
+        </div>
+
+        <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title predict-card">
+             <h2 class="mdl-card__title-text">Predict</h2>
+          </div>
+          <div class="mdl-card__supporting-text">
+            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+            Once you've trained your model, you can use it to make a predictions on unlabeled data. This can be done in either bulk or individual uploads, and depending on your results you can always go back and retrain your model.
+            </div>
+          </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Learn More</button>
+        </div>
+        </div>
+
+        </div> <!-- end inner grid -->
+
+
     <div class="mdl-cell mdl-cell--1-col"></div>
-
-    <!-- explainer cards -->
-
-    <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-      <div class="mdl-card__title">
-         <h2 class="mdl-card__title-text">Choose a Model</h2>
-      </div>
-      <div class="mdl-card__supporting-text">
-        <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
-            Create a customized machine learning model from scratch.
-        </div>
-      </div>
-    </div>
-
-    <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-      <div class="mdl-card__title">
-         <h2 class="mdl-card__title-text">Choose a Model</h2>
-      </div>
-      <div class="mdl-card__supporting-text">
-        <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
-            Create a customized machine learning model from scratch.
-        </div>
-      </div>
-    </div>
-
-    <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-      <div class="mdl-card__title">
-         <h2 class="mdl-card__title-text">Choose a Model</h2>
-      </div>
-      <div class="mdl-card__supporting-text">
-        <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
-            Create a customized machine learning model from scratch.
-        </div>
-      </div>
-    </div>
 
   </main>
 </div>
 </script>
 
 <!-- include the reactive handling code -->
+<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }};</script>
 <script src="{{=URL('static', 'js/scripts/landing.js')}}"></script>

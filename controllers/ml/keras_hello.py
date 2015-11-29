@@ -3,11 +3,12 @@ from keras.models import Sequential, Graph
 from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import SGD
 import numpy as np
-import theano, sys
+import theano, sys, pprint
 
 NUM_TRAIN = 100000
 NUM_TEST = 10000
 INDIM = 3
+EPOCHS = 20
 
 mn = 1
 
@@ -42,20 +43,20 @@ if __name__ == '__main__' :
         WS = [2.0, 1.0, 0.5]
         XNO = 2.2
 
-    X_test, y_test = get_data(10000, WS, XNO, 10000, rweight=0.4)
-    X_train, y_train = get_data(100000, WS, XNO, 10000)
+    X_test, y_test = get_data(1000, WS, XNO, 1000, rweight=0.0)
+    X_train, y_train = get_data(10000, WS, XNO, 1000, rweight=0.2)
 
     model = Sequential()
-    model.add(Dense(INDIM, input_dim=INDIM, init='uniform', activation='tanh'))
-    model.add(Dropout(0.5))
-    model.add(Dense(64, init='uniform', activation='tanh'))
-    model.add(Dropout(0.5))
-    model.add(Dense(1, init='uniform', activation='softmax'))
+    model.add(Dense(INDIM, input_dim=INDIM, init='uniform', activation='linear'))
+    # model.add(Dense(INDIM, input_dim=INDIM, init='uniform', activation='linear'))
+    model.add(Dense(1, init='uniform'))
 
-    sgd = SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
-    model.compile(loss='mean_squared_error', optimizer=sgd)
+    # sgd = SGD(lr=0.1, decay=1e-6, momentum=0.1, nesterov=True)
+    # model.compile(loss='mean_squared_error', optimizer=sgd)
+    model.compile(loss='mse', optimizer='adam')
 
-    model.fit(X_train, y_train, shuffle="batch", show_accuracy=True, nb_epoch=EPOCHS)
+    pp = model.fit(X_train, y_train, batch_size=38,  shuffle=True, show_accuracy=True, nb_epoch=EPOCHS)
+    print pp
     score, acc = model.evaluate(X_test, y_test, batch_size=16, show_accuracy=True)
     print score
     print acc
@@ -63,5 +64,9 @@ if __name__ == '__main__' :
     predict_data = np.random.rand(100*100, INDIM)
     predictions = model.predict(predict_data)
 
+
+    pprint.pprint(model.to_yaml())
+    model.save_weights('my_model.h5', overwrite=True)
     for x in range(len(predict_data)) :
-        print "%s --> %s" % (str(predict_data[x]), str(predictions[x]))
+        pass
+        # print "%s --> %s" % (str(predict_data[x]), str(predictions[x]))

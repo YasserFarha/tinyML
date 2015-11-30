@@ -40,22 +40,23 @@
 
   <!-- sidebar -->
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title"><strong>tinyML</strong></span>
+    <span class="mdl-layout-title"><a href={{=URL('default', 'index')}}> <strong>tinyML</strong></a> </span>
 	<hr>
     <nav class="mdl-navigation">
       {% #if logged_in %}
-        <a class="mdl-navigation__link" href={{=URL('do_logout')}}>
-             <i class="fa fa-sign-out"></i> Logout
+        <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
+             <i class="fa fa-2x fa-list-alt"></i> Dashboard
        </a>
-        <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
-             <i class="fa fa-pie-chart"></i> Dashboard
+		<hr>
+        <a class="mdl-navigation__link" href={{=URL('default', 'do_logout')}}>
+             <i class="fa fa-2x fa-sign-out"></i> Logout
        </a>
       {% else %}
-       <a class="mdl-navigation__link" href={{=URL('do_login')}}>
-             <i class="fa fa-sign-in"></i> Login
+       <a class="mdl-navigation__link" href={{=URL('default', 'do_login')}}>
+             <i class="fa fa-2x fa-sign-in"></i> Login
        </a>
-        <a class="mdl-navigation__link" href={{=URL('do_register')}}>
-             <i class="fa fa-user-plus"></i> Register
+        <a class="mdl-navigation__link" href={{=URL('default', 'do_register')}}>
+             <i class="fa fa-2x fa-user-plus"></i> Register
         </a>
       {% /if %}
     </nav>

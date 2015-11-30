@@ -1,10 +1,13 @@
 @import 'base'
 
-.mdl-card
-  overflow-x: auto
+.flex-card
+  width: auto
 
+.mdl-card
+  min-height: 100px
+  overflow-x: auto
   .mdl-card__menu
-    margin-top: -8px
+    margin-top: -10px
 
   .mdl-card__title
     padding-bottom: 8px
@@ -13,22 +16,41 @@
 
     padding-top: 8px
     .mdl-card__title-text
-      font-size: 30px
       color: $colorWhite
+      font-size: 22px
 
   .mdl-card__supporting-text
     width: 100%
 
-  .mdl-data-table
+  .table
+    margin-bottom: 0px
     font-size: 12px
     width: 100%
     vertical-align: center
+    tr
+      padding-top: 0px
+      height: 20px
+      th
+        height: 35px
+      td
+        height: 40px
+        text-overflow: ellipsis
+        width: 120px
+        overflow: hidden
+        white-space: nowrap
+        width: 100px
 
 .clickable-row
   cursor: pointer
+  &:hover
+    background-color: #000
 
-.material-icons
-  color: $colorWhite
+.mdl-card
+  .material-icons
+    color: $colorWhite
 
 .fa-2x
-  font-size: 1.5em
+  font-size: 1.2em
+
+.mdl-progress
+  width: 50px

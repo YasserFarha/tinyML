@@ -1,0 +1,270 @@
+<head>
+
+    <!-- fonts and icons -->
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+	<script language="JavaScript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+    <!-- reactive -->
+	<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+
+    <!-- material design lite resources -->
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue_grey-red.min.css" />
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
+</head>
+
+
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+
+  <!-- navbar -->
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+
+      <span class="mdl-layout-title">Dashboard</span>
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                  mdl-textfield--floating-label mdl-textfield--align-right">
+      </div>
+    </div>
+  </header>
+
+  <!-- sidebar -->
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title"><a href="{{=URL('default', 'home')}}"> <strong>tinyML</strong></a> </span>
+	<hr>
+    <nav class="mdl-navigation">
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
+             <i class="fa fa-2x fa-home"></i> Home
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
+             <i class="fa fa-2x fa-cogs"></i> Models
+       </a>
+       <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
+             <i class="fa fa-2x fa-plus-circle"></i> Create
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'tutorials')}}>
+             <i class="fa fa-2x fa-book"></i> Tutorials 
+       </a>
+        <hr>
+        <a class="mdl-navigation__link" href={{=URL('default', 'do_logout')}}>
+             <i class="fa fa-2x fa-sign-out"></i> Logout
+       </a>
+    </nav>
+  </div>
+
+
+  <!-- main content -->
+  <main class="mdl-layout__content">
+    <div class="page-content">
+
+    <div class="mdl-grid">
+
+        <!-- explainer cards -->
+
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+          <div class="mdl-card flex-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Models</h1>
+          </div>
+            <table class="table table-hover  mdl-shadow--2dp">
+              <thead>
+                <tr>
+                  <th class="mdl-data-table__cell--non-numeric">ID</th>
+                  <th class="mdl-data-table__cell--non-numeric">Type</th>
+                  <th class="mdl-data-table__cell--non-numeric">Name</th>
+                  <th class="mdl-data-table__cell--non-numeric">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% #each models %}
+                    <tr class="clickable-row" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}">
+                      <td class="mdl-data-table__cell--non-numeric">{% id %}</td>
+                      <td class="mdl-data-table__cell--non-numeric">{% mclass %}</td>
+                      <td class="mdl-data-table__cell--non-numeric">{% name %}</td>
+                    {% #if status == "predicting" %}
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <i style="color: green" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+                      </td>
+                    {% /if %}
+                    {% #if status == "idle" %}
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <i style="color: grey" class="fa fa-2x fa-cog"></i> {% status %}
+                      </td>
+                    {% /if %}
+                    {% #if status == "training" %}
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <i style="color: #37474f" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+                      </td>
+                    {% /if %}
+                    </tr>
+                {% /each %}
+              </tbody>
+            </table>
+
+            <div class="mdl-card__menu" >
+            <button data-board-id="{% board_id %}" id="new_model"
+               class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="">
+                  <i class="material-icons">add_circle</i>
+            </button>
+            <button data-board-id="{% board_id %}" id="view_models"
+                    class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="removeBoard">
+                  <i class="material-icons">open_in_new</i>
+            </button>
+            <div class="mdl-tooltip" for="new_model">
+                <strong>create model</strong>
+            </div>
+            <div class="mdl-tooltip" for="view_models">
+                <strong>view all</strong>
+            </div>
+          </div>
+        </div>
+
+        <br>
+
+        <div class="flex-card mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Account Details</h1>
+          </div>
+          <div class="mdl-card__supporting-text">
+            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+            Once you've trained your model, you can use it to make a predictions on unlabeled data. 
+			This can be done in either bulk or individual uploads, and depending on your results you 
+			can always go back and retrain your model.
+            </div>
+          </div>
+        </div>
+        </div>
+
+
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+          <div class=" mdl-card flex-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Activity</h1>
+          </div>
+            <table class="table table-hover  mdl-shadow--2dp">
+              <thead>
+                <tr>
+                  <th class="mdl-data-table__cell--non-numeric">ID</th>
+                  <th class="mdl-data-table__cell--non-numeric">Model</th>
+                  <th class="mdl-data-table__cell--non-numeric">Type</th>
+                  <th class="mdl-data-table__cell--non-numeric">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% #each transactions %}
+                    <tr class='clickable-row' data-href="{{=URL('dashboard', 'model', args=['{% id %}'])}}">
+                      <td class="mdl-data-table__cell--non-numeric">{% uuid_short %}...</td>
+                      <td class="mdl-data-table__cell--non-numeric">{% model %}</td>
+                      <td class="mdl-data-table__cell--non-numeric">{% tclass %}</td>
+                        {% #if status == "active" %}
+                          <td class="mdl-data-table__cell--non-numeric">
+                            <i style="color: #37474f" class="fa fa-cog fa-spin"></i> {% status %}
+                          </td>
+                        {% /if %}
+                        {% #if status == "failed" %}
+                          <td class="mdl-data-table__cell--non-numeric">
+                            <i style="color: red" class="fa fa-2x fa-cog fa-exclamation-triangle"></i> {% status %}
+                          </td>
+                        {% /if %}
+                        {% #if status == "success" %}
+                          <td class="mdl-data-table__cell--non-numeric">
+                            <i style="color: green" class="fa fa-2x fa-check-circle"></i> {% status %}
+                          </td>
+                        {% /if %}
+                    </tr>
+                {% /each %}
+              </tbody>
+            </table>
+                <div class="mdl-card__menu" >
+                <button data-board-id="{% board_id %}" id="view_trs"
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="removeBoard">
+                      <i class="material-icons">open_in_new</i>
+                </button>
+                <div class="mdl-tooltip" for="view_trs">
+                    <strong>view all</strong>
+                </div>
+              </div>
+          </div>
+        </div>
+
+
+
+        </div> <!-- end inner grid -->
+
+  </main>
+</div>
+</script>
+
+<script>
+$(function() {
+    var MAIN = new Ractive({
+        el: '#target',
+        template: '#template',
+        delimiters: ['{%', '%}'],
+        tripleDelimiters: ['{%%', '%%}'],
+        data: {
+            logged_in: logged_in,
+            user_id: user_id,
+            models : [],
+            transactions: [],
+            turl: turl,
+            murl: murl
+        },
+    });
+
+  function load_models() {
+      $.ajax(MAIN.get("murl"),
+          { method: 'POST', data: {'page' : 1},
+          success: function (data) { 
+            for(var i = 0; i < data['models'].length; i++) {
+              data['models'][i]['uuid_short'] = data['models'][i]['uuid'].substring(0, 8)
+            }
+            MAIN.set('models', data['models']);
+            models = MAIN.get('models')
+         }
+        }
+      );
+    }
+
+  function load_transactions() {
+      $.ajax(MAIN.get("turl"),
+          { method: 'POST', data: {'page' : 1},
+          success: function (data) { 
+            for(var i = 0; i < data['transactions'].length; i++) {
+              data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8)
+            }
+            MAIN.set('transactions', data['transactions']);
+            console.log(data);
+          }
+        }
+      );
+    }
+
+  load_models();
+  load_transactions();
+
+    MAIN.on({
+      clickrow: function ( e) {
+          alert("fuck");
+          th = $(e.node)
+          window.document.location = th.data("href");
+      },
+    });
+
+});
+
+
+</script>
+
+<!-- include the reactive handling code -->
+<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }}; var murl = "{{=murl}}"; var turl="{{=turl}}"; </script>

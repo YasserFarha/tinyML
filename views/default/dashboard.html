@@ -44,17 +44,20 @@
 	<hr>
     <nav class="mdl-navigation">
        <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
-             <i class="fa fa-pie-chart"></i> Models
+             <i class="fa fa-2x fa-home"></i> Home
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
-             <i class="fa fa-tasks"></i> Create
+             <i class="fa fa-2x fa-pie-chart"></i> Models
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
-             <i class="fa fa-book"></i> Tutorials 
+             <i class="fa fa-2x fa-tasks"></i> Create
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard')}}>
+             <i class="fa fa-2x fa-book"></i> Tutorials 
        </a>
         <hr>
         <a class="mdl-navigation__link" href={{=URL('do_logout')}}>
-             <i class="fa fa-sign-out"></i> Logout
+             <i class="fa fa-2x fa-sign-out"></i> Logout
        </a>
     </nav>
   </div>
@@ -63,47 +66,72 @@
   <!-- main content -->
   <main class="mdl-layout__content">
     <div class="page-content">
-    <div class="mdl-grid">
-    
-		<!-- jumbo-tron card -->
-		<div class="mdl-cell mdl-cell--10-col jumbotron">
-			 <h1>Dashboard</h1>
-		</div>
-    </div>
 
     <div class="mdl-grid">
 
         <!-- explainer cards -->
-        <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title ">
+
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Models</h1>
+          </div>
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+              <thead>
+                <tr>
+                  <th class="mdl-data-table__cell--non-numeric">ID</th>
+                  <th class="mdl-data-table__cell--non-numeric">Type</th>
+                  <th class="mdl-data-table__cell--non-numeric">Name</th>
+                  <th class="mdl-data-table__cell--non-numeric">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class='clickable-row' data-href="{{=URL('default', 'dashboard', args=['model', 'X82EtbG'])}}">
+                      <td class="mdl-data-table__cell--non-numeric">X82EtbG</td>
+                      <td class="mdl-data-table__cell--non-numeric">Deep Neural Net</td>
+                      <td class="mdl-data-table__cell--non-numeric">Housing Price Calculator, Portland OR</td>
+                      <td class="mdl-data-table__cell--non-numeric">Training</td>
+                </tr>
+                <tr class="clickable-row" data-href="{{=URL('default', 'dashboard', args=['model', 'X82EtbG'])}}">
+                      <td class="mdl-data-table__cell--non-numeric">PL902QtrX</td>
+                      <td class="mdl-data-table__cell--non-numeric">Linear Classifer</td>
+                      <td class="mdl-data-table__cell--non-numeric">Housing Price Calculator, Portland OR</td>
+                      <td class="mdl-data-table__cell--non-numeric">Training</td>
+                </tr>
+                <tr class="clickable-row" data-href="{{=URL('default', 'dashboard', args=['model', 'X82EtbG'])}}">
+                      <td class="mdl-data-table__cell--non-numeric">U4542Klpz21</td>
+                      <td class="mdl-data-table__cell--non-numeric">Deep Neural Net</td>
+                      <td class="mdl-data-table__cell--non-numeric">AMD Stock Tracker, 10mo</td>
+                      <td class="mdl-data-table__cell--non-numeric">Ready</td>
+                </tr>
+              </tbody>
+            </table>
+                <div class="mdl-card__menu" >
+                <button data-board-id="{% board_id %}" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="editBoard">
+                      <i class="material-icons">add_circle</i>
+                </button>
+                <button data-board-id="{% board_id %}" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="removeBoard">
+                      <i class="material-icons">open_in_browser</i>
+                </button>
+              </div>
+        </div>
+
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Recent Activity</h1>
           </div>
           <div class="mdl-card__supporting-text">
-             <h1 class="mdl-card__title-text">Customize</h1>
-			<br>
             <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
                 Start by hand designing the layout of your neural network. You can completely customize your model, everything from the input/output dimensions, number of hidden layers, activation functions, dropout-rates, and more can be customized.
             </div>
           </div>
         </div>
 
-        <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title ">
+        <div class="mdl-cell mdl-cell--2-col"></div>
+        <div class="mdl-cell mdl-cell--8-col mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Account Details</h1>
           </div>
           <div class="mdl-card__supporting-text">
-             <h1 class="mdl-card__title-text">Train</h1>
-			<br>
-            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
-                Once your model is setup, you can upload vast amounts of training data to our servers and we will we will initiate a training session. You can of course specify the parameters of the training, such as the number of epochs, batch size, validation withholding, etc. 
-            </div>
-          </div>
-        </div>
-
-        <div class="mdl-cell mdl-cell--4-col mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title ">
-          </div>
-          <div class="mdl-card__supporting-text">
-             <h1 class="mdl-card__title-text">Predict</h1>
-			 <br>
             <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
             Once you've trained your model, you can use it to make a predictions on unlabeled data. 
 			This can be done in either bulk or individual uploads, and depending on your results you 
@@ -114,12 +142,10 @@
 
         </div> <!-- end inner grid -->
 
-
-
   </main>
 </div>
 </script>
 
 <!-- include the reactive handling code -->
-<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }};</script>
-<script src="{{=URL('static', 'js/scripts/landing.js')}}"></script>
+<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }}; </script>
+<script src="{{=URL('static', 'js/scripts/dashboard.js')}}"></script>

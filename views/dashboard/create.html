@@ -1,0 +1,330 @@
+<head>
+
+    <!-- fonts and icons -->
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+	<script language="JavaScript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+    <!-- reactive -->
+	<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+
+    <!-- material design lite resources -->
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue_grey-red.min.css" />
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
+</head>
+
+
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+
+  <!-- navbar -->
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+
+      <span class="mdl-layout-title">Dashboard</span>
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                  mdl-textfield--floating-label mdl-textfield--align-right">
+      </div>
+    </div>
+  </header>
+
+  <!-- sidebar -->
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title"><a href="{{=URL('default', 'home')}}"> <strong>tinyML</strong></a> </span>
+	<hr>
+    <nav class="mdl-navigation">
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
+             <i class="fa fa-2x fa-home"></i> Home
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
+             <i class="fa fa-2x fa-cogs"></i> Models
+       </a>
+       <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
+             <i class="fa fa-2x fa-plus-circle"></i> Create
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'tutorials')}}>
+             <i class="fa fa-2x fa-book"></i> Tutorials 
+       </a>
+        <hr>
+        <a class="mdl-navigation__link" href={{=URL('default', 'do_logout')}}>
+             <i class="fa fa-2x fa-sign-out"></i> Logout
+       </a>
+    </nav>
+  </div>
+
+
+  <!-- main content -->
+  <main class="mdl-layout__content">
+    <div class="page-content">
+
+    <div class="mdl-grid">
+
+        <!-- explainer cards -->
+
+        <div class="mdl-cell mdl-cell--0-col mdl-cell--1-col-tablet mdl-cell--0-col-phone"></div>
+        <br>
+        <div class="mdl-grid" style="padding-top: 0">
+            
+         <!-- naming and size card -->
+          <div class="mdl-cell mdl-cell--4-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+              <div class="mdl-card flex-card mdl-shadow--2dp">
+
+                <!-- tab headers, edit/new -->
+                <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+                  <div class="mdl-tabs__tab-bar">
+                      <a id="new-model-tab" href="#new-model-panel" on-click="set_new_panel" class="mdl-tabs__tab">Create New</a>
+                      <a id="edit-model-tab" href="#edit-model-panel" on-click="set_edit_panel" class="mdl-tabs__tab">Edit Existing</a>
+                  </div>
+
+               <div class="mdl-card__supporting-text" style="padding: 4px">
+                <div class="mdl-grid" style="padding-top: 0">
+                <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+
+
+                    <div class="mdl-tabs__panel" id="new-model-panel">
+                      <div class="mdl-textfield mdl-js-textfield" style="padding-top: 0">
+                        <label  for="sample1">Name</label>
+                        <input class="mdl-textfield__input" type="text" id="sample1" value="{% new_model.name%}" style="width:100%">
+                        <label class="mdl-textfield__label" for="sample1"></label>
+                      </div>
+                        <div class="mdl-grid mdl-grid--no-spacing" style="padding-top: 0">
+                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                            <div class="form-group">
+                              <label for="model_inp_count">#Inputs</label>
+                              <input type="number" id="model_inp_count" class="form-control" min="1" max="{% max_nodes %}" value="{% new_model.arch.num_out %}">
+                            </div>
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                            <div class="form-group">
+                              <label for="model_out_count">#Outputs</label>
+                              <input type="number" id="model_out_count" class="form-control" min="1" max="{% max_nodes %}" value="{% new_model.arch.num_inp %}">
+                            </div>
+                        </div>
+
+                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat">
+                            Create
+                        </button>
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                        <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                                class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll">
+                                Clear
+                        </button>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="mdl-tabs__panel" id="edit-model-panel">
+                        <label for="name-sel">Name</label>
+                            <div class="form-group">
+                              <select value="{% current_edit_name %}" data-model-id="{% current_edit.uuid %}"
+                                     class="form-control" id="name-sel">
+                                {% #my_models:i %}
+                                <option value="{% name %}">{% name %}</option>
+                                {% /my_models %}
+                              </select>
+                            </div>
+                        <div class="mdl-grid mdl-grid--no-spacing" style="padding-top: 0">
+                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                            <div class="form-group">
+                              <label for="model_inp_count">#Inputs</label>
+                              <input type="number" id="model_inp_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_out %}">
+                            </div>
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                            <div class="form-group">
+                              <label for="model_out_count">#Outputs</label>
+                              <input type="number" id="model_out_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_inp %}">
+                            </div>
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat">
+                               Update 
+                        </button>
+                        </div>
+                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                            <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                                    class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="">
+                                    Cancel
+                            </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                      </div>
+                    </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mdl-cell mdl-cell--8-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+          <div class="mdl-card flex-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Configure Layers</h1>
+          </div>
+            <table class="table table-responsive mdl-data-table--selectable mdl-shadow--0dp">
+              <thead>
+                <tr>
+                  <th class="mdl-data-table__cell--non-numeric"></th>
+                  <th class="mdl-data-table__cell--non-numeric">#</th>
+                  <th class="mdl-data-table__cell--non-numeric">Type</th>
+                  <th class="mdl-data-table__cell--non-numeric">#Nodes</th>
+                  <th class="mdl-data-table__cell--non-numeric">Activation</th>
+                  <th class="mdl-data-table__cell--non-numeric">Initializer</th>
+                </tr>
+              </thead>
+              <tbody>
+                 {% #if current_tab == "new" %}
+                 {% #new_model.arch.layer_dicts:i %}
+                    <tr>
+                    <td class="mdl-data-table__cell--non-numeric">
+                    <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                            class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="selectLayer">
+                            <i id="layer_check_{% uuid %}" class="fa fa-1x fa-square-o"></i>
+                    </button>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <h5>{% i+1 %}</h5>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="form-group">
+                          <select value="{% type %}" class="form-control" id="sel1">
+                            <option>dense</option>
+                            <option>convolutional</option>
+                            <option>timedistdense</option>
+                            <option>autoencoder</option>
+                          </select>
+                        </div>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="form-group">
+                          <input type="number" class="form-control" min="1" max="{% max_nodes %}" value="{% nodes %}">
+                        </div>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="form-group">
+                          <select value="{% activation %}" class="form-control" id="sel1">
+                            <option>none</option>
+                            <option>sigmoid</option>
+                            <option>linear</option>
+                            <option>tanh</option>
+                            <option>relu</option>
+                          </select>
+                        </div>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="form-group">
+                          <select value="{% init %}" class="form-control" id="sel1">
+                            <option>uniform</option>
+                            <option>normal</option>
+                            <option>lecun_unif.</option>
+                            <option>zero</option>
+                            <option>he_unif.</option>
+                            <option>he_normal.</option>
+                          </select>
+                        </div>
+                    </td>
+                    </tr>
+                 {% /layer_dicts %}
+                 {% /if %}
+
+
+                 {% #if current_tab == "edit" %}
+                 {% #current_edit.arch.layer_dicts:i %}
+                    <tr>
+                    <td class="mdl-data-table__cell--non-numeric">
+                    <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                            class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="selectLayer">
+                            <i id="layer_check_{% uuid %}" class="fa fa-1x fa-square-o"></i>
+                    </button>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <h5>{% i+1 %}</h5>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="form-group">
+                          <select value="{% type %}" class="form-control" id="sel1">
+                            <option>dense</option>
+                            <option>convolutional</option>
+                            <option>timedistdense</option>
+                            <option>autoencoder</option>
+                          </select>
+                        </div>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="form-group">
+                          <input type="number" class="form-control" min="1" max="{% max_nodes %}" value="{% nodes %}">
+                        </div>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="form-group">
+                          <select value="{% activation %}" class="form-control" id="sel1">
+                            <option>none</option>
+                            <option>sigmoid</option>
+                            <option>linear</option>
+                            <option>tanh</option>
+                            <option>relu</option>
+                          </select>
+                        </div>
+                    </td>
+                    <td class="mdl-data-table__cell--non-numeric">
+                        <div class="form-group">
+                          <select value="{% init %}" class="form-control" id="sel1">
+                            <option>uniform</option>
+                            <option>normal</option>
+                            <option>lecun_unif.</option>
+                            <option>zero</option>
+                            <option>he_unif.</option>
+                            <option>he_normal.</option>
+                          </select>
+                        </div>
+                    </td>
+                    </tr>
+                 {% /layer_dicts %}
+                 {% /if %}
+
+
+                </tbody>
+              </table>
+                <div class="mdl-card__menu" >
+                <button id="add_layer"
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="addLayer">
+                      <i class="material-icons">add_circle_outline</i>
+                </button>
+                <button id="remove_layer"
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="removeLayer">
+                      <i class="material-icons">delete</i>
+                </button>
+                <div class="mdl-tooltip" for="add_layer">
+                    <strong>add layer</strong>
+                </div>
+                <div class="mdl-tooltip" for="remove_layer">
+                    <strong>remove selected</strong>
+                </div>
+              </div>
+          </div>
+          </div>
+          </div>
+
+
+
+
+
+  </main>
+</div>
+</script>
+
+<!-- include the reactive handling code -->
+<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }}; var murl = "{{=murl}}";</script>
+<script src="{{=URL('static', 'js/scripts/dbcreate.js')}}"></script>

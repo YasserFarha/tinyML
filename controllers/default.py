@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import uuid
+import uuid, json
 
 ### Routes ###
 def home() :
@@ -54,37 +54,95 @@ def deletedb():
 	return True
 
 def populate():
+
+        stcts = [ 
+            { "layer_dicts" : [
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "dense",
+                    "nodes" : 6,
+                    "init" : "normal",
+                    "activation" : "linear"},
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "dense",
+                    "nodes" : 12,
+                    "init" : "uniform",
+                    "activation" : "tanh"} ],
+                "num_inp" : 10,
+                "num_out" : 3 },
+            { "layer_dicts" : [
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "dense",
+                    "nodes" : 6,
+                    "init" : "uniform",
+                    "activation" : "relu"},
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "convolutional",
+                    "nodes" : 6,
+                    "init" : "uniform",
+                    "activation" : "relu"},
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "dense",
+                    "nodes" : 18,
+                    "init" : "he_unif",
+                    "activation" : "relu"},
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "dense",
+                    "nodes" : 10,
+                    "init" : "he_unif",
+                    "activation" : "linear"} ],
+                "num_inp" : 26,
+                "num_out" : 12 },
+            { "layer_dicts" : [
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "dense",
+                    "nodes" : 6,
+                    "init" : "uniform",
+                    "activation" : "relu"},
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "dense",
+                    "nodes" : 18,
+                    "init" : "he_unif",
+                    "activation" : "relu"},
+                {   "uuid" : str(uuid.uuid4()),
+                    "type" : "dense",
+                    "nodes" : 8,
+                    "init" : "uniform",
+                    "activation" : "tanh"} ],
+                "num_inp" : 4,
+                "num_out" : 2 }
+            ]
+
 	mdls = [
 		  {"name" : "AMD Stock Model",
 		   "creator" : auth.user_id,
 		   "mclass" : "deep-nnet",
-           "status" : "training",
+                   "status" : "training",
 		   "uuid" : uuid.uuid4(),
-		   "ninputs" : 26},
+                   "arch" : json.dumps(stcts[0])},
 		  {"name" : "Housing Price Model",
 		   "creator" : auth.user_id,
 		   "mclass" : "deep-nnet",
-           "status" : "predicting",
+                   "status" : "predicting",
 		   "uuid" : uuid.uuid4(),
-		   "ninputs" : 14},
+                   "arch" : json.dumps(stcts[1])},
 		  {"name" : "Simple Clustering",
 		   "creator" : auth.user_id,
 		   "mclass" : "cluster",
-           "status" : "idle",
+                   "status" : "idle",
 		   "uuid" : uuid.uuid4(),
-		   "ninputs" : 14},
+                   "arch" : json.dumps(stcts[2])},
 		  {"name" : "N-Body Model New",
 		   "creator" : auth.user_id,
 		   "mclass" : "deep-nnet",
-           "status" : "idle",
+                   "status" : "idle",
 		   "uuid" : uuid.uuid4(),
-		   "ninputs" : 14},
+                   "arch" : json.dumps(stcts[0])},
 		  {"name" : "Census Data 2012",
 		   "creator" : auth.user_id,
 		   "mclass" : "deep-nnet",
-           "status" : "training",
+                   "status" : "training",
 		   "uuid" : uuid.uuid4(),
-		   "ninputs" : 14}
+                   "arch" : json.dumps(stcts[2])}
 		 ]
 
 	for mdl in mdls :

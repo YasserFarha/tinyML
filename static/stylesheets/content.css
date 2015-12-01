@@ -39,51 +39,62 @@
   height: 36px;
 }
 
-/* line 45, ../sass/_base.sass */
+/* line 44, ../sass/_base.sass */
+.mdl-layout__drawer-button {
+  min-height: 36px;
+  height: 36px;
+  padding-top: 4px;
+}
+/* line 48, ../sass/_base.sass */
+.mdl-layout__drawer-button i {
+  color: #FFFFFF;
+}
+
+/* line 51, ../sass/_base.sass */
 .mdl-grid {
   max-width: 1400px;
 }
 
-/* line 48, ../sass/_base.sass */
+/* line 54, ../sass/_base.sass */
 .mdl-card {
   text-align: left;
 }
-/* line 51, ../sass/_base.sass */
+/* line 57, ../sass/_base.sass */
 .mdl-card .landing-card {
   background-color: #78909C;
   color: #EEF2F1;
-  min-height: 180px;
+  min-height: 150px;
 }
-/* line 56, ../sass/_base.sass */
+/* line 62, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__title-text {
   font-size: 36px;
 }
-/* line 59, ../sass/_base.sass */
+/* line 65, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text {
   width: 100%;
   min-height: 130px;
 }
-/* line 62, ../sass/_base.sass */
+/* line 68, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text h1 {
   font-size: 36px;
 }
-/* line 65, ../sass/_base.sass */
+/* line 71, ../sass/_base.sass */
 .mdl-card .customize-card {
   background: url("../images/nnet_6.png") top 50% left 100% no-repeat #37474f;
   background-size: 240px 240px;
 }
-/* line 69, ../sass/_base.sass */
+/* line 75, ../sass/_base.sass */
 .mdl-card .train-card {
   background: url("../images/data_1.png") bottom 20% right 75% no-repeat #37474f;
   color: #EEF0F2;
 }
-/* line 73, ../sass/_base.sass */
+/* line 79, ../sass/_base.sass */
 .mdl-card .predict-card {
   background: url("../images/nnet_4.png") bottom 23% right 55% no-repeat #37474f;
   color: #37474f;
 }
 
-/* line 77, ../sass/_base.sass */
+/* line 83, ../sass/_base.sass */
 .mdl-card__actions {
   position: absolute;
   right: 0;
@@ -91,81 +102,143 @@
 }
 
 /* line 3, ../sass/content.sass */
+.page-content {
+  background-color: #eee;
+  height: 100%;
+}
+
+/* line 8, ../sass/content.sass */
 .flex-card {
   width: auto;
 }
 
-/* line 6, ../sass/content.sass */
+/* line 11, ../sass/content.sass */
+.mdl-grid {
+  width: 100%;
+}
+
+/* line 14, ../sass/content.sass */
 .mdl-card {
   min-height: 100px;
   overflow-x: auto;
 }
-/* line 9, ../sass/content.sass */
+/* line 17, ../sass/content.sass */
 .mdl-card .mdl-card__menu {
   margin-top: -10px;
 }
-/* line 12, ../sass/content.sass */
+/* line 20, ../sass/content.sass */
 .mdl-card .mdl-card__title {
   padding-bottom: 8px;
-  background-color: #37474f;
+  background-color: #FFFFFF;
   width: 100%;
   padding-top: 8px;
 }
-/* line 18, ../sass/content.sass */
+/* line 26, ../sass/content.sass */
 .mdl-card .mdl-card__title .mdl-card__title-text {
-  color: #FFFFFF;
+  color: #37474f;
   font-size: 22px;
 }
-/* line 22, ../sass/content.sass */
+/* line 30, ../sass/content.sass */
 .mdl-card .mdl-card__supporting-text {
   width: 100%;
 }
-/* line 25, ../sass/content.sass */
+/* line 33, ../sass/content.sass */
 .mdl-card .table {
   margin-bottom: 0px;
-  font-size: 12px;
+  font-size: 13px;
   width: 100%;
   vertical-align: center;
 }
-/* line 30, ../sass/content.sass */
+/* line 38, ../sass/content.sass */
 .mdl-card .table tr {
   padding-top: 0px;
   height: 20px;
 }
-/* line 33, ../sass/content.sass */
+/* line 41, ../sass/content.sass */
 .mdl-card .table tr th {
   height: 35px;
 }
-/* line 35, ../sass/content.sass */
+/* line 43, ../sass/content.sass */
 .mdl-card .table tr td {
   height: 40px;
   text-overflow: ellipsis;
-  width: 120px;
   overflow: hidden;
   white-space: nowrap;
-  width: 100px;
+  width: auto;
 }
 
-/* line 43, ../sass/content.sass */
+/* line 50, ../sass/content.sass */
 .clickable-row {
   cursor: pointer;
 }
-/* line 45, ../sass/content.sass */
+/* line 52, ../sass/content.sass */
 .clickable-row:hover {
   background-color: #000;
 }
 
-/* line 49, ../sass/content.sass */
+/* line 56, ../sass/content.sass */
 .mdl-card .material-icons {
-  color: #FFFFFF;
+  color: #78909C;
+}
+/* line 58, ../sass/content.sass */
+.mdl-card .dark {
+  color: #78909C;
 }
 
-/* line 52, ../sass/content.sass */
+/* line 61, ../sass/content.sass */
+.mdl-tabs__tab {
+  width: 100%;
+}
+
+/* line 64, ../sass/content.sass */
 .fa-2x {
   font-size: 1.2em;
 }
 
-/* line 55, ../sass/content.sass */
+/* line 67, ../sass/content.sass */
+.fat {
+  width: 100%;
+}
+
+/* line 70, ../sass/content.sass */
+.fa-1x {
+  font-size: 0.8em;
+  color: #78909C;
+}
+
+/* line 74, ../sass/content.sass */
 .mdl-progress {
   width: 50px;
+}
+
+/* line 77, ../sass/content.sass */
+.mdl-textfield {
+  padding-top: 15px;
+  font-size: 13px;
+}
+
+/* line 81, ../sass/content.sass */
+.mdl-textfield__label:after {
+  bottom: 15px;
+}
+
+/* line 84, ../sass/content.sass */
+.select {
+  padding: 3px;
+}
+
+/* line 87, ../sass/content.sass */
+.input {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+/* line 91, ../sass/content.sass */
+.form-control {
+  border-radius: 1px;
+  padding-top: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 4px;
+  font-size: 13px;
 }

@@ -42,11 +42,12 @@ $(function() {
       );
     }
 
-
-    MAIN.on("clickrow", function(e) {
-        id = $(e.node).data('href');
-        window.document.location = id
+  jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+      alert("fuck");
+      window.document.location = $(this).data("href");
     });
+  });
 
   load_models();
   load_transactions();

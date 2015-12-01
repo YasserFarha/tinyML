@@ -17,7 +17,7 @@ db.define_table('models',
         Field('created_at', 'datetime', default=datetime.datetime.now()),
         Field('updated_at', 'datetime', default=datetime.datetime.now()),
         Field('status', 'string'), # @TODO - define statuses (training, active, busy, new)
-        Field('ninputs', 'integer')) # number of input fields
+        Field('arch', 'string')) # json describing layers
 
 
 db.define_table('transactions',

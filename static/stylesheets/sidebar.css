@@ -39,51 +39,62 @@
   height: 36px;
 }
 
-/* line 45, ../sass/_base.sass */
+/* line 44, ../sass/_base.sass */
+.mdl-layout__drawer-button {
+  min-height: 36px;
+  height: 36px;
+  padding-top: 4px;
+}
+/* line 48, ../sass/_base.sass */
+.mdl-layout__drawer-button i {
+  color: #FFFFFF;
+}
+
+/* line 51, ../sass/_base.sass */
 .mdl-grid {
   max-width: 1400px;
 }
 
-/* line 48, ../sass/_base.sass */
+/* line 54, ../sass/_base.sass */
 .mdl-card {
   text-align: left;
 }
-/* line 51, ../sass/_base.sass */
+/* line 57, ../sass/_base.sass */
 .mdl-card .landing-card {
   background-color: #78909C;
   color: #EEF2F1;
-  min-height: 180px;
+  min-height: 150px;
 }
-/* line 56, ../sass/_base.sass */
+/* line 62, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__title-text {
   font-size: 36px;
 }
-/* line 59, ../sass/_base.sass */
+/* line 65, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text {
   width: 100%;
   min-height: 130px;
 }
-/* line 62, ../sass/_base.sass */
+/* line 68, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text h1 {
   font-size: 36px;
 }
-/* line 65, ../sass/_base.sass */
+/* line 71, ../sass/_base.sass */
 .mdl-card .customize-card {
   background: url("../images/nnet_6.png") top 50% left 100% no-repeat #37474f;
   background-size: 240px 240px;
 }
-/* line 69, ../sass/_base.sass */
+/* line 75, ../sass/_base.sass */
 .mdl-card .train-card {
   background: url("../images/data_1.png") bottom 20% right 75% no-repeat #37474f;
   color: #EEF0F2;
 }
-/* line 73, ../sass/_base.sass */
+/* line 79, ../sass/_base.sass */
 .mdl-card .predict-card {
   background: url("../images/nnet_4.png") bottom 23% right 55% no-repeat #37474f;
   color: #37474f;
 }
 
-/* line 77, ../sass/_base.sass */
+/* line 83, ../sass/_base.sass */
 .mdl-card__actions {
   position: absolute;
   right: 0;
@@ -98,7 +109,7 @@ hr {
 
 /* line 7, ../sass/sidebar.sass */
 .mdl-layout__drawer {
-  background-color: #EEF0F2;
+  background-color: #FFFFFF;
 }
 /* line 10, ../sass/sidebar.sass */
 .mdl-layout__drawer .mdl-layout-title {

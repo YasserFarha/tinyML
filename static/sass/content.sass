@@ -1,7 +1,15 @@
 @import 'base'
 
+.page-content
+  background-color: #eee
+  height: 100%
+
+
 .flex-card
   width: auto
+
+.mdl-grid
+  width: 100%
 
 .mdl-card
   min-height: 100px
@@ -11,12 +19,12 @@
 
   .mdl-card__title
     padding-bottom: 8px
-    background-color: $colorDarkBlue
+    background-color: $colorWhite
     width: 100%
 
     padding-top: 8px
     .mdl-card__title-text
-      color: $colorWhite
+      color: $colorDarkBlue
       font-size: 22px
 
   .mdl-card__supporting-text
@@ -24,7 +32,7 @@
 
   .table
     margin-bottom: 0px
-    font-size: 12px
+    font-size: 13px
     width: 100%
     vertical-align: center
     tr
@@ -35,10 +43,9 @@
       td
         height: 40px
         text-overflow: ellipsis
-        width: 120px
         overflow: hidden
         white-space: nowrap
-        width: 100px
+        width: auto 
 
 .clickable-row
   cursor: pointer
@@ -47,10 +54,44 @@
 
 .mdl-card
   .material-icons
-    color: $colorWhite
+    color: $colorLightBlue
+  .dark
+    color: $colorLightBlue
+
+.mdl-tabs__tab
+  width: 100%
 
 .fa-2x
   font-size: 1.2em
 
+.fat
+  width: 100%
+
+.fa-1x
+  font-size: 0.8em
+  color: $colorLightBlue
+
 .mdl-progress
   width: 50px
+
+.mdl-textfield
+  padding-top: 15px
+  font-size: 13px
+
+.mdl-textfield__label:after
+  bottom: 15px
+
+.select
+  padding: 3px
+
+.input
+  padding-top: 0px
+  padding-bottom: 0px
+
+.form-control
+  border-radius: 1px
+  padding-top: 4px
+  padding-left: 8px
+  padding-right: 8px
+  padding-bottom: 4px
+  font-size: 13px

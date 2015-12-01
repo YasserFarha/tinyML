@@ -72,7 +72,6 @@
         <!-- explainer cards -->
 
         <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
-        <br>
           <div class="mdl-card flex-card mdl-shadow--2dp">
           <div class="mdl-card__title mdl-card--border">
              <h1 class="mdl-card__title-text">Models</h1>
@@ -148,7 +147,6 @@
 
 
         <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
-        <br>
           <div class=" mdl-card flex-card mdl-shadow--2dp">
           <div class="mdl-card__title mdl-card--border">
              <h1 class="mdl-card__title-text">Activity</h1>
@@ -207,6 +205,53 @@
 </div>
 </script>
 
+<script>
+$(function() {
+    var MAIN = new Ractive({
+        el: '#target',
+        template: '#template',
+        delimiters: ['{%', '%}'],
+        tripleDelimiters: ['{%%', '%%}'],
+        data: {
+            logged_in: logged_in,
+            user_id: user_id,
+            models : [],
+            transactions: [],
+            murl: murl
+        },
+    });
+
+  function load_models() {
+      $.ajax(MAIN.get("murl"),
+          { method: 'POST', data: {'page' : 1},
+          success: function (data) { 
+            for(var i = 0; i < data['models'].length; i++) {
+              data['models'][i]['uuid_short'] = data['models'][i]['uuid'].substring(0, 8)
+            }
+            MAIN.set('models', data['models']);
+            models = MAIN.get('models')
+         }
+        }
+      );
+    }
+
+
+  load_models();
+  load_transactions();
+
+    MAIN.on({
+      clickrow: function ( e) {
+          alert("fuck");
+          th = $(e.node)
+          window.document.location = th.data("href");
+      },
+    });
+
+});
+
+
+</script>
+
 <!-- include the reactive handling code -->
-<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }}; var murl = "{{=murl}}"; var turl="{{=turl}}"; </script>
-<script src="{{=URL('static', 'js/scripts/dashboard.js')}}"></script>
+<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }}; var murl = "{{=murl}}";</script>
+<script src="{{=URL('static', 'js/scripts/dbmodels.js')}}"></script>

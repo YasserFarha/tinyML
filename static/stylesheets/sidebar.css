@@ -63,7 +63,7 @@
 .mdl-card .landing-card {
   background-color: #78909C;
   color: #EEF2F1;
-  min-height: 150px;
+  min-height: 300px;
 }
 /* line 62, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__title-text {

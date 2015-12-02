@@ -89,12 +89,10 @@
                <div class="mdl-card__supporting-text" style="padding: 4px">
                 <div class="mdl-grid" style="padding-top: 0">
                 <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
-
-
                     <div class="mdl-tabs__panel" id="new-model-panel">
                       <div class="mdl-textfield mdl-js-textfield" style="padding-top: 0">
                         <label  for="sample1">Name</label>
-                        <input class="mdl-textfield__input" type="text" id="sample1" value="{% new_model.name%}" style="width:100%">
+                        <input class="mdl-textfield__input" type="text" id="sample1" value="{% new_model.name %}" style="width:100%">
                         <label class="mdl-textfield__label" for="sample1"></label>
                       </div>
                         <div class="mdl-grid mdl-grid--no-spacing" style="padding-top: 0">
@@ -111,61 +109,125 @@
                             </div>
                         </div>
 
-                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat">
-                            Create
-                        </button>
+                        {% #if new_model.updated %}
+                            <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="create_new">
+                                    Create
+                                </button>
+                            </div>
+                            <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                                <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                                        class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll">
+                                        Clear
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="create_new" disabled>
+                                    Create
+                                </button>
+                            </div>
+                            <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                                <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                                        class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll" disabled>
+                                        Clear
+                                </button>
+                            </div>
+                        {% /if %}
+                      </div>
+                  </div>
+                  <div class="mdl-tabs__panel" id="edit-model-panel">
+                    <label for="name-sel">Name</label>
+                    <div class="form-group">
+                      <select value="{% current_edit_name %}" data-model-id="{% current_edit.uuid %}"
+                             class="form-control" id="name-sel">
+                        {% #my_models:i %}
+                        <option value="{% name %}">{% name %}</option>
+                        {% /my_models %}
+                      </select>
+                    </div>
+                    <div class="mdl-grid mdl-grid--no-spacing" style="padding-top: 0">
+                    <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                        <div class="form-group">
+                          <label for="model_inp_count">#Inputs</label>
+                          <input type="number" id="model_inp_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_out %}">
                         </div>
-                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                    </div>
+                    <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                        <div class="form-group">
+                          <label for="model_out_count">#Outputs</label>
+                          <input type="number" id="model_out_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_inp %}">
+                        </div>
+                    </div>
+                    <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                        {% #if current_edit.updated %}
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat" on-click="update_model">
+                           Update 
+                        </button>
+                        {% else %}
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat" on-click="update_model" disabled>
+                           Update 
+                        </button>
+                        {% /if %}
+                    </div>
+                    {% #if current_edit.updated %}
+                    <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                        <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                                class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="">
+                                Cancel
+                        </button>
+                    </div>
+                    {% else %}
+                    <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
+                        <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                                class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="" disabled>
+                                Cancel
+                        </button>
+                    </div>
+                    {% /if %}
+                  </div>
+
+                    </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% #if added_models %}
+            <br>
+              <div class="mdl-card flex-card mdl-shadow--2dp">
+              <div class="mdl-card__title mdl-card--border">
+                 <h1 class="mdl-card__title-text">New Models</h1>
+              </div>
+               <div class="mdl-card__supporting-text" style="padding: 4px">
+                <div class="mdl-grid" style="padding-top: 0">
+                <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                    {% #added_models:i %}
+                    <table class="table table-responsive mdl-shadow--1dp">
+                      <thead>
+                        <tr>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            {% name %}
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">
                         <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
                                 class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll">
                                 Clear
                         </button>
-                        </div>
-                      </div>
+                        </td>
+                      </tbody>
+                    </table>
+                    {% /added_models %}
                   </div>
-                  <div class="mdl-tabs__panel" id="edit-model-panel">
-                        <label for="name-sel">Name</label>
-                            <div class="form-group">
-                              <select value="{% current_edit_name %}" data-model-id="{% current_edit.uuid %}"
-                                     class="form-control" id="name-sel">
-                                {% #my_models:i %}
-                                <option value="{% name %}">{% name %}</option>
-                                {% /my_models %}
-                              </select>
-                            </div>
-                        <div class="mdl-grid mdl-grid--no-spacing" style="padding-top: 0">
-                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
-                            <div class="form-group">
-                              <label for="model_inp_count">#Inputs</label>
-                              <input type="number" id="model_inp_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_out %}">
-                            </div>
-                        </div>
-                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
-                            <div class="form-group">
-                              <label for="model_out_count">#Outputs</label>
-                              <input type="number" id="model_out_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_inp %}">
-                            </div>
-                        </div>
-                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
-                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat">
-                               Update 
-                        </button>
-                        </div>
-                        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--12-col-phone">
-                            <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
-                                    class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="">
-                                    Cancel
-                            </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                      </div>
-                    </div>
+                </div>
               </div>
-            </div>
+              </div>
+            {% /if %}
+
           </div>
 
           <div class="mdl-cell mdl-cell--8-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
@@ -325,6 +387,12 @@
 </div>
 </script>
 
+<script> 
+var logged_in = {{=logged_in }};
+var user_id = {{=user_id }};
+var murl = "{{=murl}}";
+var new_url = "{{= new_url }}";
+var edit_url = "{{=edit_url }}";
+</script>
 <!-- include the reactive handling code -->
-<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }}; var murl = "{{=murl}}";</script>
 <script src="{{=URL('static', 'js/scripts/dbcreate.js')}}"></script>

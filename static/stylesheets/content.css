@@ -63,7 +63,7 @@
 .mdl-card .landing-card {
   background-color: #78909C;
   color: #EEF2F1;
-  min-height: 150px;
+  min-height: 300px;
 }
 /* line 62, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__title-text {
@@ -103,7 +103,7 @@
 
 /* line 3, ../sass/content.sass */
 .page-content {
-  background-color: #eee;
+  background-color: #78909C;
   height: 100%;
 }
 
@@ -215,25 +215,26 @@
 .mdl-textfield {
   padding-top: 15px;
   font-size: 13px;
+  width: 100%;
 }
 
-/* line 81, ../sass/content.sass */
+/* line 82, ../sass/content.sass */
 .mdl-textfield__label:after {
   bottom: 15px;
 }
 
-/* line 84, ../sass/content.sass */
+/* line 85, ../sass/content.sass */
 .select {
   padding: 3px;
 }
 
-/* line 87, ../sass/content.sass */
+/* line 88, ../sass/content.sass */
 .input {
   padding-top: 0px;
   padding-bottom: 0px;
 }
 
-/* line 91, ../sass/content.sass */
+/* line 92, ../sass/content.sass */
 .form-control {
   border-radius: 1px;
   padding-top: 4px;

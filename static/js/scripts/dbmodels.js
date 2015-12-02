@@ -16,7 +16,8 @@ $(function() {
 
   function load_models() {
       $.ajax(MAIN.get("murl"),
-          { method: 'POST', data: {'page' : 1},
+          { method: 'POST', data: {'page' : 1
+                                   'page_size' : 20},
           success: function (data) { 
             for(var i = 0; i < data['models'].length; i++) {
               data['models'][i]['uuid_short'] = data['models'][i]['uuid'].substring(0, 8)

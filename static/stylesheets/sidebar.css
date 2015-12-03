@@ -1,4 +1,16 @@
 /* line 17, ../sass/_base.sass */
+.page-content {
+  background-color: #78909C;
+  min-height: 100%;
+}
+
+/* line 20, ../sass/_base.sass */
+.body {
+  background-color: #78909C;
+  min-height: 100%;
+}
+
+/* line 24, ../sass/_base.sass */
 .jumbotron {
   background-color: #FFFFFF;
   padding-top: 0px;
@@ -9,92 +21,119 @@
   width: 100%;
   text-align: center;
 }
-/* line 26, ../sass/_base.sass */
+/* line 33, ../sass/_base.sass */
 .jumbotron h1 {
   font-size: 68px;
   font-weight: 40;
   color: #37474f;
 }
-/* line 30, ../sass/_base.sass */
+/* line 37, ../sass/_base.sass */
 .jumbotron h2 {
   font-size: 40px;
   color: #37474f;
   font-weight: 80;
 }
 
-/* line 35, ../sass/_base.sass */
+/* line 43, ../sass/_base.sass */
 .mdl-layout-title {
   color: #EEF2F1;
   font-size: 24px;
 }
 
-/* line 39, ../sass/_base.sass */
+/* line 47, ../sass/_base.sass */
 .mdl-layout__header {
   min-height: 40px;
 }
 
-/* line 41, ../sass/_base.sass */
+/* line 49, ../sass/_base.sass */
 .mdl-layout__header-row {
   min-height: 40px;
   height: 36px;
 }
 
-/* line 44, ../sass/_base.sass */
+/* line 52, ../sass/_base.sass */
 .mdl-layout__drawer-button {
   min-height: 36px;
   height: 36px;
   padding-top: 4px;
 }
-/* line 48, ../sass/_base.sass */
+/* line 56, ../sass/_base.sass */
 .mdl-layout__drawer-button i {
   color: #FFFFFF;
 }
 
-/* line 51, ../sass/_base.sass */
+/* line 59, ../sass/_base.sass */
+.mdl-layout-title {
+  font-size: 21px;
+  font-weight: 400;
+}
+/* line 62, ../sass/_base.sass */
+.mdl-layout-title small {
+  font-size: 17px;
+  color: #EEF0F2;
+  font-weight: 300;
+}
+
+/* line 67, ../sass/_base.sass */
+.brand {
+  font-size: 30px;
+  font-weight: 500;
+}
+
+/* line 72, ../sass/_base.sass */
 .mdl-grid {
   max-width: 1400px;
 }
 
-/* line 54, ../sass/_base.sass */
+/* line 75, ../sass/_base.sass */
 .mdl-card {
   text-align: left;
 }
-/* line 57, ../sass/_base.sass */
+/* line 78, ../sass/_base.sass */
+.mdl-card h4 {
+  color: #37474f;
+  margin-bottom: 0px;
+}
+/* line 81, ../sass/_base.sass */
+.mdl-card h3 {
+  color: #37474f;
+}
+/* line 84, ../sass/_base.sass */
 .mdl-card .landing-card {
   background-color: #78909C;
   color: #EEF2F1;
   min-height: 300px;
 }
-/* line 62, ../sass/_base.sass */
+/* line 89, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__title-text {
   font-size: 36px;
 }
-/* line 65, ../sass/_base.sass */
+/* line 92, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text {
   width: 100%;
   min-height: 130px;
 }
-/* line 68, ../sass/_base.sass */
+/* line 95, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text h1 {
   font-size: 36px;
 }
-/* line 71, ../sass/_base.sass */
+/* line 98, ../sass/_base.sass */
 .mdl-card .customize-card {
   background: url("../images/nnet_6.png") top 50% left 100% no-repeat #37474f;
   background-size: 240px 240px;
 }
-/* line 75, ../sass/_base.sass */
+/* line 102, ../sass/_base.sass */
 .mdl-card .train-card {
   background: url("../images/data_1.png") bottom 20% right 75% no-repeat #37474f;
   color: #EEF0F2;
 }
-/* line 79, ../sass/_base.sass */
+/* line 106, ../sass/_base.sass */
 .mdl-card .predict-card {
   background: url("../images/nnet_4.png") bottom 23% right 55% no-repeat #37474f;
   color: #37474f;
 }
 
-/* line 83, ../sass/_base.sass */
+/* line 110, ../sass/_base.sass */
 .mdl-card__actions {
   position: absolute;
   right: 0;

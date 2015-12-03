@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import uuid
+import task_lib, json
 
 
 def deletedb():
@@ -23,14 +24,15 @@ def model():
 		redirect(URL('default', 'index'))
 	iid = int(request.args(0))
 	model = db(db.models.id == iid).select().first()
+	murl = URL('dashboard', 'load_model', args=[iid], user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
-                user_id=auth.user_id if auth.user_id else -1,
-				model=model, transactions=[])
+                user_id=auth.user_id if auth.user_id else -1, model_id=iid,
+				murl=murl, model=model, transactions=[])
 def models():
 	if not auth.user_id :
 		redirect(URL('default', 'index'))
-	murl = URL('default', 'load_models', user_signature=True)
-	turl = URL('default', 'load_transactions', user_signature=True)
+	murl = URL('dashboard', 'load_models', user_signature=True)
+	turl = URL('dashboard', 'load_transactions', user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
                 user_id=auth.user_id if auth.user_id else -1,
                 murl=murl, models=[], transactions=[])
@@ -38,7 +40,7 @@ def models():
 def create():
 	if not auth.user_id :
 		redirect(URL('default', 'index'))
-	murl = URL('default', 'load_models', user_signature=True)
+	murl = URL('dashboard', 'load_models', user_signature=True)
 	new_url = URL('dashboard', 'add_model', user_signature=True)
 	edit_url = URL('dashboard', 'edit_model', user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
@@ -58,7 +60,7 @@ def load_models():
 def load_model():
     iid = int(request.args(0))
     trs = db(db.models.id == iid).select().first()
-    return response.json(dict(models=trs))
+    return response.json(dict(model=trs))
 
 @auth.requires_signature()
 def add_model():
@@ -66,14 +68,32 @@ def add_model():
     mclass = request.vars.get('mclass', '');
     muuid = request.vars.get('uuid', uuid.uuid4());
     arch = request.vars.get('arch');
+    if db(db.models.creator == auth.user_id and db.models.name == name).select().first() :
+        raise HTTP(400,"Model name exists already.")
+
     db['models'].insert(
                 name=name,
                 mclass=mclass,
                 uuid=muuid,
                 arch=arch,
-                status="idle",
+                status="compiling",
                 creator = auth.user_id)
-    return response.json(dict(model=db(db.models.uuid == muuid).select().first()))
+
+    model = db(db.models.uuid == muuid).select().first()
+
+    trs = {
+            "status": "active",
+            "tclass": "create",
+            "uuid" : uuid.uuid4(),
+            "creator" : auth.user_id,
+            "model" : model
+            }
+
+    db['transactions'].insert(**trs)
+
+    print scheduler.queue_task(task_lib.compile_model, pvars=dict(mid=model.id, tid=json.dumps(str(trs['uuid']))))
+
+    return response.json(dict(model=model))
 
 
 @auth.requires_signature()
@@ -88,8 +108,23 @@ def edit_model():
                 mclass=mclass,
                 uuid=muuid,
                 arch=arch,
-                status="idle",
+                status="compiling",
                 creator = auth.user_id)
+
+    trs = {
+            "status": "active",
+            "tclass": "edit",
+            "uuid" : uuid.uuid4(),
+            "creator" : auth.user_id,
+            "model" : model
+            }
+
+    db['transactions'].insert(**trs)
+
+    trs = db(db.transactions.uuid == trs['uuid']).select().first()
+
+    print scheduler.queue_task(task_lib.compile_model, pvars=dict(mid=model.id, tid=str(trs.id)))
+
     return response.json(dict(model=model))
 
 @auth.requires_signature()

@@ -45,7 +45,7 @@ $(function() {
                 MAIN.set('current_edit', ce);
                 MAIN.set('current_edit.updated', false);
             }
-         }
+         },
         }
       );
     }
@@ -64,17 +64,21 @@ $(function() {
                 "arch" : JSON.stringify(model.arch)
               },
                 success: function (data) { 
-                models = MAIN.get('my_models');
-                new_model = data['model'];
-                console.log(new_model['arch']);
-                new_model['arch'] = JSON.parse(new_model.arch);
-                models.push(new_model);
-                added = MAIN.get('added_models');
-                added.push(new_model);
-                MAIN.set('added_models', added);
-                MAIN.set('my_models', models);
-                console.log("new model added " + model.name);
-                clear_all();
+                    models = MAIN.get('my_models');
+                    new_model = data['model'];
+                    console.log("Architecture of new");
+                    console.log(new_model['arch']);
+                    new_model['arch'] = JSON.parse(new_model.arch);
+                    models.push(new_model);
+                    added = MAIN.get('added_models');
+                    added.push(new_model);
+                    MAIN.set('added_models', added);
+                    MAIN.set('my_models', models);
+                    console.log("new model added " + model.name);
+                    clear_all();
+            },
+             error: function(xhr, textStatus, errorThrown){
+                alert("A model with that name exists already, try another one.");
             }
            }
         );
@@ -96,6 +100,7 @@ $(function() {
                 success: function (data) { 
                 models = MAIN.get('my_models');
                 current_edit = data['model'];
+                current_edit.arch = JSON.parse(data['model'].arch);
                 for(var i = 0; i < models.length; i++) {
                     if(models[i].uuid == current_edit.uuid) {
                         models[i] = current_edit;
@@ -103,6 +108,7 @@ $(function() {
                 }
                 MAIN.set('my_models', models);
                 console.log("model updated " + current_edit.name);
+                console.log("model updated (arch)" + current_edit.arch);
             }
            }
         );
@@ -133,13 +139,16 @@ $(function() {
 
     MAIN.on("removeLayer", function(e) {
         var layers = {};
+        sel = MAIN.get('selected');
+        if(!isEmpty(sel)) {
+          return false;
+        }
         if(MAIN.get("current_tab") === "new")
             layers = MAIN.get('new_model');
         else
             layers = MAIN.get('current_edit');
 		layers.updated = true;
         layers = layers.arch.layer_dicts;
-        sel = MAIN.get('selected');
         for(s in sel) {
             var index = -1;
             for(var i = 0; i<layers.length; i++) {
@@ -177,7 +186,9 @@ $(function() {
 	function clear_all() {
         model = default_model();
         MAIN.set('new_model', model);
+        MAIN.set('new_model.arch', model.arch);
 		MAIN.set('new_model.updated', false);
+        console.log(MAIN.get('new_model'));
     };
 
     MAIN.on("clearAll", clear_all);
@@ -231,6 +242,8 @@ $(function() {
                            "activation" : "relu"}],
             num_inp : 3,
             num_out: 1,
+            optimizer : "sgd",
+            lossfn : "mse"
         }
     }
   }
@@ -269,6 +282,7 @@ $(function() {
 		MAIN.set('new_model', model);
 	});
 
+    function isEmpty(object) { for(var i in object) { return true; } return false; } 
 
 		MAIN.set('new_model.updated', false);
 		console.log("HERERERERER");

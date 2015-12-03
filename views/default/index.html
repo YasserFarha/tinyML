@@ -18,6 +18,8 @@
 
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 
@@ -40,7 +42,7 @@
 
   <!-- sidebar -->
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title"><a href={{=URL('default', 'index')}}> <strong>tinyML</strong></a> </span>
+    <span class="mdl-layout-title brand"><a href="{{=URL('default', 'home')}}"> <strong>tinyML</strong></a> </span>
 	<hr>
     <nav class="mdl-navigation">
       {% #if logged_in %}

@@ -17,14 +17,18 @@ db.define_table('models',
         Field('created_at', 'datetime', default=datetime.datetime.now()),
         Field('updated_at', 'datetime', default=datetime.datetime.now()),
         Field('status', 'string'), # @TODO - define statuses (training, active, busy, new)
-        Field('arch', 'string')) # json describing layers
+        Field('arch_json', 'string'), # raw model architecture in full json rep
+	Field('compiled', 'boolean', default=False),
+	Field('trained', 'boolean', default=False),
+        Field('weights', 'text'), # hd5 file describing the weight for the current model
+        Field('arch', 'string')) # json describing layers in short-syntax, convenient for UI stuff
 
 
 db.define_table('transactions',
         Field('tclass', 'string'),
-        Field('uuid', 'string'),
         Field('uuid', 'string', default=str(uuid.uuid4())),
         Field('model', 'reference models'),
         Field('creator', db.auth_user, default=auth.user_id),
         Field('created_at', 'datetime', default=datetime.datetime.now()),
+        Field('finished_at', 'datetime'),
         Field('status', 'string'))

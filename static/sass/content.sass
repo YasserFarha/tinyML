@@ -1,15 +1,15 @@
 @import 'base'
 
-.page-content
-  background-color: $colorLightBlue
-  height: 100%
-
+$font-stack:    Roboto
 
 .flex-card
   width: auto
 
 .mdl-grid
   width: 100%
+
+body
+  font-family: 'Roboto', sans-serif
 
 .mdl-card
   min-height: 100px
@@ -29,6 +29,9 @@
 
   .mdl-card__supporting-text
     width: 100%
+
+  .mdl-card__actions
+    position: relative
 
   .table
     margin-bottom: 0px
@@ -50,11 +53,11 @@
 .clickable-row
   cursor: pointer
   &:hover
-    background-color: #000
+    background-color: #eee
 
 .mdl-card
   .material-icons
-    color: $colorLightBlue
+    color: $colorDarkBlue
   .dark
     color: $colorLightBlue
 
@@ -75,7 +78,7 @@
   width: 50px
 
 .mdl-textfield
-  padding-top: 15px
+  padding-top: 5px
   font-size: 13px
   width: 100%
 
@@ -96,3 +99,24 @@
   padding-right: 8px
   padding-bottom: 4px
   font-size: 13px
+
+
+.btn-file 
+  position: relative
+  overflow: hidden
+
+.btn-file input[type=file] 
+  position: absolute
+  top: 0
+  right: 0
+  min-width: 100%
+  min-height: 100%
+  font-size: 100px
+  text-align: right
+  filter: alpha(opacity=0)
+  opacity: 0
+  outline: none
+  background: white
+  cursor: inherit
+  display: block
+

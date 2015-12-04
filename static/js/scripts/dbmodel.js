@@ -9,6 +9,7 @@ $(function() {
             logged_in: logged_in,
             user_id: user_id,
             model : [],
+			model_id : model_id,
             transactions: [],
             murl: murl
         },
@@ -16,7 +17,7 @@ $(function() {
 
   function load_model(id) {
       $.ajax(MAIN.get("murl"),
-          { method: 'GET',
+          { method: 'GET', data : {"id" : MAIN.get('model_id')},
           success: function (data) { 
               var model = data['model'];
               var arch = data['model']['arch'];
@@ -28,7 +29,7 @@ $(function() {
     }
 
 
-  load_model();
+  load_model(model_id);
 
 
   jQuery(document).ready(function($) {

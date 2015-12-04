@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
 
+   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
@@ -101,13 +103,13 @@
                         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
                             <div class="form-group">
                               <label for="model_inp_count">#Inputs</label>
-                              <input type="number" id="model_inp_count" class="form-control" min="1" max="{% max_nodes %}" value="{% new_model.arch.num_out %}">
+                              <input type="number" id="model_inp_count" class="form-control" min="1" max="{% max_nodes %}" value="{% new_model.arch.num_inp %}">
                             </div>
                         </div>
                         <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
                             <div class="form-group">
                               <label for="model_out_count">#Outputs</label>
-                              <input type="number" id="model_out_count" class="form-control" min="1" max="{% max_nodes %}" value="{% new_model.arch.num_inp %}">
+                              <input type="number" id="model_out_count" class="form-control" min="1" max="{% max_nodes %}" value="{% new_model.arch.num_out %}">
                             </div>
                         </div>
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
@@ -164,13 +166,23 @@
                         {% /if %}
                       </div>
                   </div>
+
+
                   <div class="mdl-tabs__panel" id="edit-model-panel">
                     <label for="name-sel">Name</label>
                     <div class="form-group">
                       <select value="{% current_edit_name %}" data-model-id="{% current_edit.uuid %}"
                              class="form-control" id="name-sel">
                         {% #my_models:i %}
-                        <option value="{% name %}">{% name %}</option>
+                            {% #if status == "idle" %}
+                            <option value="{% name %}">{% name %} </option>
+                            {% /if %}
+                            {% #if status == "broken" %}
+                            <option value="{% name %}">{% name %} <span style="color:red"> (broken)</span> </option>
+                            {% /if %}
+                            {% #if status !== "broken" && status !== "idle" %}
+                            <option value="{% name %}">{% name %} <span style="color:blue"> (busy)</span> </option>
+                            {% /if %}
                         {% /my_models %}
                       </select>
                     </div>
@@ -178,13 +190,13 @@
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
                         <div class="form-group">
                           <label for="model_inp_count">#Inputs</label>
-                          <input type="number" id="model_inp_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_out %}">
+                          <input type="number" id="model_inp_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_inp %}">
                         </div>
                     </div>
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
                         <div class="form-group">
                           <label for="model_out_count">#Outputs</label>
-                          <input type="number" id="model_out_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_inp %}">
+                          <input type="number" id="model_out_count" class="form-control" min="1" max="{% max_nodes %}" value="{% current_edit.arch.num_out %}">
                         </div>
                     </div>
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
@@ -213,9 +225,13 @@
                         </div>
                     </div>
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-                    {% #if current_edit.updated %}
+                    {% #if current_edit.updated && current_edit.status === "idle" %}
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat" on-click="update_model">
                            Update 
+                        </button>
+                    {% elseif current_edit.updated && current_edit.status == "broken" %}
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat" on-click="update_model">
+                          Fix! 
                         </button>
                     {% else %}
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat" on-click="update_model" disabled>
@@ -223,7 +239,14 @@
                         </button>
                     {% /if %}
                     </div>
-                    {% #if current_edit.updated %}
+                    {% #if current_edit.updated && current_edit.status === "idle" %}
+                    <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+                        <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
+                                class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="">
+                                Cancel
+                        </button>
+                    </div>
+                    {% elseif current_edit.updated && current_edit.status == "broken" %}
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
                         <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
                                 class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="">
@@ -250,33 +273,48 @@
             {% #if added_models %}
             <br>
               <div class="mdl-card flex-card mdl-shadow--2dp">
-              <div class="mdl-card__title mdl-card--border">
-                 <h1 class="mdl-card__title-text">New Models</h1>
-              </div>
-               <div class="mdl-card__supporting-text" style="padding: 4px">
+				  <div class="mdl-card__title mdl-card--border">
+					 <h1 class="mdl-card__title-text">New/Edited Models</h1>
+				  </div>
                 <div class="mdl-grid" style="padding-top: 0">
                 <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
-                    {% #added_models:i %}
                     <table class="table table-responsive mdl-shadow--1dp">
-                      <thead>
-                        <tr>
-                        </tr>
-                      </thead>
                       <tbody>
+                    {% #added_models:i %}
+						<tr class="clickable-row" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}">
                         <td class="mdl-data-table__cell--non-numeric">
                             {% name %}
                         </td>
-                        <td class="mdl-data-table__cell--non-numeric">
-                        <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
-                                class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll">
-                                Clear
-                        </button>
-                        </td>
+						{% #if status == "predicting" %}
+						  <td class="mdl-data-table__cell--non-numeric">
+							<i style="color: green" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+						  </td>
+						{% /if %}
+						{% #if status == "idle" %}
+						  <td class="mdl-data-table__cell--non-numeric">
+							<i style="color: green" class="fa fa-2x fa-check-square"></i> {% status %}
+						  </td>
+						{% /if %}
+						{% #if status == "broken" %}
+						  <td class="mdl-data-table__cell--non-numeric">
+							<i style="color: red" class="fa fa-2x fa-exclamation-triangle"></i> {% status %}
+						  </td>
+						{% /if %}
+						{% #if status == "training" %}
+						  <td class="mdl-data-table__cell--non-numeric">
+							<i style="color: #37474f" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+						  </td>
+						{% /if %}
+						{% #if status == "compiling" %}
+						  <td class="mdl-data-table__cell--non-numeric">
+							<i style="color: #78909C" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+						  </td>
+						{% /if %}
+						</tr>
+                    {% /added_models %}
                       </tbody>
                     </table>
-                    {% /added_models %}
                   </div>
-                </div>
               </div>
               </div>
             {% /if %}
@@ -316,9 +354,9 @@
                         <div class="form-group">
                           <select value="{% type %}" class="form-control" id="sel1">
                             <option>dense</option>
-                            <option>convolutional</option>
-                            <option>timedistdense</option>
-                            <option>autoencoder</option>
+                            <option disabled>convolutional</option>
+                            <option disabled>timedistdense</option>
+                            <option disabled>autoencoder</option>
                           </select>
                         </div>
                     </td>
@@ -343,10 +381,10 @@
                           <select value="{% init %}" class="form-control" id="sel1">
                             <option>uniform</option>
                             <option>normal</option>
-                            <option>lecun_unif.</option>
+                            <option>lecun_uniform</option>
                             <option>zero</option>
-                            <option>he_unif.</option>
-                            <option>he_normal.</option>
+                            <option>he_uniform</option>
+                            <option>he_normal</option>
                           </select>
                         </div>
                     </td>
@@ -368,22 +406,17 @@
                         <h5>{% i+1 %}</h5>
                     </td>
                     <td class="mdl-data-table__cell--non-numeric">
-                        <div class="form-group">
                           <select value="{% type %}" class="form-control" id="sel1">
                             <option>dense</option>
-                            <option>convolutional</option>
-                            <option>timedistdense</option>
-                            <option>autoencoder</option>
+                            <option disabled>convolutional</option>
+                            <option disabled>timedistdense</option>
+                            <option disabled>autoencoder</option>
                           </select>
-                        </div>
                     </td>
                     <td class="mdl-data-table__cell--non-numeric">
-                        <div class="form-group">
                           <input type="number" class="form-control" min="1" max="{% max_nodes %}" value="{% nodes %}">
-                        </div>
                     </td>
                     <td class="mdl-data-table__cell--non-numeric">
-                        <div class="form-group">
                           <select value="{% activation %}" class="form-control" id="sel1">
                             <option>none</option>
                             <option>sigmoid</option>
@@ -391,19 +424,16 @@
                             <option>tanh</option>
                             <option>relu</option>
                           </select>
-                        </div>
                     </td>
                     <td class="mdl-data-table__cell--non-numeric">
-                        <div class="form-group">
                           <select value="{% init %}" class="form-control" id="sel1">
                             <option>uniform</option>
                             <option>normal</option>
-                            <option>lecun_unif.</option>
+                            <option>lecun_uniform</option>
                             <option>zero</option>
-                            <option>he_unif.</option>
-                            <option>he_normal.</option>
+                            <option>he_uniform</option>
+                            <option>he_normal</option>
                           </select>
-                        </div>
                     </td>
                     </tr>
                  {% /layer_dicts %}
@@ -445,6 +475,7 @@ var logged_in = {{=logged_in }};
 var user_id = {{=user_id }};
 var murl = "{{=murl}}";
 var new_url = "{{= new_url }}";
+var surl = "{{= surl }}";
 var edit_url = "{{=edit_url }}";
 </script>
 <!-- include the reactive handling code -->

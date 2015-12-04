@@ -15,6 +15,7 @@ $(function() {
             current_tab : "new",
             max_nodes: 1000,
             murl: murl,
+            surl: surl,
             new_url: new_url,
             edit_url: edit_url,
             selected : {}
@@ -39,7 +40,6 @@ $(function() {
             for(var i = 0; i < models.length; i++) {
 				MAIN.set('my_models.updated', false);
             }
-            console.log(MAIN.get('my_models'));
             if(data['models'].length > 0) {
                 var ce = MAIN.get('my_models')[0];
                 MAIN.set('current_edit', ce);
@@ -66,15 +66,12 @@ $(function() {
                 success: function (data) { 
                     models = MAIN.get('my_models');
                     new_model = data['model'];
-                    console.log("Architecture of new");
-                    console.log(new_model['arch']);
                     new_model['arch'] = JSON.parse(new_model.arch);
                     models.push(new_model);
                     added = MAIN.get('added_models');
                     added.push(new_model);
                     MAIN.set('added_models', added);
                     MAIN.set('my_models', models);
-                    console.log("new model added " + model.name);
                     clear_all();
             },
              error: function(xhr, textStatus, errorThrown){
@@ -107,6 +104,9 @@ $(function() {
                     }
                 }
                 MAIN.set('my_models', models);
+                added = MAIN.get('added_models');
+                added.push(current_edit);
+                MAIN.set('added_models', added);
                 console.log("model updated " + current_edit.name);
                 console.log("model updated (arch)" + current_edit.arch);
             }
@@ -248,6 +248,51 @@ $(function() {
     }
   }
 
+  function push_update(data) {
+    mdls = MAIN.get('my_models');
+    for(var i = 0; i < mdls.length; i++) {
+      if(mdls[i].id === data.id && mdls != data) {
+         mdls[i] = data;
+         mdls[i].arch = data.arch;
+         console.log("Model Pushed Successfully");
+         console.log(mdls[i]);
+         MAIN.set('current_edit_name', MAIN.get('current_edit_name'));
+      }
+    }
+    MAIN.set('my_models', mdls);
+  }
+
+  function watch_added() {
+    added = MAIN.get('added_models')
+    for(var i = 0; i < added.length; i++) {
+        console.log(added[i]);
+        if(added[i].status === "compiling") {
+            var k = i;
+            load_model(added[k].id, function(data) {
+                dl = data['model'];
+                added[k] = dl;
+                added[k].arch = JSON.parse(dl.arch); 
+                push_update(added[k]);
+            });
+        }
+    }
+    MAIN.set('added_models', added);
+  }
+
+  function load_model(id, callback) {
+      $.ajax(MAIN.get("surl"),
+          { method: 'GET', data: {"id": id},
+          success: function (data) { 
+              callback(data);
+         }
+        }
+      );
+    }
+
+    setInterval(watch_added, 2000);
+
+
+
 	MAIN.observe( 'current_edit_name', function () {
 		models = MAIN.get('my_models');
 		ce = MAIN.get('current_edit_name');
@@ -255,36 +300,34 @@ $(function() {
 			if(models[i].name === ce) {
 				MAIN.set('current_edit', models[i]);
 				MAIN.set('current_edit.arch.layer_dicts', models[i].arch.layer_dicts);
-                console.log(MAIN.get('current_edit'));
-				console.log(models[i]);
 			}
 		}
 	});
 
 	MAIN.observe( 'current_edit.arch', function () {
-		console.log('edit');
 		model = MAIN.get('current_edit');
 		model.updated = true;
 		MAIN.set('current_edit', model);
-        console.log(MAIN.get('current_edit'));
 	});
 
 	MAIN.observe( 'new_model.name', function () {
-		console.log('new');
 		model = MAIN.get('new_model');
 		model.updated = true;
 		MAIN.set('new_model', model);
 	});
 	MAIN.observe( 'new_model.arch', function () {
-		console.log('new');
 		model = MAIN.get('new_model');
 		model.updated = true;
 		MAIN.set('new_model', model);
 	});
 
+    MAIN.on("clickrow", function(e) {
+        id = $(e.node).data('href');
+        window.document.location = id
+    });
+
     function isEmpty(object) { for(var i in object) { return true; } return false; } 
 
 		MAIN.set('new_model.updated', false);
-		console.log("HERERERERER");
 	    console.log(MAIN.get('new_model'));
 });

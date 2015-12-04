@@ -30,20 +30,6 @@ $(function() {
       );
     }
 
-  function load_transactions() {
-      $.ajax(MAIN.get("turl"),
-          { method: 'POST', data: {'page' : 1},
-          success: function (data) { 
-            for(var i = 0; i < data['transactions'].length; i++) {
-              data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8)
-            }
-            MAIN.set('transactions', data['transactions']);
-            console.log(data);
-          }
-        }
-      );
-    }
-
   jQuery(document).ready(function($) {
     $(".clickable-row").click(function() {
       alert("fuck");
@@ -52,6 +38,7 @@ $(function() {
   });
 
   load_models();
-  load_transactions();
+
+  setInterval(load_models, 2000);
 
 });

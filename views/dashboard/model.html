@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
 
+   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
@@ -99,7 +101,7 @@
                     {% /if %}
                     {% #if status == "idle" %}
                       <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: grey" class="fa fa-2x fa-cog"></i> {% model.status %}
+						<i style="color: green" class="fa fa-2x fa-check-square"></i> {% status %}
                       </td>
                     {% /if %}
                     {% #if status == "training" %}
@@ -110,6 +112,11 @@
                     {% #if status == "compiling" %}
                       <td class="mdl-data-table__cell--non-numeric">
                         <i style="color: #78909C" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+                      </td>
+                    {% /if %}
+                    {% #if status == "broken" %}
+                      <td class="mdl-data-table__cell--non-numeric">
+                        <i style="color: red" class="fa fa-2x fa-exclamation-triangle"></i> {% status %}
                       </td>
                     {% /if %}
                     </tr>

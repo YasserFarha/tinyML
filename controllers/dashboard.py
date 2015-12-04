@@ -12,8 +12,8 @@ def populate():
 def index():
 	if not auth.user_id :
 		redirect(URL('default', 'index'))
-	murl = URL('default', 'load_models', user_signature=True)
-	turl = URL('default', 'load_transactions', user_signature=True)
+	murl = URL('dashboard', 'load_models', user_signature=True)
+	turl = URL('dashboard', 'load_transactions', user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
                 user_id=auth.user_id if auth.user_id else -1,
 				models=[], transactions=[],
@@ -24,7 +24,7 @@ def model():
 		redirect(URL('default', 'index'))
 	iid = int(request.args(0))
 	model = db(db.models.id == iid).select().first()
-	murl = URL('dashboard', 'load_model', args=[iid], user_signature=True)
+	murl = URL('dashboard', 'load_model', user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
                 user_id=auth.user_id if auth.user_id else -1, model_id=iid,
 				murl=murl, model=model, transactions=[])
@@ -41,11 +41,12 @@ def create():
 	if not auth.user_id :
 		redirect(URL('default', 'index'))
 	murl = URL('dashboard', 'load_models', user_signature=True)
+	surl = URL('dashboard', 'load_model', args=[])
 	new_url = URL('dashboard', 'add_model', user_signature=True)
 	edit_url = URL('dashboard', 'edit_model', user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
                     user_id=auth.user_id if auth.user_id else -1,
-                    murl=murl, new_url=new_url, edit_url=edit_url, model={}, transactions=[])
+                    surl=surl, murl=murl, new_url=new_url, edit_url=edit_url, model={}, transactions=[])
 
 @auth.requires_signature()
 def load_models():
@@ -56,10 +57,12 @@ def load_models():
     trs = db(db.models.creator == auth.user_id).select(orderby=~db.models.created_at, limitby=(pb, pe))
     return response.json(dict(models=trs))
 
-@auth.requires_signature()
 def load_model():
-    iid = int(request.args(0))
+    iid = int(request.vars.get('id'))
+    # iid = int(request.args(0))
     trs = db(db.models.id == iid).select().first()
+    if not auth or not auth.user_id == trs.creator :
+        raise HTTP(404,"Prohibited")
     return response.json(dict(model=trs))
 
 @auth.requires_signature()
@@ -76,6 +79,7 @@ def add_model():
                 mclass=mclass,
                 uuid=muuid,
                 arch=arch,
+				compiled=False,
                 status="compiling",
                 creator = auth.user_id)
 
@@ -91,7 +95,9 @@ def add_model():
 
     db['transactions'].insert(**trs)
 
-    print scheduler.queue_task(task_lib.compile_model, pvars=dict(mid=model.id, tid=json.dumps(str(trs['uuid']))))
+    trs = db(db.transactions.uuid == trs['uuid']).select().first()
+
+    print scheduler.queue_task(task_lib.compile_model, pvars=dict(mid=model.id, tid=str(trs.id)))
 
     return response.json(dict(model=model))
 
@@ -130,7 +136,7 @@ def edit_model():
 @auth.requires_signature()
 def load_transactions():
 	page = int(request.vars.get('page', 1))
-	page_size = 7
+	page_size = int(request.vars.get('page_size', 1))
 	pb = int(page-1)*(int(page_size))
 	pe = int(page)*(int(page_size))
 	trs = db(db.transactions.creator == auth.user_id).select(orderby=~db.transactions.created_at, limitby=(pb, pe))

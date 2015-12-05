@@ -30,12 +30,10 @@ $(function() {
       );
     }
 
-  jQuery(document).ready(function($) {
-    $(".clickable-row").click(function() {
-      alert("fuck");
-      window.document.location = $(this).data("href");
+    MAIN.on("clickrow", function(e) {
+        id = $(e.node).data('href');
+        window.document.location = id
     });
-  });
 
   load_models();
 

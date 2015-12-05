@@ -56,6 +56,9 @@
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
        </a>
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+             <i class="fa fa-2x fa-user"></i> Account
+       </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'tutorials')}}>
              <i class="fa fa-2x fa-book"></i> Tutorials 
        </a>
@@ -82,8 +85,8 @@
         {% #each models %}
           <div class="mdl-grid">
            <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone" style="margin:0">
-          <div class="clickable-row">
-          <div class="clickable-row mdl-card--border">
+          <div class="clickable-row mdl-card--border" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}" >
+          <div class="clickable-row" >
              <h4 class="" >
 				<span style="width:450px">
                 <span style="color: #aaa; padding-left: 0px;padding-right: 10px; font-size: 12px"> 
@@ -111,13 +114,13 @@
                 </span>
             </h4>
           </div>
-			<div style="font-size: 12px;padding-left: 15px;padding-top: 10px">
+			<div style="font-size: 12px;padding-left: 20px;padding-top: 10px">
 				  <strong>{% mclass %}</strong> with 
 				  <strong>{% arch.layer_dicts.length %}</strong> Layers. <br>
 				  <strong>{% arch.num_inp %}</strong> inputs, <strong>{% arch.num_out %}</strong> outputs with an <strong>'{% arch.optimizer %}'</strong> optimizer and <strong>{% arch.lossfn %}</strong> loss function.
 			</div>
             </div>
-            </div>
+          </div>
           </div>
           {% /each %}
 			<div class="mdl-card__menu" >

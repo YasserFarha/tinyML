@@ -56,6 +56,9 @@
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
        </a>
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+             <i class="fa fa-2x fa-user"></i> Account
+       </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'tutorials')}}>
              <i class="fa fa-2x fa-book"></i> Tutorials 
        </a>
@@ -157,46 +160,6 @@
 
 
 
-        <div class="flex-card mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title mdl-card--border">
-             <h1 class="mdl-card__title-text">Quick Request</h1>
-          </div>
-          <div class="mdl-card__supporting-text">
-			<label for="name-sel">Model</label>
-			<div class="form-group">
-			  <select value="{% current_edit_name %}" data-model-id="{% current_edit.uuid %}"
-					 class="form-control" id="name-sel">
-				{% #models:i %}
-				<option value="{% name %}">{% name %}</option>
-				{% /models %}
-			  </select>
-			</div>
-				<label for="file-sel">Select File (.csv)</label>
-			<div class="input-group">
-				<span class="input-group-btn">
-					<button class="btn btn-primary btn-file">
-						Browse&hellip; <input type="file" multiple>
-					</button>
-				</span>
-				<input type="text" id="filesel" class="form-control" readonly>
-			</div>
-		   </div>
-		   <div class="mdl-card__actions mdl-card--border">
-			  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary" on-click="create_new">
-			 	Create 
-			  </button>
-		   </div>
-			<div class="mdl-card__menu" >
-                <button data-board-id="{% board_id %}" id="new_req"
-                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="removeBoard">
-                      <i class="material-icons">open_in_new</i>
-                </button>
-                <div class="mdl-tooltip" for="new_req">
-                    <strong>view full form</strong>
-                </div>
-		   </div>
-
-          </div>
         </div>
 
 
@@ -254,6 +217,49 @@
                     <strong>view all</strong>
                 </div>
               </div>
+          </div>
+
+        <br>
+
+        <div class="flex-card mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Quick Request</h1>
+          </div>
+          <div class="mdl-card__supporting-text">
+			<label for="name-sel">Model</label>
+			<div class="form-group">
+			  <select value="{% current_edit_name %}" data-model-id="{% current_edit.uuid %}"
+					 class="form-control" id="name-sel">
+				{% #models:i %}
+				<option value="{% name %}">{% name %}</option>
+				{% /models %}
+			  </select>
+			</div>
+				<label for="file-sel">Select File (.csv)</label>
+			<div class="input-group">
+				<span class="input-group-btn">
+					<button class="btn btn-primary btn-file">
+						Browse&hellip; <input type="file" multiple>
+					</button>
+				</span>
+				<input type="text" id="filesel" class="form-control" readonly>
+			</div>
+		   </div>
+		   <div class="mdl-card__actions mdl-card--border">
+			  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary" on-click="create_new">
+			 	Create 
+			  </button>
+		   </div>
+			<div class="mdl-card__menu" >
+                <button data-board-id="{% board_id %}" id="new_req"
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="removeBoard">
+                      <i class="material-icons">open_in_new</i>
+                </button>
+                <div class="mdl-tooltip" for="new_req">
+                    <strong>view full form</strong>
+                </div>
+		   </div>
+
           </div>
 
         </div> <!-- end inner grid -->

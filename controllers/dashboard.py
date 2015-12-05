@@ -25,9 +25,10 @@ def model():
 	iid = int(request.args(0))
 	model = db(db.models.id == iid).select().first()
 	murl = URL('dashboard', 'load_model', user_signature=True)
+	turl = URL('dashboard', 'load_transactions', user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
-                user_id=auth.user_id if auth.user_id else -1, model_id=iid,
-				murl=murl, model=model, transactions=[])
+                    user_id=auth.user_id if auth.user_id else -1, model_id=iid,
+                    turl=turl, murl=murl, model=model, transactions=[])
 def models():
 	if not auth.user_id :
 		redirect(URL('default', 'index'))
@@ -135,11 +136,16 @@ def edit_model():
 
 @auth.requires_signature()
 def load_transactions():
+        mid = int(request.vars.get('mid', -1))
 	page = int(request.vars.get('page', 1))
 	page_size = int(request.vars.get('page_size', 1))
 	pb = int(page-1)*(int(page_size))
 	pe = int(page)*(int(page_size))
-	trs = db(db.transactions.creator == auth.user_id).select(orderby=~db.transactions.created_at, limitby=(pb, pe))
+
+        if mid >= 0 :
+            trs = db(db.transactions.creator == auth.user_id and db.transactions.model == mid).select(orderby=~db.transactions.created_at, limitby=(pb, pe))
+        else :
+            trs = db(db.transactions.creator == auth.user_id).select(orderby=~db.transactions.created_at, limitby=(pb, pe))
 	return response.json(dict(transactions=trs))
 
 def do_logout() :

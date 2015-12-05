@@ -8,7 +8,7 @@ $(function() {
             logged_in: logged_in,
             user_id: user_id,
             my_models : [],
-            current_edit : {}, // index of model being edited
+            ce : 0, // index of model being edited
             current_edit_name : "", // index of model being edited
             new_model : default_model(),
             added_models : [],
@@ -37,13 +37,11 @@ $(function() {
               models[i].arch = JSON.parse(models[i]["arch"]);
             }
             MAIN.set('my_models', models);
-            for(var i = 0; i < models.length; i++) {
-				MAIN.set('my_models.updated', false);
-            }
             if(data['models'].length > 0) {
                 var ce = MAIN.get('my_models')[0];
-                MAIN.set('current_edit', ce);
-                MAIN.set('current_edit.updated', false);
+                ce.updated = false;
+                MAIN.set('ce', 0);
+                // MAIN.set('current_edit.updated', false);
             }
          },
         }
@@ -52,6 +50,18 @@ $(function() {
 
     MAIN.on("create_new", function(e) {
         model = MAIN.get('new_model');
+        mdls = MAIN.get('my_models');
+        if(model.name === "") {
+            alert("Model must be named.");
+            return false;
+        }
+
+        for(var i = 0; i < mdls.length; i++) {
+            if(mdls[i].name === model.name) {
+                alert("You already have a model with this name, try another one.");
+                return false;
+            }
+        }
         if(model.arch.layer_dicts.length <= 0) {
             alert("not enough layers!");
         }
@@ -82,7 +92,7 @@ $(function() {
     });
 
     MAIN.on("update_model", function(e) {
-        model = MAIN.get('current_edit');
+        model = get_current_edit();
         if(model.arch.layer_dicts.length <= 0) {
             alert("not enough layers!");
         }
@@ -95,20 +105,16 @@ $(function() {
                 "arch" : JSON.stringify(model.arch)
               },
                 success: function (data) { 
-                models = MAIN.get('my_models');
-                current_edit = data['model'];
-                current_edit.arch = JSON.parse(data['model'].arch);
-                for(var i = 0; i < models.length; i++) {
-                    if(models[i].uuid == current_edit.uuid) {
-                        models[i] = current_edit;
-                    }
-                }
+                var models = MAIN.get('my_models');
+                var ce = MAIN.get('ce');
+                models[ce] = data['model'];
+                models[ce].arch = JSON.parse(data['model'].arch);
                 MAIN.set('my_models', models);
                 added = MAIN.get('added_models');
-                added.push(current_edit);
+                added.push(models[ce]);
                 MAIN.set('added_models', added);
-                console.log("model updated " + current_edit.name);
-                console.log("model updated (arch)" + current_edit.arch);
+                console.log("model updated " + models[ce].name);
+                console.log("model updated (arch)" + models[ce].arch);
             }
            }
         );
@@ -120,7 +126,7 @@ $(function() {
         if(MAIN.get("current_tab") === "new")
             model = MAIN.get('new_model');
         else
-            model = MAIN.get('current_edit');
+            model = get_current_edit();
 		model.updated = true;
         layers = model.arch.layer_dicts;
         layers.push({
@@ -132,7 +138,7 @@ $(function() {
         if(MAIN.get("current_tab") === "new")
             MAIN.set("new_model", model);
         else
-            MAIN.set("current_edit", model);
+            set_current_edit(model);
                      
     });
 
@@ -140,15 +146,15 @@ $(function() {
     MAIN.on("removeLayer", function(e) {
         var layers = {};
         sel = MAIN.get('selected');
-        if(!isEmpty(sel)) {
+        if(isEmpty(sel)) {
           return false;
         }
         if(MAIN.get("current_tab") === "new")
-            layers = MAIN.get('new_model');
+            model = MAIN.get('new_model');
         else
-            layers = MAIN.get('current_edit');
-		layers.updated = true;
-        layers = layers.arch.layer_dicts;
+            model = get_current_edit(); //MAIN.get('current_edit');
+		model.updated = true;
+        layers = model.arch.layer_dicts;
         for(s in sel) {
             var index = -1;
             for(var i = 0; i<layers.length; i++) {
@@ -160,24 +166,33 @@ $(function() {
                 layers.splice(index, 1); 
             }
         }
-        MAIN.set('selected', {});
+        MAIN.set('selected', sel );
         if(MAIN.get("current_tab") === "new")
             MAIN.set("new_model.arch.layer_dicts", layers);
         else
-            MAIN.set("current_edit.arch.layer_dicts", layers);
+            // MAIN.set("current_edit.arch.layer_dicts", layers);
+            set_current_edit(model);
     });
 
     MAIN.on("selectLayer", function(e) {
+        var mdl = {};
+        if(MAIN.get("current_tab") === "new")
+            mdl = MAIN.get('new_model');
+        else
+            mdl = get_current_edit(); //MAIN.get('current_edit');
+        console.log(mdl);
         lay_num = $(e.node).data('layer-id');
         cb = $("#layer_check_"+lay_num)
-        cb.toggleClass("fa-check-square");
-        cb.toggleClass("fa-square-o");
         sel = MAIN.get('selected');
-        if(sel[lay_num] == undefined)
-            sel[lay_num] = lay_num;
-        else
+        console.log("select!!");
+        console.log(sel);
+        if(!sel[lay_num] ) {
+            sel[lay_num] = true;
+        }
+        else {
             delete sel[lay_num];
-
+        }
+        MAIN.set('selected', sel);
         console.log(sel);
                      
     });
@@ -198,13 +213,13 @@ $(function() {
         models = MAIN.get('my_models');
         for(var i = 0; i < models.length; i++) {
             if(uuid === models[i].uuid) {
-                MAIN.set("current_edit", models[i]);
+                // MAIN.set("current_edit", models[i]);
+                set_current_edit(models[i]);
             }
         }
         console.log(models);
     });
 
-  load_models();
   $("#new-model-panel").toggleClass("is-active");
   $("#new-model-tab").toggleClass("is-active");
  
@@ -232,7 +247,7 @@ $(function() {
   function default_model() {
     return  {
         uuid : genuuid(),
-        name: "my_new_model",
+        name: "",
 		updated: false,
         arch : {
             layer_dicts: [{"uuid" : genuuid(), 
@@ -250,16 +265,24 @@ $(function() {
 
   function push_update(data) {
     mdls = MAIN.get('my_models');
+    active = MAIN.get('added_models');
     for(var i = 0; i < mdls.length; i++) {
-      if(mdls[i].id === data.id && mdls != data) {
+      if(mdls[i].uuid === data.uuid) {
          mdls[i] = data;
          mdls[i].arch = data.arch;
          console.log("Model Pushed Successfully");
          console.log(mdls[i]);
          MAIN.set('current_edit_name', MAIN.get('current_edit_name'));
       }
+        for(var j = 0; j < active.length; j++) {
+          var cur = active[j];
+          if(mdls[i].uuid === cur.uuid) {
+              active[j] = mdls[i];
+          }
+        }
     }
     MAIN.set('my_models', mdls);
+    MAIN.set('added_models', active);
   }
 
   function watch_added() {
@@ -291,23 +314,35 @@ $(function() {
 
     setInterval(watch_added, 2000);
 
+    function get_current_edit() {
+        models = MAIN.get('my_models');
+        return models[MAIN.get('ce')];
+    }
 
+    function set_current_edit(data) {
+        models = MAIN.get('my_models');
+        models[MAIN.get('ce')] = data;
+    }
 
 	MAIN.observe( 'current_edit_name', function () {
 		models = MAIN.get('my_models');
+        // MAIN.set('selected', {});
 		ce = MAIN.get('current_edit_name');
 		for(var i =0; i < models.length; i++) {
 			if(models[i].name === ce) {
-				MAIN.set('current_edit', models[i]);
-				MAIN.set('current_edit.arch.layer_dicts', models[i].arch.layer_dicts);
+				MAIN.set('ce', i);
+				// MAIN.set('current_edit.arch.layer_dicts', models[i].arch.layer_dicts);
 			}
 		}
+        MAIN.set('my_models', MAIN.get('my_models'));
 	});
 
-	MAIN.observe( 'current_edit.arch', function () {
-		model = MAIN.get('current_edit');
-		model.updated = true;
-		MAIN.set('current_edit', model);
+	MAIN.observe( 'my_models['+MAIN.get('ce')+']', function () {
+        console.log('update');
+		models = MAIN.get('my_models');
+        ce = MAIN.get('ce');
+		models[ce].updated = true;
+		MAIN.set('my_models', models);
 	});
 
 	MAIN.observe( 'new_model.name', function () {
@@ -326,8 +361,9 @@ $(function() {
         window.document.location = id
     });
 
-    function isEmpty(object) { for(var i in object) { return true; } return false; } 
+    function isEmpty(object) { for(var i in object) { return false; } return true; } 
 
-		MAIN.set('new_model.updated', false);
-	    console.log(MAIN.get('new_model'));
+    load_models();
+    console.log(MAIN.get('new_model'));
+    MAIN.set('new_model.updated', false);
 });

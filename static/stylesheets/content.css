@@ -155,56 +155,63 @@
 }
 
 /* line 11, ../sass/content.sass */
+.btn {
+  padding: 4px 12px;
+}
+
+/* line 14, ../sass/content.sass */
 body {
   font-family: "Roboto", sans-serif;
 }
 
-/* line 14, ../sass/content.sass */
+/* line 17, ../sass/content.sass */
 .mdl-card {
   min-height: 100px;
   overflow-x: auto;
 }
-/* line 17, ../sass/content.sass */
+/* line 20, ../sass/content.sass */
 .mdl-card .mdl-card__menu {
   margin-top: -10px;
+  right: 12px;
+  top: 12px;
 }
-/* line 20, ../sass/content.sass */
+/* line 25, ../sass/content.sass */
 .mdl-card .mdl-card__title {
   padding-bottom: 8px;
   background-color: #FFFFFF;
   width: 100%;
   padding-top: 8px;
 }
-/* line 26, ../sass/content.sass */
+/* line 31, ../sass/content.sass */
 .mdl-card .mdl-card__title .mdl-card__title-text {
   color: #37474f;
   font-size: 22px;
 }
-/* line 30, ../sass/content.sass */
+/* line 35, ../sass/content.sass */
 .mdl-card .mdl-card__supporting-text {
   width: 100%;
 }
-/* line 33, ../sass/content.sass */
+/* line 38, ../sass/content.sass */
 .mdl-card .mdl-card__actions {
   position: relative;
 }
-/* line 36, ../sass/content.sass */
+/* line 41, ../sass/content.sass */
 .mdl-card .table {
   margin-bottom: 0px;
   font-size: 13px;
   width: 100%;
   vertical-align: center;
 }
-/* line 41, ../sass/content.sass */
+/* line 46, ../sass/content.sass */
 .mdl-card .table tr {
   padding-top: 0px;
   height: 20px;
 }
-/* line 44, ../sass/content.sass */
+/* line 49, ../sass/content.sass */
 .mdl-card .table tr th {
   height: 35px;
 }
-/* line 46, ../sass/content.sass */
+/* line 51, ../sass/content.sass */
 .mdl-card .table tr td {
   height: 40px;
   text-overflow: ellipsis;
@@ -213,74 +220,74 @@ body {
   width: auto;
 }
 
-/* line 53, ../sass/content.sass */
+/* line 58, ../sass/content.sass */
 .clickable-row {
   cursor: pointer;
 }
-/* line 55, ../sass/content.sass */
+/* line 60, ../sass/content.sass */
 .clickable-row:hover {
   background-color: #eee;
 }
 
-/* line 59, ../sass/content.sass */
+/* line 64, ../sass/content.sass */
 .mdl-card .material-icons {
   color: #37474f;
 }
-/* line 61, ../sass/content.sass */
+/* line 66, ../sass/content.sass */
 .mdl-card .dark {
   color: #78909C;
 }
 
-/* line 64, ../sass/content.sass */
+/* line 69, ../sass/content.sass */
 .mdl-tabs__tab {
   width: 100%;
 }
 
-/* line 67, ../sass/content.sass */
+/* line 72, ../sass/content.sass */
 .fa-2x {
   font-size: 1.2em;
 }
 
-/* line 70, ../sass/content.sass */
+/* line 75, ../sass/content.sass */
 .fat {
   width: 100%;
 }
 
-/* line 73, ../sass/content.sass */
+/* line 78, ../sass/content.sass */
 .fa-1x {
   font-size: 0.8em;
   color: #78909C;
 }
 
-/* line 77, ../sass/content.sass */
+/* line 82, ../sass/content.sass */
 .mdl-progress {
   width: 50px;
 }
 
-/* line 80, ../sass/content.sass */
+/* line 85, ../sass/content.sass */
 .mdl-textfield {
   padding-top: 5px;
   font-size: 13px;
   width: 100%;
 }
 
-/* line 85, ../sass/content.sass */
+/* line 90, ../sass/content.sass */
 .mdl-textfield__label:after {
   bottom: 15px;
 }
 
-/* line 88, ../sass/content.sass */
+/* line 93, ../sass/content.sass */
 .select {
   padding: 3px;
 }
 
-/* line 91, ../sass/content.sass */
+/* line 96, ../sass/content.sass */
 .input {
   padding-top: 0px;
   padding-bottom: 0px;
 }
 
-/* line 95, ../sass/content.sass */
+/* line 100, ../sass/content.sass */
 .form-control {
   border-radius: 1px;
   padding-top: 4px;
@@ -291,13 +298,13 @@ body {
   height: 30px;
 }
 
-/* line 105, ../sass/content.sass */
+/* line 110, ../sass/content.sass */
 .btn-file {
   position: relative;
   overflow: hidden;
 }
 
-/* line 109, ../sass/content.sass */
+/* line 114, ../sass/content.sass */
 .btn-file input[type=file] {
   position: absolute;
   top: 0;

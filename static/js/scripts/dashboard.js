@@ -14,9 +14,9 @@ $(function() {
         },
     });
 
-  function load_models() {
+  function load_models(page, page_size) {
       $.ajax(MAIN.get("murl"),
-          { method: 'POST', data: {'page' : 1},
+          { method: 'POST', data: {'page' : page, 'page_size' : page_size},
           success: function (data) { 
             for(var i = 0; i < data['models'].length; i++) {
               data['models'][i]['uuid_short'] = data['models'][i]['uuid'].substring(0, 8)
@@ -42,8 +42,8 @@ $(function() {
       );
     }
 
-    setInterval(load_models, 2000);
-    setInterval(function() { load_transactions(1, 15, function(data) {
+    setInterval(function() { load_models(1, 6); }, 2000);
+    setInterval(function() { load_transactions(1, 8, function(data) {
             MAIN.set('transactions', data['transactions']);
         });
 	 }, 3000);
@@ -102,7 +102,7 @@ $(function() {
                         width:2 
                     },
                     name: models[i].name,
-                    mode: "lines+markers"
+                    mode: "markers"
                }
                for(var j = 0; j < trs.length; j++) {
                     if(trs[j].model === models[i].id) {
@@ -133,13 +133,13 @@ $(function() {
         })
 	}
 
-  load_models();
-  load_transactions(1, 15, function(data) {  
+  load_models(1, 6);
+  load_transactions(1, 8, function(data) {  
     MAIN.set('transactions', data['transactions']);
   });
+
   setTimeout(plot_home, 200); 
-// when the window resizes, keep the modal horizontally and vertically centred
-    window.addEventListener( 'resize', resizeHandler = function () {
+  window.addEventListener( 'resize', resizeHandler = function () {
         plot_home();
     }, false );
 

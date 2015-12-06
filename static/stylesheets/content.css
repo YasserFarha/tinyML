@@ -1,16 +1,24 @@
-/* line 19, ../sass/_base.sass */
+/* line 23, ../sass/_base.sass */
 .page-content {
   background-color: #B3D7E8;
+  background-color: #E0E0E0;
   min-height: 100%;
 }
 
-/* line 22, ../sass/_base.sass */
+/* line 27, ../sass/_base.sass */
 .body {
   background-color: #B3D7E8;
+  background-color: #E0E0E0;
   min-height: 100%;
 }
 
-/* line 26, ../sass/_base.sass */
+/* line 32, ../sass/_base.sass */
+.fa-exclamation {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+/* line 36, ../sass/_base.sass */
 .jumbotron {
   background-color: #B3D7E8;
   padding-top: 0px;
@@ -21,123 +29,126 @@
   width: 100%;
   text-align: center;
 }
-/* line 35, ../sass/_base.sass */
+/* line 45, ../sass/_base.sass */
 .jumbotron h1 {
   font-size: 68px;
   font-weight: 40;
   color: #37474f;
 }
-/* line 39, ../sass/_base.sass */
+/* line 49, ../sass/_base.sass */
 .jumbotron h2 {
   font-size: 40px;
   color: #37474f;
   font-weight: 80;
 }
-/* line 44, ../sass/_base.sass */
+/* line 54, ../sass/_base.sass */
 .jumbotron small {
   color: #37474f;
 }
 
-/* line 48, ../sass/_base.sass */
+/* line 58, ../sass/_base.sass */
 .mdl-layout-title {
   color: #EEF2F1;
   font-size: 24px;
 }
 
-/* line 52, ../sass/_base.sass */
+/* line 62, ../sass/_base.sass */
 .mdl-layout__header {
   min-height: 40px;
 }
 
-/* line 54, ../sass/_base.sass */
+/* line 64, ../sass/_base.sass */
 .mdl-layout__header-row {
   min-height: 40px;
   height: 36px;
 }
 
-/* line 57, ../sass/_base.sass */
+/* line 67, ../sass/_base.sass */
 .mdl-layout__drawer-button {
   min-height: 36px;
   height: 36px;
   padding-top: 4px;
 }
-/* line 61, ../sass/_base.sass */
+/* line 71, ../sass/_base.sass */
 .mdl-layout__drawer-button i {
   color: #FFFFFF;
 }
 
-/* line 64, ../sass/_base.sass */
-.mdl-layout-title {
+/* line 75, ../sass/_base.sass */
+.mdl-layout__drawer .mdl-layout-title {
   font-size: 21px;
   font-weight: 400;
+  padding-left: 20px;
+  padding-bottom: 0px;
 }
-/* line 67, ../sass/_base.sass */
-.mdl-layout-title small {
+/* line 80, ../sass/_base.sass */
+.mdl-layout__drawer .mdl-layout-title small {
   font-size: 17px;
   color: #EEF0F2;
   font-weight: 300;
 }
 
-/* line 72, ../sass/_base.sass */
+/* line 85, ../sass/_base.sass */
 .brand {
   font-size: 30px;
   font-weight: 500;
+  padding-left: 10px;
 }
 
-/* line 77, ../sass/_base.sass */
+/* line 91, ../sass/_base.sass */
 .mdl-grid {
   max-width: 1400px;
 }
 
-/* line 80, ../sass/_base.sass */
+/* line 94, ../sass/_base.sass */
 .mdl-card {
   text-align: left;
 }
-/* line 83, ../sass/_base.sass */
+/* line 97, ../sass/_base.sass */
 .mdl-card h4 {
   color: #37474f;
   margin-bottom: 0px;
 }
-/* line 86, ../sass/_base.sass */
+/* line 100, ../sass/_base.sass */
 .mdl-card h3 {
   color: #37474f;
 }
-/* line 89, ../sass/_base.sass */
+/* line 103, ../sass/_base.sass */
 .mdl-card .landing-card {
   background-color: #78909C;
   color: #EEF2F1;
   min-height: 300px;
 }
-/* line 94, ../sass/_base.sass */
+/* line 108, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__title-text {
   font-size: 36px;
 }
-/* line 97, ../sass/_base.sass */
+/* line 111, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text {
   width: 100%;
   min-height: 130px;
 }
-/* line 100, ../sass/_base.sass */
+/* line 114, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text h1 {
   font-size: 36px;
 }
-/* line 103, ../sass/_base.sass */
+/* line 117, ../sass/_base.sass */
 .mdl-card .customize-card {
   background: url("../images/nnet_6.png") top 50% left 100% no-repeat #37474f;
   background-size: 240px 240px;
 }
-/* line 107, ../sass/_base.sass */
+/* line 121, ../sass/_base.sass */
 .mdl-card .train-card {
   background: url("../images/data_1.png") bottom 20% right 75% no-repeat #37474f;
   color: #EEF0F2;
 }
-/* line 111, ../sass/_base.sass */
+/* line 125, ../sass/_base.sass */
 .mdl-card .predict-card {
   background: url("../images/nnet_4.png") bottom 23% right 55% no-repeat #37474f;
   color: #37474f;
 }
 
-/* line 115, ../sass/_base.sass */
+/* line 129, ../sass/_base.sass */
 .mdl-card__actions {
   position: absolute;
   right: 0;
@@ -160,58 +171,76 @@
 }
 
 /* line 14, ../sass/content.sass */
+.btn-primary {
+  background-color: #607D8B;
+  border: 1px solid #607D8B;
+  border-radius: 0px;
+}
+
+/* line 19, ../sass/content.sass */
+.label {
+  font-size: 10px;
+  margin-left: 5px;
+}
+
+/* line 23, ../sass/content.sass */
+.label-primary {
+  background-color: #607D8B;
+}
+
+/* line 27, ../sass/content.sass */
 body {
   font-family: "Roboto", sans-serif;
 }
 
-/* line 17, ../sass/content.sass */
+/* line 30, ../sass/content.sass */
 .mdl-card {
   min-height: 100px;
   overflow-x: auto;
 }
-/* line 20, ../sass/content.sass */
+/* line 33, ../sass/content.sass */
 .mdl-card .mdl-card__menu {
   margin-top: -10px;
   right: 12px;
   top: 12px;
 }
-/* line 25, ../sass/content.sass */
+/* line 38, ../sass/content.sass */
 .mdl-card .mdl-card__title {
   padding-bottom: 8px;
   background-color: #FFFFFF;
   width: 100%;
   padding-top: 8px;
 }
-/* line 31, ../sass/content.sass */
+/* line 44, ../sass/content.sass */
 .mdl-card .mdl-card__title .mdl-card__title-text {
   color: #37474f;
   font-size: 22px;
 }
-/* line 35, ../sass/content.sass */
+/* line 48, ../sass/content.sass */
 .mdl-card .mdl-card__supporting-text {
   width: 100%;
 }
-/* line 38, ../sass/content.sass */
+/* line 51, ../sass/content.sass */
 .mdl-card .mdl-card__actions {
   position: relative;
 }
-/* line 41, ../sass/content.sass */
+/* line 54, ../sass/content.sass */
 .mdl-card .table {
   margin-bottom: 0px;
   font-size: 13px;
   width: 100%;
   vertical-align: center;
 }
-/* line 46, ../sass/content.sass */
+/* line 59, ../sass/content.sass */
 .mdl-card .table tr {
   padding-top: 0px;
   height: 20px;
 }
-/* line 49, ../sass/content.sass */
+/* line 62, ../sass/content.sass */
 .mdl-card .table tr th {
   height: 35px;
 }
-/* line 51, ../sass/content.sass */
+/* line 64, ../sass/content.sass */
 .mdl-card .table tr td {
   height: 40px;
   text-overflow: ellipsis;
@@ -220,74 +249,74 @@ body {
   width: auto;
 }
 
-/* line 58, ../sass/content.sass */
+/* line 71, ../sass/content.sass */
 .clickable-row {
   cursor: pointer;
 }
-/* line 60, ../sass/content.sass */
+/* line 73, ../sass/content.sass */
 .clickable-row:hover {
   background-color: #eee;
 }
 
-/* line 64, ../sass/content.sass */
+/* line 77, ../sass/content.sass */
 .mdl-card .material-icons {
-  color: #37474f;
+  color: #607D8B;
 }
-/* line 66, ../sass/content.sass */
+/* line 79, ../sass/content.sass */
 .mdl-card .dark {
   color: #78909C;
 }
 
-/* line 69, ../sass/content.sass */
+/* line 82, ../sass/content.sass */
 .mdl-tabs__tab {
   width: 100%;
 }
 
-/* line 72, ../sass/content.sass */
+/* line 85, ../sass/content.sass */
 .fa-2x {
   font-size: 1.2em;
 }
 
-/* line 75, ../sass/content.sass */
+/* line 88, ../sass/content.sass */
 .fat {
   width: 100%;
 }
 
-/* line 78, ../sass/content.sass */
+/* line 91, ../sass/content.sass */
 .fa-1x {
   font-size: 0.8em;
   color: #78909C;
 }
 
-/* line 82, ../sass/content.sass */
+/* line 95, ../sass/content.sass */
 .mdl-progress {
   width: 50px;
 }
 
-/* line 85, ../sass/content.sass */
+/* line 98, ../sass/content.sass */
 .mdl-textfield {
   padding-top: 5px;
   font-size: 13px;
   width: 100%;
 }
 
-/* line 90, ../sass/content.sass */
+/* line 103, ../sass/content.sass */
 .mdl-textfield__label:after {
   bottom: 15px;
 }
 
-/* line 93, ../sass/content.sass */
+/* line 106, ../sass/content.sass */
 .select {
   padding: 3px;
 }
 
-/* line 96, ../sass/content.sass */
+/* line 109, ../sass/content.sass */
 .input {
   padding-top: 0px;
   padding-bottom: 0px;
 }
 
-/* line 100, ../sass/content.sass */
+/* line 113, ../sass/content.sass */
 .form-control {
   border-radius: 1px;
   padding-top: 4px;
@@ -298,13 +327,13 @@ body {
   height: 30px;
 }
 
-/* line 110, ../sass/content.sass */
+/* line 123, ../sass/content.sass */
 .btn-file {
   position: relative;
   overflow: hidden;
 }
 
-/* line 114, ../sass/content.sass */
+/* line 127, ../sass/content.sass */
 .btn-file input[type=file] {
   position: absolute;
   top: 0;

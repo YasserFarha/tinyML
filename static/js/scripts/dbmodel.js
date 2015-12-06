@@ -11,65 +11,34 @@ $(function() {
             model : [],
 			model_id : model_id,
             transactions: [],
-            murl: murl,
+            mdurl: mdurl,
             turl: turl
         },
     });
 
-  function load_model(id) {
-      $.ajax(MAIN.get("murl"),
-          { method: 'GET', data : {"id" : MAIN.get('model_id')},
-          success: function (data) { 
-              var model = data['model'];
-              var arch = data['model']['arch'];
-              model.arch = arch;
-              MAIN.set('model', model);
-         }
-        }
-      );
-    }
-
-  function load_transactions(id) {
-      console.log("loading trs");
-      $.ajax(MAIN.get("turl"),
-          { method: 'POST', data : {"mid" : id, page : 1, page_size : 10},
-          success: function (data) { 
-              console.log(data);
-              MAIN.set('transactions', data['transactions']);
-         }
-        }
-      );
-    }
-
-  function load_transactions(id, page, page_size, callback) {                                                                         
-      $.ajax(MAIN.get("turl"),
-          { method: 'POST', data: {'mid' : id, 'page' : page, 'page_size' : page_size},
-          success: function (data) { 
-            for(var i = 0; i < data['transactions'].length; i++) {
-              data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8)
-            }   
-            callback(data);
-            console.log(data);
-          }   
-        }   
-      );  
-    }   
+      function on_model_load(data) { 
+          var model = data['model'];
+          var arch = data['model']['arch'];
+          model.arch = arch;
+          MAIN.set('model', model);
+     }
 
 
-
-  load_model(model_id);
-  load_transactions(model_id, 1, 15,  function (data) { 
+  load_model(MAIN, model_id, on_model_load);
+  load_transactions_id(MAIN, model_id, 1, 15,  function (data) { 
 		  console.log(data);
 		  MAIN.set('transactions', data['transactions']);
    });
-    setInterval(function() { load_model(model_id); }, 2000);
-    setInterval(function() { load_transactions(model_id, 1, 15, function(data) {
+    setInterval(function() { load_model(MAIN, model_id, on_model_load); }, 2000);
+    setInterval(function() { load_transactions_id(MAIN, model_id, 1, 15, function(data) {
             MAIN.set('transactions', data['transactions']);
         }); 
      }, 3000);
 
 
-
+  MAIN.on("edit_model", function(e) {                                                                                            
+     window.document.location = create_url;
+  });
 
 
   jQuery(document).ready(function($) {

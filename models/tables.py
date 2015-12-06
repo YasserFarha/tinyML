@@ -11,6 +11,7 @@ a transaction is generated that identifies that training session uniquely.
 """
 db.define_table('models',
         Field('name', 'string'), # @TODO set default to be user_id+model_id or something
+        Field('name_short', 'string'), # @TODO set default to be user_id+model_id or something
         Field('mclass', 'string'),
         Field('uuid', 'string', default=str(uuid.uuid4())),
         Field('creator', db.auth_user, default=auth.user_id),
@@ -28,6 +29,8 @@ db.define_table('transactions',
         Field('tclass', 'string'),
         Field('uuid', 'string', default=str(uuid.uuid4())),
         Field('model', 'reference models'),
+        Field('model_name', 'string'),
+        Field('model_name_short', 'string'),
         Field('creator', db.auth_user, default=auth.user_id),
         Field('created_at', 'datetime', default=datetime.datetime.now()),
         Field('finished_at', 'datetime'),

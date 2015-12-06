@@ -24,11 +24,11 @@ def model():
 		redirect(URL('default', 'index'))
 	iid = int(request.args(0))
 	model = db(db.models.id == iid).select().first()
-	murl = URL('dashboard', 'load_model', user_signature=True)
+	mdurl = URL('dashboard', 'load_model', user_signature=True)
 	turl = URL('dashboard', 'load_transactions', user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
                     user_id=auth.user_id if auth.user_id else -1, model_id=iid,
-                    turl=turl, murl=murl, model=model, transactions=[])
+                    turl=turl, mdurl=mdurl, model=model, transactions=[])
 def models():
 	if not auth.user_id :
 		redirect(URL('default', 'index'))
@@ -42,12 +42,14 @@ def create():
 	if not auth.user_id :
 		redirect(URL('default', 'index'))
 	murl = URL('dashboard', 'load_models', user_signature=True)
-	surl = URL('dashboard', 'load_model', args=[])
+	tdurl = URL('dashboard', 'load_transaction', args=[],  user_signature=True)
+	mdurl = URL('dashboard', 'load_model', args=[])
 	new_url = URL('dashboard', 'add_model', user_signature=True)
 	edit_url = URL('dashboard', 'edit_model', user_signature=True)
 	return dict(logged_in=("true" if auth.user_id != None else "false"),
                     user_id=auth.user_id if auth.user_id else -1,
-                    surl=surl, murl=murl, new_url=new_url, edit_url=edit_url, model={}, transactions=[])
+                    mdurl=mdurl, murl=murl, new_url=new_url,
+		    tdurl=tdurl,  edit_url=edit_url, model={}, transactions=[])
 
 @auth.requires_signature()
 def load_models():
@@ -77,10 +79,11 @@ def add_model():
 
     db['models'].insert(
                 name=name,
+                name_short=name[:9],
                 mclass=mclass,
                 uuid=muuid,
                 arch=arch,
-				compiled=False,
+		compiled=False,
                 status="compiling",
                 creator = auth.user_id)
 
@@ -91,6 +94,8 @@ def add_model():
             "tclass": "create",
             "uuid" : uuid.uuid4(),
             "creator" : auth.user_id,
+	    "model_name" : model.name,
+	    "model_name_short" : model.name_short,
             "model" : model
             }
 
@@ -100,7 +105,7 @@ def add_model():
 
     print scheduler.queue_task(task_lib.compile_model, pvars=dict(mid=model.id, tid=str(trs.id)))
 
-    return response.json(dict(model=model))
+    return response.json(dict(model=model, transaction=trs))
 
 
 @auth.requires_signature()
@@ -112,7 +117,9 @@ def edit_model():
     model = db(db.models.uuid == muuid).select().first()
     model.update_record(
                 name=name,
+                name_short=name[:9],
                 mclass=mclass,
+                compiled=False,
                 uuid=muuid,
                 arch=arch,
                 status="compiling",
@@ -123,7 +130,9 @@ def edit_model():
             "tclass": "edit",
             "uuid" : uuid.uuid4(),
             "creator" : auth.user_id,
-            "model" : model
+            "model" : model,
+	    "model_name" : model.name,
+	    "model_name_short" : model.name_short,
             }
 
     db['transactions'].insert(**trs)
@@ -132,7 +141,7 @@ def edit_model():
 
     print scheduler.queue_task(task_lib.compile_model, pvars=dict(mid=model.id, tid=str(trs.id)))
 
-    return response.json(dict(model=model))
+    return response.json(dict(model=model, transaction=trs))
 
 @auth.requires_signature()
 def load_transactions():
@@ -147,6 +156,15 @@ def load_transactions():
         else :
             trs = db(db.transactions.creator == auth.user_id).select(orderby=~db.transactions.created_at, limitby=(pb, pe))
 	return response.json(dict(transactions=trs))
+
+@auth.requires_signature()
+def load_transaction():
+        tid = int(request.vars.get('tid', -1))
+	if not tid :
+	    raise HTTP(404,"Transaction not found or innaccesable.")
+		
+	tr = db(db.transactions.creator == auth.user_id and db.transactions.id == int(tid)).select().first()
+	return response.json(dict(transaction=tr))
 
 def do_logout() :
     redirect(URL('default', 'user', args=['logout']))

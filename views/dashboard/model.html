@@ -34,7 +34,7 @@
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
 
-      <span class="mdl-layout-title">Dashboard</span>
+      <span class="mdl-layout-title">Dashboard > <small> Model </small> </span>
       <div class="mdl-layout-spacer"></div>
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
                   mdl-textfield--floating-label mdl-textfield--align-right">
@@ -44,14 +44,21 @@
 
   <!-- sidebar -->
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title brand"><a href="{{=URL('default', 'home')}}"> <strong>tinyML</strong></a> </span>
+    <span class="mdl-layout-title brand">                                                                                         
+        <a href="{{=URL('default', 'home')}}"> 
+            <img src="/tinyML/static/images/tinyML.png">
+        </a> 
+    </span>
 	<hr>
-    <nav class="mdl-navigation">
+    <nav class="mdl-navigation">                                                                                                  
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
              <i class="fa fa-2x fa-home"></i> Home
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
              <i class="fa fa-2x fa-cogs"></i> Models
+       </a>
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+             <i class="fa fa-2x fa-line-chart"></i> Activity
        </a>
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
@@ -82,7 +89,7 @@
         <br>
           <div class="mdl-card flex-card mdl-shadow--2dp">
           <div class="mdl-card__title mdl-card--border">
-             <h1 class="mdl-card__title-text">Models</h1>
+             <h1 class="mdl-card__title-text">{% model.name %}</h1>
           </div>
             <table class="table table-hover  mdl-shadow--2dp">
               <thead>
@@ -106,12 +113,12 @@
                     {% /if %}
                     {% #if status == "idle" %}
                       <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: green" class="fa fa-2x fa-check-square"></i> {% status %}
+                        <i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
                       </td>
                     {% /if %}
                     {% #if status == "broken" %}
                       <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: red" class="fa fa-2x fa-exclamation-triangle"></i> {% status %}
+                        <i style="color: red" class="fa fa-2x fa-exclamation"></i> {% status %}
                       </td>
                     {% /if %}
                     {% #if status == "training" %}
@@ -131,7 +138,7 @@
 
             <div class="mdl-card__menu" >
             <button data-board-id="" id="new_model"
-               class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="go_create">
+               class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="edit_model">
                   <i class="material-icons">mode_edit</i>
             </button>
             <div class="mdl-tooltip" for="new_model">
@@ -213,7 +220,7 @@
                 {% #each transactions %}
                     <tr class='clickable-row' data-href="{{=URL('dashboard', 'model', args=['{% id %}'])}}">
                       <td class="mdl-data-table__cell--non-numeric">{% uuid_short %}...</td>
-                      <td class="mdl-data-table__cell--non-numeric">{% model %}</td>
+                      <td class="mdl-data-table__cell--non-numeric">{% model_name %}</td>
                       <td class="mdl-data-table__cell--non-numeric">{% tclass %}</td>
                         {% #if status == "active" %}
                           <td class="mdl-data-table__cell--non-numeric">
@@ -222,12 +229,12 @@
                         {% /if %}
                         {% #if status == "failed" %}
                           <td class="mdl-data-table__cell--non-numeric">
-                            <i style="color: red" class="fa fa-2x fa-cog fa-exclamation-triangle"></i> {% status %}
+                            <i style="color: red" class="fa fa-2x fa-cog fa-exclamation"></i> {% status %}
                           </td>
                         {% /if %}
                         {% #if status == "success" %}
                           <td class="mdl-data-table__cell--non-numeric">
-                            <i style="color: green" class="fa fa-2x fa-check-circle"></i> {% status %}
+                            <i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
                           </td>
                         {% /if %}
                     </tr>
@@ -255,10 +262,13 @@
 <script>
 var logged_in = {{=logged_in }};
 var user_id = {{=user_id }};
-var murl = "{{=murl}}";
+var mdurl = "{{=mdurl}}";
 var turl = "{{=turl}}";
-var model_id = {{=model_id}}
+var model_id = {{=model_id}};
+var create_url = "{{=URL('dashboard', 'create', vars=dict(tab='edit'))}}"+"&model_id="+model_id;;
+console.log(create_url);
 </script>
+<script src="{{=URL('static', 'js/scripts/common.js')}}"></script>
 <script src="{{=URL('static', 'js/scripts/dbmodel.js')}}"></script>
 <script>
 $(document).on('change', '.btn-file :file', function() {

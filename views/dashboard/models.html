@@ -44,14 +44,22 @@
 
   <!-- sidebar -->
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title brand"><a href="{{=URL('default', 'home')}}"> <strong>tinyML</strong></a> </span>
+    <span class="mdl-layout-title brand">                                                                                         
+        <a href="{{=URL('default', 'home')}}"> 
+            <img src="/tinyML/static/images/tinyML.png">
+        </a> 
+    </span>
+
 	<hr>
-    <nav class="mdl-navigation">
+    <nav class="mdl-navigation">                                                                                                  
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
              <i class="fa fa-2x fa-home"></i> Home
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
              <i class="fa fa-2x fa-cogs"></i> Models
+       </a>
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+             <i class="fa fa-2x fa-line-chart"></i> Activity
        </a>
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
@@ -94,13 +102,16 @@
                 </span>
                 {% name %}
                 </span>
+            </h4>
+          </div>
 
-                <span style="color: #aaa; padding-left: 0px;padding-left: 15px; font-size: 12px"> 
+			<div style="font-size: 12px;padding-left: 25px;padding-top: 10px">
+                <span style="color: #aaa; font-size: 13px"> 
                 {% #if status == "predicting" %}
                     <i style="color: green" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
                 {% /if %}
                 {% #if status == "idle" %}
-					<i style="color: green" class="fa fa-2x fa-check-square"></i> {% status %}
+					<i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
                 {% /if %}
                 {% #if status == "training" %}
                     <i style="color: #37474f" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
@@ -109,12 +120,17 @@
                     <i style="color: #78909C" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
                 {% /if %}
                 {% #if status == "broken" %}
-                    <i style="color: red" class="fa fa-2x fa-exclamation-triangle"></i> {% status %}
+                    <i style="color: red" class="fa fa-2x fa-exclamation"></i> {% status %}
                 {% /if %}
                 </span>
-            </h4>
-          </div>
-			<div style="font-size: 12px;padding-left: 20px;padding-top: 10px">
+                {% #if compiled %}
+                <span class="label label-primary"> Compiled</span>
+                {% /if %}
+                {% #if trained  %}
+                <span class="label label-primary"> Trained</span>
+                {% /if %}
+			</div>
+			<div style="font-size: 12px;padding-left: 25px;padding-top: 10px">
 				  <strong>{% mclass %}</strong> with 
 				  <strong>{% arch.layer_dicts.length %}</strong> Layers. <br>
 				  <strong>{% arch.num_inp %}</strong> inputs, <strong>{% arch.num_out %}</strong> outputs with an <strong>'{% arch.optimizer %}'</strong> optimizer and <strong>{% arch.lossfn %}</strong> loss function.
@@ -144,5 +160,10 @@
   </main>
 </div>
 </script>
-<script> var logged_in = {{=logged_in }}; var user_id = {{=user_id }}; var murl = "{{=murl}}";</script>
+<script> 
+ var logged_in = {{=logged_in }};
+ var user_id = {{=user_id }};
+ var murl = "{{=murl}}";
+</script>
+<script src="{{=URL('static', 'js/scripts/common.js')}}"></script>
 <script src="{{=URL('static', 'js/scripts/dbmodels.js')}}"></script>

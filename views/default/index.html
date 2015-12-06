@@ -42,7 +42,11 @@
 
   <!-- sidebar -->
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title brand"><a href="{{=URL('default', 'home')}}"> <strong>tinyML</strong></a> </span>
+    <span class="mdl-layout-title brand">                                                                                         
+        <a href="{{=URL('default', 'home')}}"> 
+            <img src="/tinyML/static/images/tinyML.png">
+        </a> 
+    </span>
 	<hr>
     <nav class="mdl-navigation">
       {% #if logged_in %}

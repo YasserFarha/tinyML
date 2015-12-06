@@ -44,7 +44,12 @@
 
   <!-- sidebar -->
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title brand"><a href="{{=URL('default', 'home')}}"> <strong>tinyML</strong></a> </span>
+    <span class="mdl-layout-title brand">
+		<a href="{{=URL('default', 'home')}}"> 
+			<img src="/tinyML/static/images/tinyML.png">
+		
+		</a> 
+	</span>
 	<hr>
     <nav class="mdl-navigation">
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
@@ -52,6 +57,9 @@
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
              <i class="fa fa-2x fa-cogs"></i> Models
+       </a>
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+             <i class="fa fa-2x fa-line-chart"></i> Activity
        </a>
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
@@ -90,6 +98,8 @@
                   <th class="mdl-data-table__cell--non-numeric">ID</th>
                   <th class="mdl-data-table__cell--non-numeric">Type</th>
                   <th class="mdl-data-table__cell--non-numeric">Name</th>
+                  <th class="mdl-data-table__cell--non-numeric">Compiled</th>
+                  <th class="mdl-data-table__cell--non-numeric">Trained</th>
                   <th class="mdl-data-table__cell--non-numeric">Status</th>
                 </tr>
               </thead>
@@ -98,7 +108,25 @@
                     <tr class="clickable-row" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}">
                       <td class="mdl-data-table__cell--non-numeric">{% id %}</td>
                       <td class="mdl-data-table__cell--non-numeric">{% mclass %}</td>
-                      <td class="mdl-data-table__cell--non-numeric">{% name %}</td>
+                      <td class="mdl-data-table__cell--non-numeric">{% name_short %}..</td>
+                    {% #if compiled %}
+                      <td class="mdl-data-table__cell--non-numeric" style="text-align: center">
+                        <i style="color: #37474f" class="fa fa-2x fa-check"></i>
+                      </td>
+                    {% else %}
+                      <td class="mdl-data-table__cell--non-numeric" style="text-align: center">
+                        <i style="color: #bbb" class="fa fa-2x fa-close"></i>
+                      </td>
+                    {% /if %}
+                    {% #if trained %}
+                      <td class="mdl-data-table__cell--non-numeric" style="text-align: center">
+                        <i style="color: #37474f" class="fa fa-2x fa-check"></i>
+                      </td>
+                    {% else %}
+                      <td class="mdl-data-table__cell--non-numeric" style="text-align: center">
+                        <i style="color: #bbb" class="fa fa-2x fa-close"></i>
+                      </td>
+                    {% /if %}
                     {% #if status == "predicting" %}
                       <td class="mdl-data-table__cell--non-numeric">
                         <i style="color: green" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
@@ -106,12 +134,12 @@
                     {% /if %}
                     {% #if status == "idle" %}
                       <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: green" class="fa fa-2x fa-check-square"></i> {% status %}
+                        <i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
                       </td>
                     {% /if %}
                     {% #if status == "broken" %}
                       <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: red" class="fa fa-2x fa-exclamation-triangle"></i> {% status %}
+                        <i style="color: red" class="fa fa-2x fa-exclamation"></i> {% status %}
                       </td>
                     {% /if %}
                     {% #if status == "training" %}
@@ -158,15 +186,7 @@
         </div>
         <br>
 
-
-
         </div>
-
-
-
-
-
-
 
         <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
         <br>
@@ -187,7 +207,7 @@
                 {% #each transactions %}
                     <tr class='clickable-row' data-href="{{=URL('dashboard', 'model', args=['{% id %}'])}}">
                       <td class="mdl-data-table__cell--non-numeric">{% uuid_short %}...</td>
-                      <td class="mdl-data-table__cell--non-numeric">{% model %}</td>
+                      <td class="mdl-data-table__cell--non-numeric">{% model_name_short %}..</td>
                       <td class="mdl-data-table__cell--non-numeric">{% tclass %}</td>
                         {% #if status == "active" %}
                           <td class="mdl-data-table__cell--non-numeric">
@@ -201,7 +221,7 @@
                         {% /if %}
                         {% #if status == "success" %}
                           <td class="mdl-data-table__cell--non-numeric">
-                            <i style="color: green" class="fa fa-2x fa-check-circle"></i> {% status %}
+                            <i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
                           </td>
                         {% /if %}
                     </tr>
@@ -277,6 +297,7 @@ var turl="{{=turl}}";
 var create_url = "{{=URL('dashboard', 'create', vars={'tab' : 'new'}) }}" 
 var models_url = "{{=URL('dashboard', 'models', vars={'page' : '1'}) }}" 
 </script>
+<script src="{{=URL('static', 'js/scripts/common.js')}}"></script>
 <script src="{{=URL('static', 'js/scripts/dashboard.js')}}"></script>
 <script>
 $(document).on('change', '.btn-file :file', function() {
@@ -299,15 +320,6 @@ $(document).ready( function() {
         }
         
     });
-});
-$(document).ready( function() {
-    TESTER = document.getElementById('home_plot');
-    var layout = {
-        margin : {l:30, r:10, t:20, b:20},
-        height : 180,
-        pad : 20,
-        showlegend : false
-        };
 });
 </script>
 <script>

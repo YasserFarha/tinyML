@@ -13,37 +13,20 @@ $(function() {
             murl: murl
         },
     });
-
-  function load_models(page, page_size) {
-      $.ajax(MAIN.get("murl"),
-          { method: 'POST', data: {'page' : page, 'page_size' : page_size},
-          success: function (data) { 
+    setInterval(function() { 
+        load_models(MAIN, 1, 6, function(data) { 
             for(var i = 0; i < data['models'].length; i++) {
               data['models'][i]['uuid_short'] = data['models'][i]['uuid'].substring(0, 8)
             }
             MAIN.set('models', data['models']);
             models = MAIN.get('models')
-         }
-        }
-      );
-    }
+        });
+     }, 2000);
 
-  function load_transactions(page, page_size, callback) {
-      $.ajax(MAIN.get("turl"),
-          { method: 'POST', data: {'page' : page, 'page_size' : page_size},
-          success: function (data) { 
-            for(var i = 0; i < data['transactions'].length; i++) {
-              data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8)
-            }
-			callback(data);
-            console.log(data);
-          }
-        }
-      );
-    }
-
-    setInterval(function() { load_models(1, 6); }, 2000);
-    setInterval(function() { load_transactions(1, 8, function(data) {
+    setInterval(function() { load_transactions(MAIN, 1, 8, function(data) {
+            trs = MAIN.get('transactions');
+            if(trs && trs.length > 0 && trs[0].uuid !== data['transactions'][0].uuid)
+                setTimeout(plot_home, 100);
             MAIN.set('transactions', data['transactions']);
         });
 	 }, 3000);
@@ -71,7 +54,7 @@ $(function() {
             showlegend: false
 		};
 		models = MAIN.get('models');
-        load_transactions(1, 50, function(data) {
+        load_transactions(MAIN, 1, 50, function(data) {
             trs = data['transactions'];
             console.log(trs);
             data = [];
@@ -133,8 +116,15 @@ $(function() {
         })
 	}
 
-  load_models(1, 6);
-  load_transactions(1, 8, function(data) {  
+  load_models(MAIN, 1, 6,  function (data) { 
+        for(var i = 0; i < data['models'].length; i++) {
+          data['models'][i]['uuid_short'] = data['models'][i]['uuid'].substring(0, 8)
+        }
+        MAIN.set('models', data['models']);
+        models = MAIN.get('models')
+  });
+
+  load_transactions(MAIN, 1, 8, function(data) {  
     MAIN.set('transactions', data['transactions']);
   });
 

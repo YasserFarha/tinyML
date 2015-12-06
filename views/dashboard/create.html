@@ -44,14 +44,21 @@
 
   <!-- sidebar -->
   <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title brand"><a href="{{=URL('default', 'home')}}"> <strong>tinyML</strong></a> </span>
+    <span class="mdl-layout-title brand">                                                                                         
+        <a href="{{=URL('default', 'home')}}"> 
+            <img src="/tinyML/static/images/tinyML.png">
+        </a> 
+    </span>
 	<hr>
-    <nav class="mdl-navigation">
+    <nav class="mdl-navigation">                                                                                                  
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
              <i class="fa fa-2x fa-home"></i> Home
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
              <i class="fa fa-2x fa-cogs"></i> Models
+       </a>
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+             <i class="fa fa-2x fa-line-chart"></i> Activity
        </a>
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
@@ -232,41 +239,44 @@
                           </select>
                         </div>
                     </div>
+					{% #unless my_models %}
+					 <tiny> You don't have any models to update! </tiny>
+					{% /unless %}
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-                    {% #if my_models[ce].updated && my_models[ce].status === "idle" %}
+                    {% #if my_models.length && my_models[ce].updated && my_models[ce].status === "idle" %}
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat" on-click="update_model">
                            Update 
                         </button>
-                    {% elseif my_models[ce].updated && my_models[ce].status == "broken" %}
+                    {% elseif my_models.length && my_models[ce].updated && my_models[ce].status == "broken" %}
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat" on-click="update_model">
                           Fix! 
                         </button>
-                    {% else %}
+                    {% elseif my_models.length %}
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--primary fat" on-click="update_model" disabled>
                            Update 
                         </button>
                     {% /if %}
                     </div>
-                    {% #if my_models[ce].updated && my_models[ce].status === "idle" %}
+                    {% #if my_models.length && my_models[ce].updated && my_models[ce].status === "idle" %}
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-                        <button class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="">
+                        <button class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="resetModel">
                             Cancel
                         </button>
                     </div>
-                    {% elseif my_models.updated && my_models[ce].status == "broken" %}
+                    {% elseif my_models.length && my_models[ce].updated && my_models[ce].status == "broken" %}
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-                        <button class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="">
+                        <button class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="resetModel">
                             Cancel
                         </button>
                     </div>
-                    {% else %}
+                    {% elseif my_models.length %}
                     <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
                         <button class="mdl-button fat mdl-js-button mdl-js-ripple-effect" on-click="" disabled>
                             Cancel
                         </button>
                     </div>
                     {% /if %}
-                    {% #if my_models.updated && my_models.status === "idle" %}
+                    {% #if my_models.length && my_models[ce].updated && my_models.status === "idle" %}
                     <br>
                     <br>
                     <br>
@@ -281,52 +291,44 @@
               </div>
             </div>
 
-            {% #if added_models %}
+            {% #if added_transactions %}
             <br>
               <div class="mdl-card flex-card mdl-shadow--2dp">
 				  <div class="mdl-card__title mdl-card--border">
-					 <h1 class="mdl-card__title-text">New/Edited Models</h1>
+					 <h1 class="mdl-card__title-text">New Requests</h1>
 				  </div>
-                <div class="mdl-grid" style="padding-top: 0">
-                <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
                     <table class="table table-responsive mdl-shadow--1dp">
                       <tbody>
-                    {% #added_models:i %}
+                    {% #added_transactions:i %}
 						<tr class="clickable-row" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}">
                         <td class="mdl-data-table__cell--non-numeric">
-                            {% name %}
+                            {% id %}
                         </td>
-						{% #if status == "predicting" %}
+                        <td class="mdl-data-table__cell--non-numeric">
+                            {% tclass %}
+                        </td>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            {% model_name_short %}..
+                        </td>
+						{% #if status == "success" %}
 						  <td class="mdl-data-table__cell--non-numeric">
-							<i style="color: green" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+							<i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
 						  </td>
 						{% /if %}
-						{% #if status == "idle" %}
+						{% #if status == "failed" %}
 						  <td class="mdl-data-table__cell--non-numeric">
-							<i style="color: green" class="fa fa-2x fa-check-square"></i> {% status %}
+							<i style="color: red" class="fa fa-2x fa-exclamation"></i> {% status %}
 						  </td>
 						{% /if %}
-						{% #if status == "broken" %}
-						  <td class="mdl-data-table__cell--non-numeric">
-							<i style="color: red" class="fa fa-2x fa-exclamation-triangle"></i> {% status %}
-						  </td>
-						{% /if %}
-						{% #if status == "training" %}
-						  <td class="mdl-data-table__cell--non-numeric">
-							<i style="color: #37474f" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-						  </td>
-						{% /if %}
-						{% #if status == "compiling" %}
+						{% #if status == "active" %}
 						  <td class="mdl-data-table__cell--non-numeric">
 							<i style="color: #78909C" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
 						  </td>
 						{% /if %}
 						</tr>
-                    {% /added_models %}
+                    {% /added_transactions %}
                       </tbody>
                     </table>
-                  </div>
-              </div>
               </div>
             {% /if %}
 
@@ -350,7 +352,9 @@
               </thead>
               <tbody>
                  {% #if current_tab == "new" %}
-                 {% #new_model.arch.layer_dicts:i %}
+                 {% #new_model %}
+                 {% #arch %}
+                 {% #each layer_dicts:i %}
                     <tr>
                     <td class="mdl-data-table__cell--non-numeric">
                     <button data-id="layer_sel_{% uuid %}" data-layer-id="{% uuid %}"
@@ -404,11 +408,13 @@
                         </div>
                     </td>
                     </tr>
+                 {% /each %}
+                 {% /arch%}
                  {% /layer_dicts %}
                  {% /if %}
 
 
-                 {% #if current_tab == "edit" %}
+                 {% #if current_tab == "edit" && my_models %}
                  {% #my_models[ce].arch.layer_dicts:i %}
                     <tr>
                     <td class="mdl-data-table__cell--non-numeric">
@@ -484,10 +490,6 @@
           </div>
           </div>
 
-
-
-
-
   </main>
 </div>
 </script>
@@ -497,8 +499,10 @@ var logged_in = {{=logged_in }};
 var user_id = {{=user_id }};
 var murl = "{{=murl}}";
 var new_url = "{{= new_url }}";
-var surl = "{{= surl }}";
+var mdurl = "{{= mdurl }}";
+var tdurl = "{{= tdurl }}";
 var edit_url = "{{=edit_url }}";
 </script>
 <!-- include the reactive handling code -->
+<script src="{{=URL('static', 'js/scripts/common.js')}}"></script>
 <script src="{{=URL('static', 'js/scripts/dbcreate.js')}}"></script>

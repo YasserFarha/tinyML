@@ -40,6 +40,10 @@ $(function() {
         window.document.location = create_url;
     });
 
+    MAIN.on("go_activity", function(e) {
+        window.document.location = activity_url;
+    });
+
     MAIN.on("go_models", function(e) {
         window.document.location = models_url;
     });
@@ -85,7 +89,7 @@ $(function() {
                         width:2 
                     },
                     name: models[i].name,
-                    mode: "markers"
+                    mode: "lines+markers"
                }
                for(var j = 0; j < trs.length; j++) {
                     if(trs[j].model === models[i].id) {

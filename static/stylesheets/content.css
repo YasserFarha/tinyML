@@ -1,24 +1,36 @@
-/* line 23, ../sass/_base.sass */
-.page-content {
-  background-color: #B3D7E8;
-  background-color: #E0E0E0;
-  min-height: 100%;
+/* line 24, ../sass/_base.sass */
+.modal-backdrop {
+  position: static;
+  z-index: 1;
 }
 
-/* line 27, ../sass/_base.sass */
-.body {
-  background-color: #B3D7E8;
-  background-color: #E0E0E0;
-  min-height: 100%;
+/* line 28, ../sass/_base.sass */
+.modal-dialog {
+  margin: 100px auto;
+  z-index: 1500;
 }
 
 /* line 32, ../sass/_base.sass */
+.page-content {
+  background-color: #B3D7E8;
+  background-color: #ECF0EF;
+  min-height: 100%;
+}
+
+/* line 36, ../sass/_base.sass */
+.body {
+  background-color: #B3D7E8;
+  background-color: #ECF0EF;
+  min-height: 100%;
+}
+
+/* line 41, ../sass/_base.sass */
 .fa-exclamation {
   padding-left: 4px;
   padding-right: 4px;
 }
 
-/* line 36, ../sass/_base.sass */
+/* line 45, ../sass/_base.sass */
 .jumbotron {
   background-color: #B3D7E8;
   padding-top: 0px;
@@ -29,126 +41,126 @@
   width: 100%;
   text-align: center;
 }
-/* line 45, ../sass/_base.sass */
+/* line 54, ../sass/_base.sass */
 .jumbotron h1 {
   font-size: 68px;
   font-weight: 40;
   color: #37474f;
 }
-/* line 49, ../sass/_base.sass */
+/* line 58, ../sass/_base.sass */
 .jumbotron h2 {
   font-size: 40px;
   color: #37474f;
   font-weight: 80;
 }
-/* line 54, ../sass/_base.sass */
+/* line 63, ../sass/_base.sass */
 .jumbotron small {
   color: #37474f;
 }
 
-/* line 58, ../sass/_base.sass */
+/* line 67, ../sass/_base.sass */
 .mdl-layout-title {
   color: #EEF2F1;
   font-size: 24px;
 }
 
-/* line 62, ../sass/_base.sass */
+/* line 71, ../sass/_base.sass */
 .mdl-layout__header {
   min-height: 40px;
 }
 
-/* line 64, ../sass/_base.sass */
+/* line 73, ../sass/_base.sass */
 .mdl-layout__header-row {
   min-height: 40px;
   height: 36px;
 }
 
-/* line 67, ../sass/_base.sass */
+/* line 76, ../sass/_base.sass */
 .mdl-layout__drawer-button {
   min-height: 36px;
   height: 36px;
   padding-top: 4px;
 }
-/* line 71, ../sass/_base.sass */
+/* line 80, ../sass/_base.sass */
 .mdl-layout__drawer-button i {
   color: #FFFFFF;
 }
 
-/* line 75, ../sass/_base.sass */
+/* line 84, ../sass/_base.sass */
 .mdl-layout__drawer .mdl-layout-title {
   font-size: 21px;
   font-weight: 400;
   padding-left: 20px;
   padding-bottom: 0px;
 }
-/* line 80, ../sass/_base.sass */
+/* line 89, ../sass/_base.sass */
 .mdl-layout__drawer .mdl-layout-title small {
   font-size: 17px;
   color: #EEF0F2;
   font-weight: 300;
 }
 
-/* line 85, ../sass/_base.sass */
+/* line 94, ../sass/_base.sass */
 .brand {
   font-size: 30px;
   font-weight: 500;
   padding-left: 10px;
 }
 
-/* line 91, ../sass/_base.sass */
+/* line 100, ../sass/_base.sass */
 .mdl-grid {
   max-width: 1400px;
 }
 
-/* line 94, ../sass/_base.sass */
+/* line 103, ../sass/_base.sass */
 .mdl-card {
   text-align: left;
 }
-/* line 97, ../sass/_base.sass */
+/* line 106, ../sass/_base.sass */
 .mdl-card h4 {
   color: #37474f;
   margin-bottom: 0px;
 }
-/* line 100, ../sass/_base.sass */
+/* line 109, ../sass/_base.sass */
 .mdl-card h3 {
   color: #37474f;
 }
-/* line 103, ../sass/_base.sass */
+/* line 112, ../sass/_base.sass */
 .mdl-card .landing-card {
   background-color: #78909C;
   color: #EEF2F1;
-  min-height: 300px;
+  min-height: 200px;
 }
-/* line 108, ../sass/_base.sass */
+/* line 117, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__title-text {
   font-size: 36px;
 }
-/* line 111, ../sass/_base.sass */
+/* line 120, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text {
   width: 100%;
   min-height: 130px;
 }
-/* line 114, ../sass/_base.sass */
+/* line 123, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text h1 {
   font-size: 36px;
 }
-/* line 117, ../sass/_base.sass */
+/* line 126, ../sass/_base.sass */
 .mdl-card .customize-card {
   background: url("../images/nnet_6.png") top 50% left 100% no-repeat #37474f;
   background-size: 240px 240px;
 }
-/* line 121, ../sass/_base.sass */
+/* line 130, ../sass/_base.sass */
 .mdl-card .train-card {
   background: url("../images/data_1.png") bottom 20% right 75% no-repeat #37474f;
   color: #EEF0F2;
 }
-/* line 125, ../sass/_base.sass */
+/* line 134, ../sass/_base.sass */
 .mdl-card .predict-card {
   background: url("../images/nnet_4.png") bottom 23% right 55% no-repeat #37474f;
   color: #37474f;
 }
 
-/* line 129, ../sass/_base.sass */
+/* line 138, ../sass/_base.sass */
 .mdl-card__actions {
   position: absolute;
   right: 0;
@@ -174,7 +186,7 @@
 .btn-primary {
   background-color: #607D8B;
   border: 1px solid #607D8B;
-  border-radius: 0px;
+  border-radius: 2px;
 }
 
 /* line 19, ../sass/content.sass */
@@ -185,62 +197,92 @@
 
 /* line 23, ../sass/content.sass */
 .label-primary {
-  background-color: #607D8B;
+  background-color: #37474f;
 }
 
-/* line 27, ../sass/content.sass */
+/* line 26, ../sass/content.sass */
+.label-warning {
+  background-color: #616161;
+}
+
+/* line 29, ../sass/content.sass */
+.label-green {
+  background-color: #319C20;
+}
+
+/* line 32, ../sass/content.sass */
+.label-blue {
+  background-color: #37474f;
+}
+
+/* line 35, ../sass/content.sass */
+.label-red {
+  background-color: #7D2529;
+}
+
+/* line 38, ../sass/content.sass */
+.label-light-blue {
+  background-color: #78909C;
+}
+
+/* line 43, ../sass/content.sass */
+.list-unstyled {
+  font-size: 12px;
+}
+
+/* line 47, ../sass/content.sass */
 body {
   font-family: "Roboto", sans-serif;
 }
 
-/* line 30, ../sass/content.sass */
+/* line 50, ../sass/content.sass */
 .mdl-card {
   min-height: 100px;
   overflow-x: auto;
 }
-/* line 33, ../sass/content.sass */
+/* line 53, ../sass/content.sass */
 .mdl-card .mdl-card__menu {
   margin-top: -10px;
   right: 12px;
   top: 12px;
 }
-/* line 38, ../sass/content.sass */
+/* line 58, ../sass/content.sass */
 .mdl-card .mdl-card__title {
   padding-bottom: 8px;
   background-color: #FFFFFF;
   width: 100%;
   padding-top: 8px;
 }
-/* line 44, ../sass/content.sass */
+/* line 64, ../sass/content.sass */
 .mdl-card .mdl-card__title .mdl-card__title-text {
   color: #37474f;
   font-size: 22px;
 }
-/* line 48, ../sass/content.sass */
+/* line 68, ../sass/content.sass */
 .mdl-card .mdl-card__supporting-text {
   width: 100%;
 }
-/* line 51, ../sass/content.sass */
+/* line 71, ../sass/content.sass */
 .mdl-card .mdl-card__actions {
   position: relative;
 }
-/* line 54, ../sass/content.sass */
+/* line 74, ../sass/content.sass */
 .mdl-card .table {
   margin-bottom: 0px;
   font-size: 13px;
   width: 100%;
   vertical-align: center;
 }
-/* line 59, ../sass/content.sass */
+/* line 79, ../sass/content.sass */
 .mdl-card .table tr {
   padding-top: 0px;
   height: 20px;
 }
-/* line 62, ../sass/content.sass */
+/* line 82, ../sass/content.sass */
 .mdl-card .table tr th {
   height: 35px;
 }
-/* line 64, ../sass/content.sass */
+/* line 84, ../sass/content.sass */
 .mdl-card .table tr td {
   height: 40px;
   text-overflow: ellipsis;
@@ -249,74 +291,74 @@ body {
   width: auto;
 }
 
-/* line 71, ../sass/content.sass */
+/* line 91, ../sass/content.sass */
 .clickable-row {
   cursor: pointer;
 }
-/* line 73, ../sass/content.sass */
+/* line 93, ../sass/content.sass */
 .clickable-row:hover {
   background-color: #eee;
 }
 
-/* line 77, ../sass/content.sass */
+/* line 97, ../sass/content.sass */
 .mdl-card .material-icons {
   color: #607D8B;
 }
-/* line 79, ../sass/content.sass */
+/* line 99, ../sass/content.sass */
 .mdl-card .dark {
   color: #78909C;
 }
 
-/* line 82, ../sass/content.sass */
+/* line 102, ../sass/content.sass */
 .mdl-tabs__tab {
   width: 100%;
 }
 
-/* line 85, ../sass/content.sass */
+/* line 105, ../sass/content.sass */
 .fa-2x {
   font-size: 1.2em;
 }
 
-/* line 88, ../sass/content.sass */
+/* line 108, ../sass/content.sass */
 .fat {
   width: 100%;
 }
 
-/* line 91, ../sass/content.sass */
+/* line 111, ../sass/content.sass */
 .fa-1x {
   font-size: 0.8em;
   color: #78909C;
 }
 
-/* line 95, ../sass/content.sass */
+/* line 115, ../sass/content.sass */
 .mdl-progress {
   width: 50px;
 }
 
-/* line 98, ../sass/content.sass */
+/* line 118, ../sass/content.sass */
 .mdl-textfield {
   padding-top: 5px;
   font-size: 13px;
   width: 100%;
 }
 
-/* line 103, ../sass/content.sass */
+/* line 123, ../sass/content.sass */
 .mdl-textfield__label:after {
   bottom: 15px;
 }
 
-/* line 106, ../sass/content.sass */
+/* line 126, ../sass/content.sass */
 .select {
   padding: 3px;
 }
 
-/* line 109, ../sass/content.sass */
+/* line 129, ../sass/content.sass */
 .input {
   padding-top: 0px;
   padding-bottom: 0px;
 }
 
-/* line 113, ../sass/content.sass */
+/* line 133, ../sass/content.sass */
 .form-control {
   border-radius: 1px;
   padding-top: 4px;
@@ -327,13 +369,13 @@ body {
   height: 30px;
 }
 
-/* line 123, ../sass/content.sass */
+/* line 143, ../sass/content.sass */
 .btn-file {
   position: relative;
   overflow: hidden;
 }
 
-/* line 127, ../sass/content.sass */
+/* line 147, ../sass/content.sass */
 .btn-file input[type=file] {
   position: absolute;
   top: 0;

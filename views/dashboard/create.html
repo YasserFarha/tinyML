@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
@@ -46,7 +47,7 @@
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title brand">                                                                                         
         <a href="{{=URL('default', 'home')}}"> 
-            <img src="/tinyML/static/images/tinyML.png">
+            <img src="/tinyML/static/images/tinyML.svg">
         </a> 
     </span>
 	<hr>
@@ -57,13 +58,13 @@
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
              <i class="fa fa-2x fa-cogs"></i> Models
        </a>
-       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'activity' )}}">
              <i class="fa fa-2x fa-line-chart"></i> Activity
        </a>
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
        </a>
-       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account')}}">
              <i class="fa fa-2x fa-user"></i> Account
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'tutorials')}}>
@@ -276,10 +277,12 @@
                         </button>
                     </div>
                     {% /if %}
-                    {% #if my_models.length && my_models[ce].updated && my_models.status === "idle" %}
-                    <br>
-                    <br>
-                    <br>
+                    {% #if my_models.length && my_models[ce].updated && my_models[ce].status == "broken" %}
+                    <br> <br> <br>
+                      <tiny> <span style="color:red"> Fix Me!</span> This model is broken and must be fixed before it can be trained and used. </tiny>
+                    {% /if %}
+                    {% #if my_models.length && my_models[ce].updated && my_models[ce].status === "idle" %}
+                    <br> <br> <br>
                       <tiny> <span style="color:red"> Warning!</span> This will cause your model to be re-compiled from scratch. </tiny>
                     {% /if %}
                   </div>
@@ -300,7 +303,7 @@
                     <table class="table table-responsive mdl-shadow--1dp">
                       <tbody>
                     {% #added_transactions:i %}
-						<tr class="clickable-row" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}">
+						<tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}/{% id %}">
                         <td class="mdl-data-table__cell--non-numeric">
                             {% id %}
                         </td>
@@ -310,21 +313,27 @@
                         <td class="mdl-data-table__cell--non-numeric">
                             {% model_name_short %}..
                         </td>
-						{% #if status == "success" %}
-						  <td class="mdl-data-table__cell--non-numeric">
-							<i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
-						  </td>
-						{% /if %}
-						{% #if status == "failed" %}
-						  <td class="mdl-data-table__cell--non-numeric">
-							<i style="color: red" class="fa fa-2x fa-exclamation"></i> {% status %}
-						  </td>
-						{% /if %}
-						{% #if status == "active" %}
-						  <td class="mdl-data-table__cell--non-numeric">
-							<i style="color: #78909C" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-						  </td>
-						{% /if %}
+                        {% #if status == "active" %}
+                          <td class="mdl-data-table__cell--non-numeric">
+                            <span class="label label-light-blue">
+                                <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+                            </span>
+                          </td>                                                                                                   
+                        {% /if %}
+                        {% #if status == "failed" %}
+                          <td class="mdl-data-table__cell--non-numeric">
+                            <span class="label label-red">
+                                <i style="color: white" class="fa fa-2x fa-cog fa-exclamation"></i> {% status %}
+                            </span>
+                          </td>
+                        {% /if %}
+                        {% #if status == "success" %}
+                          <td class="mdl-data-table__cell--non-numeric">
+                            <span class="label label-green">
+                                <i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
+                            </span>
+                          </td>
+                        {% /if %}
 						</tr>
                     {% /added_transactions %}
                       </tbody>

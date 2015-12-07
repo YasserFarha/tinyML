@@ -39,10 +39,10 @@ function load_transactions(MAIN, page, page_size, callback) {
       { method: 'POST', data: {'page' : page, 'page_size' : page_size},
       success: function (data) { 
         for(var i = 0; i < data['transactions'].length; i++) {
-          data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8)
+          data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8);
+          data['transactions'][i]['output_payload'] = JSON.parse(data['transactions'][i]['output_payload']);
         }
         callback(data);
-        console.log(data);
       }
     }
   );
@@ -52,9 +52,9 @@ function load_transaction(MAIN, tid, callback) {
   $.ajax(MAIN.get("tdurl"),
       { method: 'POST', data: {'tid' : tid},
       success: function (data) { 
-        console.log(data);
         if(data['transaction']) {
           data['transaction']['uuid_short'] = data['transaction']['uuid'].substring(0, 8)
+          data['transaction']['output_payload'] = JSON.parse(data['transaction']['output_payload'])
         }
         callback(data);
       }
@@ -70,7 +70,6 @@ function load_transactions_id(MAIN, id,  page, page_size, callback) {
           data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8)
         }
         callback(data);
-        console.log(data);
       }
     }
   );

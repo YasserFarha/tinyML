@@ -4,6 +4,7 @@ $colorWhite: #FFFFFF
 $colorRed: #7D2529
 $colorMaroon: #A99395
 $colorGreen: #5CB85C
+$colorGreen: #319C20
 $colorDarkBlue: #37474f
 $colorLightBlue: #78909C
 $colorLightBlue2: #B3D7E8
@@ -20,13 +21,21 @@ $colorOffWhite: #EEF2F1
 $colorPrimary: #607D8B
 $colorAccent: #FF5252
 
+.modal-backdrop
+  position: static
+  z-index: 1
+
+.modal-dialog
+  margin: 100px auto
+  z-index: 1500
+
 .page-content
   background-color: $colorLightBlue2
-  background-color: $colorLightGray2
+  background-color: $colorOffWhite3
   min-height: 100%
 .body
   background-color: $colorLightBlue2
-  background-color: $colorLightGray2
+  background-color: $colorOffWhite3
   min-height: 100%
 
 .fa-exclamation
@@ -103,7 +112,7 @@ $colorAccent: #FF5252
   .landing-card
     background-color: $colorLightBlue
     color: $colorOffWhite
-    min-height: 300px
+    min-height: 200px
 
     .mdl-card__title-text
       font-size: 36px

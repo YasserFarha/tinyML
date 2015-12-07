@@ -206,16 +206,15 @@ $(function() {
     MAIN.on("clearAll", function(e) { clear_all(); });
 
     MAIN.on("resetModel", function(e) {
-        console.log("reseting");
         mdl = get_current_edit(); 
         load_model(MAIN, mdl.id, function(data) {
             md = data['model'];
             md.arch = JSON.parse(md.arch);
+            md.updated = true;
             md.arch.layer_dicts = md.arch.layer_dicts;
             set_current_edit(md);
             MAIN.set('my_models['+MAIN.get('ce')+']', md);
             MAIN.set('my_models['+MAIN.get('ce')+'].arch.layer_dicts', md.arch.layer_dicts);
-            console.log(md);
         });
     
     });
@@ -236,21 +235,21 @@ $(function() {
 	MAIN.set('current_tab', vars['tab']);
   }
 
-if(MAIN.get('current_tab') === 'new') {
-  $("#new-model-panel").toggleClass("is-active");
-  $("#new-model-tab").toggleClass("is-active");
-}
-else {
-  $("#edit-model-panel").toggleClass("is-active");
-  $("#edit-model-tab").toggleClass("is-active");
-}
- 
- MAIN.on("set_new_panel", function(e) { 
-     MAIN.set('current_tab', "new");
- });
- MAIN.on("set_edit_panel", function(e) { 
-     MAIN.set('current_tab', "edit");
- });
+    if(MAIN.get('current_tab') === 'new') {
+      $("#new-model-panel").toggleClass("is-active");
+      $("#new-model-tab").toggleClass("is-active");
+    }
+    else {
+      $("#edit-model-panel").toggleClass("is-active");
+      $("#edit-model-tab").toggleClass("is-active");
+    }
+     
+     MAIN.on("set_new_panel", function(e) { 
+         MAIN.set('current_tab', "new");
+     });
+     MAIN.on("set_edit_panel", function(e) { 
+         MAIN.set('current_tab', "edit");
+     });
 
 
   function default_model() {
@@ -261,6 +260,8 @@ else {
 		updated: false,
         compiled: false,
         trained: false,
+        mclass: "deep-nnet",
+        arch_json: "",
         arch : {
             layer_dicts: [{"uuid" : genuuid(), 
                            "type" : "dense",
@@ -327,13 +328,12 @@ else {
                 load_model(MAIN, tr.model, function(data) { 
                     data = data['model'];
                     data.arch = JSON.parse(data.arch);
-                    console.log(data);
                     mdls = MAIN.get('my_models');
                     active = MAIN.get('added_models');
                     for(var i = 0; i < mdls.length; i++) {
                       if(mdls[i].uuid === data['uuid']) {
-                         mdls[i] = data;
-                         mdls[i].arch = data['arch'];
+                         mdls[i].status = data['status'];
+                         // mdls[i].arch = data['arch'];
                          MAIN.set('current_edit_name', MAIN.get('current_edit_name'));
                       }
                         for(var j = 0; j < active.length; j++) {
@@ -386,7 +386,6 @@ else {
             return;
         }
         ce = MAIN.get('ce');
-        console.log(ce);
         if(ce !== undefined) {
             models[ce].updated = true;
             MAIN.set('my_models', models);
@@ -415,7 +414,6 @@ else {
 	setTimeout( function() {
 		if(vars['model_id']) {
 		  mdls = MAIN.get('my_models');
-		  console.log(mdls);
 		  for(var i = 0; i < mdls.length; i++) {
 			if(mdls[i].id === parseInt(vars['model_id'])) {
 				MAIN.set('ce', i);

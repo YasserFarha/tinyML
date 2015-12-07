@@ -1,24 +1,36 @@
-/* line 23, ../sass/_base.sass */
-.page-content {
-  background-color: #B3D7E8;
-  background-color: #E0E0E0;
-  min-height: 100%;
+/* line 24, ../sass/_base.sass */
+.modal-backdrop {
+  position: static;
+  z-index: 1;
 }
 
-/* line 27, ../sass/_base.sass */
-.body {
-  background-color: #B3D7E8;
-  background-color: #E0E0E0;
-  min-height: 100%;
+/* line 28, ../sass/_base.sass */
+.modal-dialog {
+  margin: 100px auto;
+  z-index: 1500;
 }
 
 /* line 32, ../sass/_base.sass */
+.page-content {
+  background-color: #B3D7E8;
+  background-color: #ECF0EF;
+  min-height: 100%;
+}
+
+/* line 36, ../sass/_base.sass */
+.body {
+  background-color: #B3D7E8;
+  background-color: #ECF0EF;
+  min-height: 100%;
+}
+
+/* line 41, ../sass/_base.sass */
 .fa-exclamation {
   padding-left: 4px;
   padding-right: 4px;
 }
 
-/* line 36, ../sass/_base.sass */
+/* line 45, ../sass/_base.sass */
 .jumbotron {
   background-color: #B3D7E8;
   padding-top: 0px;
@@ -29,126 +41,126 @@
   width: 100%;
   text-align: center;
 }
-/* line 45, ../sass/_base.sass */
+/* line 54, ../sass/_base.sass */
 .jumbotron h1 {
   font-size: 68px;
   font-weight: 40;
   color: #37474f;
 }
-/* line 49, ../sass/_base.sass */
+/* line 58, ../sass/_base.sass */
 .jumbotron h2 {
   font-size: 40px;
   color: #37474f;
   font-weight: 80;
 }
-/* line 54, ../sass/_base.sass */
+/* line 63, ../sass/_base.sass */
 .jumbotron small {
   color: #37474f;
 }
 
-/* line 58, ../sass/_base.sass */
+/* line 67, ../sass/_base.sass */
 .mdl-layout-title {
   color: #EEF2F1;
   font-size: 24px;
 }
 
-/* line 62, ../sass/_base.sass */
+/* line 71, ../sass/_base.sass */
 .mdl-layout__header {
   min-height: 40px;
 }
 
-/* line 64, ../sass/_base.sass */
+/* line 73, ../sass/_base.sass */
 .mdl-layout__header-row {
   min-height: 40px;
   height: 36px;
 }
 
-/* line 67, ../sass/_base.sass */
+/* line 76, ../sass/_base.sass */
 .mdl-layout__drawer-button {
   min-height: 36px;
   height: 36px;
   padding-top: 4px;
 }
-/* line 71, ../sass/_base.sass */
+/* line 80, ../sass/_base.sass */
 .mdl-layout__drawer-button i {
   color: #FFFFFF;
 }
 
-/* line 75, ../sass/_base.sass */
+/* line 84, ../sass/_base.sass */
 .mdl-layout__drawer .mdl-layout-title {
   font-size: 21px;
   font-weight: 400;
   padding-left: 20px;
   padding-bottom: 0px;
 }
-/* line 80, ../sass/_base.sass */
+/* line 89, ../sass/_base.sass */
 .mdl-layout__drawer .mdl-layout-title small {
   font-size: 17px;
   color: #EEF0F2;
   font-weight: 300;
 }
 
-/* line 85, ../sass/_base.sass */
+/* line 94, ../sass/_base.sass */
 .brand {
   font-size: 30px;
   font-weight: 500;
   padding-left: 10px;
 }
 
-/* line 91, ../sass/_base.sass */
+/* line 100, ../sass/_base.sass */
 .mdl-grid {
   max-width: 1400px;
 }
 
-/* line 94, ../sass/_base.sass */
+/* line 103, ../sass/_base.sass */
 .mdl-card {
   text-align: left;
 }
-/* line 97, ../sass/_base.sass */
+/* line 106, ../sass/_base.sass */
 .mdl-card h4 {
   color: #37474f;
   margin-bottom: 0px;
 }
-/* line 100, ../sass/_base.sass */
+/* line 109, ../sass/_base.sass */
 .mdl-card h3 {
   color: #37474f;
 }
-/* line 103, ../sass/_base.sass */
+/* line 112, ../sass/_base.sass */
 .mdl-card .landing-card {
   background-color: #78909C;
   color: #EEF2F1;
-  min-height: 300px;
+  min-height: 200px;
 }
-/* line 108, ../sass/_base.sass */
+/* line 117, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__title-text {
   font-size: 36px;
 }
-/* line 111, ../sass/_base.sass */
+/* line 120, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text {
   width: 100%;
   min-height: 130px;
 }
-/* line 114, ../sass/_base.sass */
+/* line 123, ../sass/_base.sass */
 .mdl-card .landing-card .mdl-card__supporting-text h1 {
   font-size: 36px;
 }
-/* line 117, ../sass/_base.sass */
+/* line 126, ../sass/_base.sass */
 .mdl-card .customize-card {
   background: url("../images/nnet_6.png") top 50% left 100% no-repeat #37474f;
   background-size: 240px 240px;
 }
-/* line 121, ../sass/_base.sass */
+/* line 130, ../sass/_base.sass */
 .mdl-card .train-card {
   background: url("../images/data_1.png") bottom 20% right 75% no-repeat #37474f;
   color: #EEF0F2;
 }
-/* line 125, ../sass/_base.sass */
+/* line 134, ../sass/_base.sass */
 .mdl-card .predict-card {
   background: url("../images/nnet_4.png") bottom 23% right 55% no-repeat #37474f;
   color: #37474f;
 }
 
-/* line 129, ../sass/_base.sass */
+/* line 138, ../sass/_base.sass */
 .mdl-card__actions {
   position: absolute;
   right: 0;
@@ -176,19 +188,23 @@ hr {
   color: #616161;
   padding: 12px 40px;
 }
-
 /* line 21, ../sass/sidebar.sass */
+.mdl-layout__drawer .mdl-navigation .fa {
+  color: #37474f;
+}
+
+/* line 24, ../sass/sidebar.sass */
 a {
   color: #37474f;
   text-decoration: none;
 }
-/* line 24, ../sass/sidebar.sass */
+/* line 27, ../sass/sidebar.sass */
 a.hover {
   color: #37474f;
   text-decoration: none;
 }
 
-/* line 29, ../sass/sidebar.sass */
+/* line 32, ../sass/sidebar.sass */
 .material-icons {
   color: #37474f;
 }

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
@@ -46,7 +47,7 @@
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title brand">
 		<a href="{{=URL('default', 'home')}}"> 
-			<img src="/tinyML/static/images/tinyML.png">
+			<img src="/tinyML/static/images/tinyML.svg">
 		
 		</a> 
 	</span>
@@ -58,13 +59,13 @@
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
              <i class="fa fa-2x fa-cogs"></i> Models
        </a>
-       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'activity')}}">
              <i class="fa fa-2x fa-line-chart"></i> Activity
        </a>
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
        </a>
-       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account')}}">
              <i class="fa fa-2x fa-user"></i> Account
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'tutorials')}}>
@@ -98,8 +99,7 @@
                   <th class="mdl-data-table__cell--non-numeric">ID</th>
                   <th class="mdl-data-table__cell--non-numeric">Type</th>
                   <th class="mdl-data-table__cell--non-numeric">Name</th>
-                  <th class="mdl-data-table__cell--non-numeric">Compiled</th>
-                  <th class="mdl-data-table__cell--non-numeric">Trained</th>
+                  <th class="mdl-data-table__cell hidden-sm hidden-xs">States</th>
                   <th class="mdl-data-table__cell--non-numeric">Status</th>
                 </tr>
               </thead>
@@ -108,50 +108,47 @@
                     <tr class="clickable-row" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}">
                       <td class="mdl-data-table__cell--non-numeric">{% id %}</td>
                       <td class="mdl-data-table__cell--non-numeric">{% mclass %}</td>
-                      <td class="mdl-data-table__cell--non-numeric">{% name_short %}..</td>
-                    {% #if compiled %}
-                      <td class="mdl-data-table__cell--non-numeric" style="text-align: center">
-                        <i style="color: #37474f" class="fa fa-2x fa-check"></i>
+                      <td class="mdl-data-table__cell--non-numeric">{% name %}</td>
+                      <td class="mdl-data-table__cell hidden-sm hidden-xs" style="padding: 8px 0px">
+						{% #if compiled %}                                                                                                
+						<span class="label label-primary"> compiled</span>
+						{% else %}
+						<span class="label label-warning"> un-compiled</span>
+						{% /if %}
+						{% #if trained  %}
+						<span class="label label-primary"> trained</span>
+						{% else %}
+						<span class="label label-warning"> un-trained</span>
+						{% /if %}
                       </td>
-                    {% else %}
-                      <td class="mdl-data-table__cell--non-numeric" style="text-align: center">
-                        <i style="color: #bbb" class="fa fa-2x fa-close"></i>
-                      </td>
-                    {% /if %}
-                    {% #if trained %}
-                      <td class="mdl-data-table__cell--non-numeric" style="text-align: center">
-                        <i style="color: #37474f" class="fa fa-2x fa-check"></i>
-                      </td>
-                    {% else %}
-                      <td class="mdl-data-table__cell--non-numeric" style="text-align: center">
-                        <i style="color: #bbb" class="fa fa-2x fa-close"></i>
-                      </td>
-                    {% /if %}
+
+                      <td class="mdl-data-table__cell--non-numeric" style="padding: 11px 0px">
                     {% #if status == "predicting" %}
-                      <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: green" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-                      </td>
+						<span class="label label-blue">
+							 <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+						</span>
                     {% /if %}
                     {% #if status == "idle" %}
-                      <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
-                      </td>
+						<span class="label label-green">
+                        <i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
+						</span>
                     {% /if %}
                     {% #if status == "broken" %}
-                      <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: red" class="fa fa-2x fa-exclamation"></i> {% status %}
-                      </td>
+						<span class="label label-red">
+                        <i style="color: white" class="fa fa-2x fa-exclamation"></i> {% status %}
+						</span>
                     {% /if %}
                     {% #if status == "training" %}
-                      <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: #37474f" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-                      </td>
+						<span class="label label-blue">
+                        <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+						</span>
                     {% /if %}
                     {% #if status == "compiling" %}
-                      <td class="mdl-data-table__cell--non-numeric">
-                        <i style="color: #78909C" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-                      </td>
+						<span class="label label-light-blue">
+                        <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+						</span>
                     {% /if %}
+                      </td>
                     </tr>
                 {% /each %}
               </tbody>
@@ -201,36 +198,44 @@
                   <th class="mdl-data-table__cell--non-numeric">Model</th>
                   <th class="mdl-data-table__cell--non-numeric">Type</th>
                   <th class="mdl-data-table__cell--non-numeric">Status</th>
+                  <th class="mdl-data-table__cell--non-numeric hidden-sm hidden-xs">Output</th>
                 </tr>
               </thead>
               <tbody>
                 {% #each transactions %}
-                    <tr class='clickable-row' data-href="{{=URL('dashboard', 'model', args=['{% id %}'])}}">
-                      <td class="mdl-data-table__cell--non-numeric">{% uuid_short %}...</td>
-                      <td class="mdl-data-table__cell--non-numeric">{% model_name_short %}..</td>
+                    <tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}/{% id %}">
+                      <td class="mdl-data-table__cell--non-numeric">{% id %}</td>
+                      <td class="mdl-data-table__cell--non-numeric">{% model_name %}</td>
                       <td class="mdl-data-table__cell--non-numeric">{% tclass %}</td>
                         {% #if status == "active" %}
                           <td class="mdl-data-table__cell--non-numeric">
-                            <i style="color: #37474f" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+							<span class="label label-light-blue">
+								<i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+							</span>
                           </td>
                         {% /if %}
                         {% #if status == "failed" %}
                           <td class="mdl-data-table__cell--non-numeric">
-                            <i style="color: red" class="fa fa-2x fa-cog fa-exclamation-triangle"></i> {% status %}
+							<span class="label label-red">
+								<i style="color: white" class="fa fa-2x fa-cog fa-exclamation"></i> {% status %}
+							</span>
                           </td>
                         {% /if %}
                         {% #if status == "success" %}
                           <td class="mdl-data-table__cell--non-numeric">
-                            <i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
+							<span class="label label-green">
+								<i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
+							</span>
                           </td>
                         {% /if %}
+                      <td class="mdl-data-table__cell--non-numeric hidden-sm hidden-xs"><small>{% tresult_short %}</small></td>
                     </tr>
                 {% /each %}
               </tbody>
             </table>
                 <div class="mdl-card__menu" >
                 <button data-board-id="{% board_id %}" id="view_trs"
-                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="removeBoard">
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="go_activity">
                       <i class="material-icons">open_in_new</i>
                 </button>
                 <div class="mdl-tooltip" for="view_trs">
@@ -243,7 +248,7 @@
 
         <div class="flex-card mdl-card mdl-shadow--2dp">
           <div class="mdl-card__title mdl-card--border">
-             <h1 class="mdl-card__title-text">Quick Request</h1>
+             <h1 class="mdl-card__title-text">Quick Predict</h1>
           </div>
           <div class="mdl-card__supporting-text">
 			<label for="name-sel">Model</label>
@@ -255,7 +260,7 @@
 				{% /models %}
 			  </select>
 			</div>
-				<label for="file-sel">Select File (.csv)</label>
+            <label for="file-sel">Select File (.csv)</label>
 			<div class="input-group">
 				<span class="input-group-btn">
 					<button class="btn btn-primary btn-file">
@@ -296,6 +301,7 @@ var murl = "{{=murl}}";
 var turl="{{=turl}}";
 var create_url = "{{=URL('dashboard', 'create', vars={'tab' : 'new'}) }}" 
 var models_url = "{{=URL('dashboard', 'models', vars={'page' : '1'}) }}" 
+var activity_url = "{{=URL('dashboard', 'activity', vars={'page' : '1'}) }}" 
 </script>
 <script src="{{=URL('static', 'js/scripts/common.js')}}"></script>
 <script src="{{=URL('static', 'js/scripts/dashboard.js')}}"></script>

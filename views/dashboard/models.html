@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
     <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
@@ -46,7 +47,7 @@
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title brand">                                                                                         
         <a href="{{=URL('default', 'home')}}"> 
-            <img src="/tinyML/static/images/tinyML.png">
+            <img src="/tinyML/static/images/tinyML.svg">
         </a> 
     </span>
 
@@ -58,13 +59,13 @@
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
              <i class="fa fa-2x fa-cogs"></i> Models
        </a>
-       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'activity')}}">
              <i class="fa fa-2x fa-line-chart"></i> Activity
        </a>
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
              <i class="fa fa-2x fa-plus-circle"></i> Create
        </a>
-       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account')}}">
              <i class="fa fa-2x fa-user"></i> Account
        </a>
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'tutorials')}}>
@@ -91,10 +92,7 @@
              <h1 class="mdl-card__title-text">Models </h1>
           </div>
         {% #each models %}
-          <div class="mdl-grid">
-           <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone" style="margin:0">
-          <div class="clickable-row mdl-card--border" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}" >
-          <div class="clickable-row" >
+          <div class="mdl-card__supporting-text clickable-row mdl-card--border" on-click="clickrow" data-href="{{=URL('dashboard', 'model')}}/{% id %}" >
              <h4 class="" >
 				<span style="width:450px">
                 <span style="color: #aaa; padding-left: 0px;padding-right: 10px; font-size: 12px"> 
@@ -103,31 +101,42 @@
                 {% name %}
                 </span>
             </h4>
-          </div>
 
 			<div style="font-size: 12px;padding-left: 25px;padding-top: 10px">
-                <span style="color: #aaa; font-size: 13px"> 
-                {% #if status == "predicting" %}
-                    <i style="color: green" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-                {% /if %}
-                {% #if status == "idle" %}
-					<i style="color: green" class="fa fa-2x fa-check"></i> {% status %}
-                {% /if %}
-                {% #if status == "training" %}
-                    <i style="color: #37474f" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-                {% /if %}
-                {% #if status == "compiling" %}
-                    <i style="color: #78909C" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-                {% /if %}
-                {% #if status == "broken" %}
-                    <i style="color: red" class="fa fa-2x fa-exclamation"></i> {% status %}
-                {% /if %}
-                </span>
+				 {% #if status == "predicting" %}
+					<span class="label label-blue">                                                                           
+						 <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+					</span>
+				  {% /if %}
+				  {% #if status == "idle" %}
+					<span class="label label-green">
+						<i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
+					</span>
+				  {% /if %}
+				  {% #if status == "broken" %}
+					<span class="label label-red">
+						<i style="color: white" class="fa fa-2x fa-exclamation"></i> {% status %}
+					</span>
+				  {% /if %}
+				  {% #if status == "training" %}
+					<span class="label label-blue">
+						<i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+					</span>
+				  {% /if %}
+				  {% #if status == "compiling" %}
+					<span class="label label-light-blue">
+						<i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+					</span>
+				  {% /if %}
                 {% #if compiled %}
-                <span class="label label-primary"> Compiled</span>
+                <span class="label label-primary"> compiled</span>
+				{% else %}
+                <span class="label label-warning"> un-compiled</span>
                 {% /if %}
                 {% #if trained  %}
-                <span class="label label-primary"> Trained</span>
+                <span class="label label-primary"> trained</span>
+				{% else %}
+                <span class="label label-warning"> un-trained</span>
                 {% /if %}
 			</div>
 			<div style="font-size: 12px;padding-left: 25px;padding-top: 10px">
@@ -136,8 +145,6 @@
 				  <strong>{% arch.num_inp %}</strong> inputs, <strong>{% arch.num_out %}</strong> outputs with an <strong>'{% arch.optimizer %}'</strong> optimizer and <strong>{% arch.lossfn %}</strong> loss function.
 			</div>
             </div>
-          </div>
-          </div>
           {% /each %}
 			<div class="mdl-card__menu" >
 			<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable

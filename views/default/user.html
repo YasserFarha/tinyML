@@ -1,35 +1,140 @@
-{{extend 'layout.html'}}
+<head>
 
-<h2>
-{{=T('Sign Up') if request.args(0) == 'register' else T('Log In') if request.args(0) == 'login' else T(request.args(0).replace('_',' ').title())}}
-</h2>
+    <!-- fonts and icons -->
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
-<div class="container">
-    <div class="row">
-        <div id="web2py_user_form" class="col-lg-6">
-        {{
-        if request.args(0)=='login':
-            if not 'register' in auth.settings.actions_disabled:
-                form.add_button(T('Sign Up'),URL(args='register', vars={'_next': request.vars._next} if request.vars._next else None),_class='btn btn-default')
-            pass
-            if not 'request_reset_password' in auth.settings.actions_disabled:
-                form.add_button(T('Lost Password'),URL(args='request_reset_password'),_class='btn btn-default')
-            pass
-        pass
-        =form
-        }}
+	<script language="JavaScript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+    <!-- reactive -->
+	<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+  
+    <!-- material design lite resources -->
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue_grey-red.min.css" />
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
+
+   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+
+      <!-- navbar -->
+      <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+
+          <span class="mdl-layout-title">Dashboard</span>
+          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                      mdl-textfield--floating-label mdl-textfield--align-right">
+          </div>
         </div>
+      </header>
+
+      <!-- sidebar -->
+      <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title brand">
+            <a href="{{=URL('default', 'home')}}"> 
+                <img src="/tinyML/static/images/tinyML.svg">
+            
+            </a> 
+        </span>
+        <hr>
+        <nav class="mdl-navigation">
+          {% #if logged_in %}
+            <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
+                 <i class="fa fa-2x fa-list-alt"></i> Dashboard
+           </a>
+            <hr>
+            <a class="mdl-navigation__link" href={{=URL('default', 'do_logout')}}>
+                 <i class="fa fa-2x fa-sign-out"></i> Logout
+           </a>
+          {% else %}
+           <a class="mdl-navigation__link" href={{=URL('default', 'do_login')}}>
+                 <i class="fa fa-2x fa-sign-in"></i> Login
+           </a>
+            <a class="mdl-navigation__link" href={{=URL('default', 'do_register')}}>
+                 <i class="fa fa-2x fa-user-plus"></i> Register
+            </a>
+          {% /if %}
+
+        </nav>
+      </div>
+
+
+      <!-- main content -->
+      <main class="mdl-layout__content">
+        <div class="page-content">
+
+        <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--3-col mdl-cell--1-col-tablet mdl-cell--0-col-phone"></div>
+        <div class="mdl-cell mdl-cell--6-col mdl-cell-4-col-tablet mdl-cell-4-col-phone mdl-shadow--2dp">
+          <div class="mdl-card flex-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text"> {{=T('Sign Up') if request.args(0) == 'register' else T('Log In') if request.args(0) == 'login' else T(request.args(0).replace('_',' ').title())}} </h1>
+          </div>
+          <div class="mdl-card__supporting-text">
+            <br>
+            <div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
+                    <div id="web2py_user_form">
+                    {{
+                    if request.args(0)=='login':
+                        if not 'register' in auth.settings.actions_disabled:
+                            form.add_button(T('Sign Up'),URL(args='register', vars={'_next': request.vars._next} if request.vars._next else None),_class='btn btn-default')
+                        pass
+                        if not 'request_reset_password' in auth.settings.actions_disabled:
+                            form.add_button(T('Lost Password'),URL(args='request_reset_password'),_class='btn btn-default')
+                        pass
+                    pass
+                    =form
+                    }}
+                    </div>
+            </div>
+          </div>
+        </div>
+
+            {{block page_js}}
+            <script>
+                jQuery("#web2py_user_form input:visible:enabled:first").focus();
+            {{if request.args(0)=='register':}}
+                web2py_validate_entropy(jQuery('#auth_user_password'),100);
+            {{elif request.args(0)=='change_password':}}
+                web2py_validate_entropy(jQuery('#no_table_new_password'),100);
+            {{pass}}
+            </script>
+            {{end page_js}}
+
+
+        </div> <!-- end inner grid -->
+
+      </main>
     </div>
-</div>
-
-
-{{block page_js}}
-<script>
-    jQuery("#web2py_user_form input:visible:enabled:first").focus();
-{{if request.args(0)=='register':}}
-    web2py_validate_entropy(jQuery('#auth_user_password'),100);
-{{elif request.args(0)=='change_password':}}
-    web2py_validate_entropy(jQuery('#no_table_new_password'),100);
-{{pass}}
 </script>
-{{end page_js}}
+
+<!-- include the reactive handling code -->
+<script src="{{=URL('static', 'js/scripts/common.js')}}"></script>
+<script>
+$(function() {
+    var MAIN = new Ractive({
+        el: '#target',
+        template: '#template',
+        delimiters: ['{%', '%}'],
+        tripleDelimiters: ['{%%', '%%}'],
+        data: {
+        },
+    });
+});
+</script>
+

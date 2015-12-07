@@ -1,0 +1,189 @@
+<head>
+
+    <!-- fonts and icons -->
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+	<script language="JavaScript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+    <!-- reactive -->
+	<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+
+    <!-- material design lite resources -->
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue_grey-red.min.css" />
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/sidebar.css')}}">
+    <link rel="stylesheet" href="{{=URL('static', 'stylesheets/content.css')}}">
+
+   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+
+<div id="target"></div>
+
+<script id="template" type="text/ractive">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+
+  <!-- navbar -->
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+
+      <span class="mdl-layout-title">Dashboard > <small> Model Request </small> </span>
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                  mdl-textfield--floating-label mdl-textfield--align-right">
+      </div>
+    </div>
+  </header>
+
+  <!-- sidebar -->
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title brand">
+		<a href="{{=URL('default', 'home')}}"> 
+			<img src="/tinyML/static/images/tinyML.svg">
+		
+		</a> 
+	</span>
+	<hr>
+    <nav class="mdl-navigation">
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'index')}}>
+             <i class="fa fa-2x fa-home"></i> Home
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
+             <i class="fa fa-2x fa-cogs"></i> Models
+       </a>
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+             <i class="fa fa-2x fa-line-chart"></i> Activity
+       </a>
+       <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
+             <i class="fa fa-2x fa-plus-circle"></i> Create
+       </a>
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+             <i class="fa fa-2x fa-user"></i> Account
+       </a>
+       <a class="mdl-navigation__link" href={{=URL('dashboard', 'tutorials')}}>
+             <i class="fa fa-2x fa-book"></i> Tutorials 
+       </a>
+        <hr>
+        <a class="mdl-navigation__link" href={{=URL('default', 'do_logout')}}>
+             <i class="fa fa-2x fa-sign-out"></i> Logout
+       </a>
+    </nav>
+  </div>
+
+
+  <!-- main content -->
+  <main class="mdl-layout__content">
+    <div class="page-content">
+
+    <div class="mdl-grid">
+
+        <div class="mdl-cell mdl-cell--1-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div> 
+        <div class="mdl-cell mdl-cell--10-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+        <br>
+          <div class=" mdl-card flex-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Model Request # {% transaction.id %}</h1>
+          </div>
+           <div class="mdl-card__supporting-text" style="padding: 4px">
+            <div class="mdl-grid" style="padding-top: 0">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                {% #transaction %}
+                  <h4> <small>Model </small> : {% model_name %}</h4>
+                  <h4> <small>Type </small> : {% tclass %}</h4>
+                  <h4> <small>Status </small> : 
+                    {% #if status == "active" %}
+                        <span class="label label-light-blue">
+                            <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+                        </span>
+                    {% /if %}
+                    {% #if status == "failed" %}
+                        <span class="label label-red">
+                            <i style="color: white" class="fa fa-2x fa-cog fa-exclamation"></i> {% status %}
+                        </span>
+                    {% /if %}
+                    {% #if status == "success" %}
+                        <span class="label label-green">
+                            <i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
+                        </span>
+                    {% /if %}
+                    </h4>
+                
+                  <h4> <small>Output </small> : {% tresult_short %}</h4>
+                {% /transaction %}
+                <hr>
+               </div>
+             </div>
+            </div>
+            <div class="mdl-card__menu" >
+                <button data-board-id="{% board_id %}" id="prev_page"
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="page_prev">
+                      <i class="material-icons">arrow_back</i>
+                </button>
+                {% cpage %}
+                <button data-board-id="{% board_id %}" id="nxt_page"
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="page_nxt">
+                      <i class="material-icons">arrow_forward</i>
+                </button>
+                <div class="mdl-tooltip" for="prev_page">
+                    <strong>prev page</strong>
+                </div>
+                <div class="mdl-tooltip" for="nxt_page">
+                    <strong>next page</strong>
+                </div>
+            </div>
+            </div>
+
+
+
+        <br>
+
+          <div class=" mdl-card flex-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Details</h1>
+          </div>
+           <div class="mdl-card__supporting-text" style="padding: 4px">
+            <div class="mdl-grid" style="padding-top: 0">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                {% #transaction %}
+                <h4> Output : </h4>
+                {% output_payload.output %}
+                <h4> Logs: </h4>
+                <ul class="list-unstyled">
+                {% #each transaction.output_payload.logs:i %}
+                    <li> {% i+1 %} <code>{% transaction.output_payload.logs[i] %}</code></li>
+                {% /each %}
+                </ul>
+                {% /transaction %}
+                </div>
+                </div>
+                </div>
+          </div>
+          </div>
+          </div>
+
+        </div> <!-- end inner grid -->
+
+  </main>
+</div>
+</script>
+
+<!-- include the reactive handling code -->
+<script>
+var logged_in = {{=logged_in }};
+var user_id = {{=user_id }};
+var murl = "{{=murl}}";
+var mdurl = "{{=mdurl}}";
+var turl="{{=turl}}";
+var tdurl = "{{=tdurl}}";
+var trans_id = {{=trans_id}};
+</script>
+<script src="{{=URL('static', 'js/scripts/common.js')}}"></script>
+<script src="{{=URL('static', 'js/scripts/dbrequest.js')}}"></script>

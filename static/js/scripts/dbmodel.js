@@ -13,9 +13,11 @@ $(function() {
             transactions: [],
             current_tab: "train",
             train_payload: default_tpayload(),
-            predict_payload: default_epayload(),
-            eval_payload: default_ppayload(),
+            predict_payload: default_ppayload(),
+            eval_payload: default_epayload(),
             mdurl: mdurl,
+            saved_labels: [],
+            saved_input: [],
             turl: turl
         },
     });
@@ -32,18 +34,40 @@ $(function() {
     return {
         "max_epochs": 256,
         "max_batch_size": 1000,
-        "input" : {},
-        "labels" : {},
+        "input" : {
+            "upload" : true,
+            "name" : "",
+            "save" : false,
+            "data" : {}
+        },
+        "labels" : {
+            "upload" : true,
+            "name" : "",
+            "save" : false,
+            "data" : {}
+        },
         "batch_size": 128,
         "nb_epoch": 100,
-        "valid_split" : 80,
+        "valid_split" : 15,
         "shuffle" : "batch"
     }
   }
 
   function default_epayload() {
     return {
-        "input" : {},
+        "input" : {
+            "upload" : true,
+            "name" : "",
+            "save" : false,
+            "data" : {}
+        },
+        "labels" : {
+            "upload" : true,
+            "name" : "",
+            "save" : false,
+            "data" : {}
+        },
+        "max_batch_size": 1000,
         "labels" : {},
         "batch_size": 128
     }
@@ -51,7 +75,13 @@ $(function() {
 
   function default_ppayload() {
     return {
-        "input" : {},
+        "input" : {
+            "upload" : true,
+            "name" : "",
+            "save" : false,
+            "data" : {}
+        },
+        "max_batch_size": 1000,
         "batch_size": 128
     }
   }
@@ -68,6 +98,15 @@ $(function() {
   }, 3000);
 
 
+  MAIN.on("train_model", function(e) {
+    var tp = MAIN.get('train_payload');
+    var tfiles = $("#train-input-file").prop('files');
+    var lfiles = $("#train-label-file").prop('files');
+    console.log(tfiles);
+    console.log(lfiles);
+
+  });
+
   MAIN.on("edit_model", function(e) {                                                                                            
      window.document.location = create_url;
   });
@@ -76,6 +115,24 @@ $(function() {
     MAIN.on("clickrow", function(e) {
         id = $(e.node).data('href');
         window.document.location = id
+    });
+
+    MAIN.on("clearAll", function(e) {
+        id = $(e.node).data('clear-id');
+        if(id === "train") {
+            tp = MAIN.get('train_payload');
+            tpn = default_tpayload();
+            tp.input = tpn.input;
+            tp.labels = tpn.labels;
+            tp = tpn;
+            MAIN.set('train_payload', tp);
+        }
+        console.log(componentHandler.upgradeDom());
+    });
+
+
+    MAIN.on("go_activity", function(e) {
+        window.document.location = "/tinyML/dashboard/activity?mid="+MAIN.get('model_id')
     });
 
   var vars = getUrlVars();                                                                                                        
@@ -105,6 +162,17 @@ $(function() {
      MAIN.on("set_predict_panel", function(e) { 
          MAIN.set('current_tab', "predict");
      }); 
+
+    MAIN.on("checkBox", function(e) {
+        var mdl = {};
+        type = $(e.node).data('box-name');
+        if(type === "train-input-box") {
+            MAIN.set('train_payload.input.save', !MAIN.get('train_payload.input.save')); 
+        }
+        if(type === "train-labels-box") {
+            MAIN.set('train_payload.labels.save', !MAIN.get('train_payload.labels.save')); 
+        }
+    });
 
 
 });

@@ -11,35 +11,99 @@ import numpy as np
 import theano, sys, json, datetime
 from sys import stderr, stdout
 
+
+output_payload = {
+    "abstract" : "Executing Recompilation Sequence...",
+    "logs" : [],
+    "output" : []
+}
 tlogs = []
-logstr = lambda x: tlogs.append(x) or stderr.write(str(x)) or stderr.write("\n");
+dbmodel = {}
+dbt = {}
+
+# logstr = lambda x: tlogs.append(  str(datetime.datetime.now())+" : " +x) or stderr.write(str(x)+"\n")
+
+def logheader(trs) :
+    global output_payload
+    global tlogs
+    global dbmodel
+    global dbt
+    lstr = ["Model Compilation Request : %s" % trs.model_name]
+    lstr.append("Started at : " +str(datetime.datetime.now())[:-3])
+    lstr.append("-"*80)
+    tlogs = lstr + tlogs
+    stderr.write(str(lstr)+"\n")
+    output_payload['logs'] = tlogs
+    trs.update_record(
+        output_payload = json.dumps(output_payload)
+    )
+    db.commit()
+
+def logfooter(trs) :
+    global output_payload
+    global tlogs
+    global dbmodel
+    global dbt
+    lstr = ["-"*80]
+    lstr.append("Model Compilation Request : %s" % trs.model_name)
+    lstr.append("Finished at : " +str(datetime.datetime.now())[:-3])
+    tlogs = tlogs + lstr
+    stderr.write(str(lstr)+"\n")
+    output_payload['logs'] = tlogs
+    trs.update_record(
+        output_payload = json.dumps(output_payload)
+    )
+    db.commit()
+
+def logstr(trs, x) :
+    global output_payload
+    global tlogs
+    global dbmodel
+    global dbt
+    lstr = str(datetime.datetime.now()).split(" ")[1][:-3]+" : "+str(x)
+    stderr.write(str(x)+"\n")
+    tlogs.append(lstr)
+    output_payload['logs'] = tlogs
+    trs.update_record(
+        output_payload = json.dumps(output_payload)
+    )
+    db.commit()
 
 
 def compile_model(mid, tid) :
+    global output_payload
+    global tlogs
+    global dbmodel
+    global dbt
     try :
-        logstr("Attempting Model Compilation, ID (%s)"%str(mid));
         dbmodel = db(db.models.id == mid).select().first()
+        dbt = db(db.transactions.id == int(tid)).select().first()
+
+        logheader(dbt)
+        logstr(dbt, "Attempting Model Compilation, ID (%s)"%str(mid));
+
         arch = json.loads(dbmodel.arch)
         layers = arch['layer_dicts']
 
-        logstr("Creating Sequential Model...");
+        logstr(dbt,"Creating Sequential Model...");
         mdl = Sequential()
-        logstr("Sequential Model Created, Adding Layers...");
+        logstr(dbt, "Sequential Model Created, Adding Layers...");
         
         if not len(layers): return False
         mdl = add_layer(mdl, layers[0], arch, first=True, last=len(layers) == 1)
-        logstr("First Layer Added")
+        logstr(dbt, "First Layer Added")
         for i in range(1, len(layers)-1) :
-            logstr("Layer %s Added"%str(i+1))
+            logstr(dbt, "Layer %s Added"%str(i+1))
             mdl = add_layer(mdl, layers[i], arch)
         if not len(layers) <= 1:
             mdl = add_layer(mdl, layers[len(layers)-1], arch, first=False, last=True)
+            logstr(dbt, "Last Layer Added")
 
-        logstr("Compiling Model....")
+        logstr(dbt, "Compiling Model....")
         mdl.compile(loss=arch['lossfn'], optimizer=arch['optimizer'])
-        logstr("Model Compiled Successfully.")
+        logstr(dbt, "Model Compiled Successfully.")
 
-        logstr("Updating Model and Transaction Records.")
+        logstr(dbt, "Updating Model and Transaction Records.")
         dbmodel.update_record(
             status = "idle",
             arch_json = mdl.to_json(),
@@ -47,25 +111,27 @@ def compile_model(mid, tid) :
             compiled = True
        ) 
         db.commit()
-        logstr("Model Saved to DB")
+        logstr(dbt, "Model Saved to DB")
 
         dbt = db(db.transactions.id == int(tid)).select().first()
+
+
+        output_payload['abstract'] = "Model Compiled Successfully."
+        output_payload['logs'] = tlogs
+        output_payload['output'].append("Model (%s) was compiled successfully at (%s)."%(dbmodel.name, str(dbmodel.updated_at)))
         dbt.update_record(
             status = "success",
             finished_at = datetime.datetime.now(),
-            output_payload = json.dumps({
-                    "abstract": "Model Compiled Successfully.",  
-                    "logs": tlogs,
-                    "output": "Model (%s) was compiled successfully at (%s)."%(dbmodel.name, str(dbmodel.updated_at))
-            })
+            output_payload = json.dumps(output_payload)
 		)
 
-        logstr("Transaction Saved to DB")
+        logfooter(dbt)
 
         db.commit()
     except Exception as e :
-        logstr("Compile Failed : %s" % str(e))
         dbmodel = db(db.models.id == mid).select().first()
+        dbt = db(db.transactions.id == int(tid)).select().first()
+        logstr(dbt, "Compile Failed : %s" % str(e))
         dbmodel.update_record(
             status = "broken",
             arch_json = "", #mdl.to_json(),
@@ -74,25 +140,30 @@ def compile_model(mid, tid) :
             trained = False
        ) 
         db.commit()
-        logstr("Exception while Compiling Model (%s)" % str(dbmodel.name))
+        logstr(dbt, "Exception while Compiling Model (%s)" % str(dbmodel.name))
 
-        dbt = db(db.transactions.id == int(tid)).select().first()
+        logstr(dbt, "Error noted and Transaction marked as failed");
+
+        logstr(dbt, "Transaction Failure Saved in DB");
+        logfooter(dbt)
         dbt.update_record(
             status = "failed",
             finished_at = datetime.datetime.now(),
             output_payload = json.dumps({
 					"abstract": "Error While Compiling. (%s)" % (str(e)),
-                    "abstract": "Model Compiled Successfully.",  
                     "logs": tlogs,
-                    "output": "Error was experienced while compiling model (%s). Full error output:  (%s)."%(dbmodel.name, str(e))
+                    "output": ["Error was experienced while compiling model (%s)."%(dbmodel.name), "Full error output:  (%s)."%(str(e))]
             })
 		)
         db.commit()
-        logstr("Error noted and Transaction marked as failed");
 
 
 
 def add_layer(mdl, ld, arch, first=False, last=False) :
+    global output_payload
+    global tlogs
+    global dbmodel
+    global dbt
     num_inp = arch['num_inp']
     num_out = arch['num_out']
     if ld['type'] == 'dense' :
@@ -103,7 +174,7 @@ def add_layer(mdl, ld, arch, first=False, last=False) :
 
     try :
         if ld['type'] == 'convolutional' :
-            logstr("Adding convolutional layer")
+            logstr(dbt, "Adding convolutional layer")
             if first : mdl.add(Convolution1D(ld['nodes'], filter_length=3, input_dim=num_inp, init=ld['init']))
             elif last : mdl.add(Convolution1D(num_out, filter_length=3, init=ld['init']))
             else: mdl.add(Convolution1D(ld['nodes'], filter_length=3, input_dim=ld['num_inp'], init=ld['init']))

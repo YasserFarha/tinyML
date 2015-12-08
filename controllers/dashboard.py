@@ -118,8 +118,13 @@ def add_model():
             "tclass": "create",
             "uuid" : uuid.uuid4(),
             "creator" : auth.user_id,
+            "input_payload": json.dumps({
+                    "name" : name,
+                    "mclass" : mclass,
+                    "arch": json.loads(arch)
+            }),
             "output_payload": json.dumps({
-                    "abstract": "Compiling New Model...",
+                    "abstract": "Enqueing New Compilation Request...",
                     "logs": [],
                     "output": []
             }),
@@ -161,8 +166,13 @@ def edit_model():
             "uuid" : uuid.uuid4(),
             "creator" : auth.user_id,
             "model" : model,
+            "input_payload": json.dumps({
+                    "name" : name,
+                    "mclass" : mclass,
+                    "arch": json.loads(arch)
+            }),
             "output_payload": json.dumps({
-                    "abstract": "Recompiling Model From Scratch...",
+                    "abstract": "Enqueing Recompilation Request...",
                     "logs": [],
                     "output": []
             }),
@@ -199,7 +209,11 @@ def load_transaction():
         raise HTTP(404,"Transaction not found or innaccesable.")
         
     tr = db(db.transactions.creator == auth.user_id and db.transactions.id == int(tid)).select().first()
-    return response.json(dict(transaction=tr))
+    trn = db(db.transactions.creator == auth.user_id and db.transactions.id > int(tid)).select().first()
+    trp = db(db.transactions.creator == auth.user_id and db.transactions.id < int(tid)).select(orderby=~db.transactions.id).first()
+    trn = trn.id if trn else -1
+    trp = trp.id if trp else -1
+    return response.json(dict(transaction=tr, tnext=trn, tprev=trp))
 
 def do_logout() :
     redirect(URL('default', 'user', args=['logout']))

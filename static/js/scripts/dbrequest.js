@@ -14,12 +14,16 @@ $(function() {
             tdurl: tdurl,
             murl: murl,
             mdurl: mdurl,
+            tnext: -1, tprev: -1,
             cpage : 1
         },
     });
 
-    setInterval(function() { load_transaction(MAIN, trans_id, function(data) {
+    setInterval(function() { load_transaction(MAIN, MAIN.get('trans_id'), function(data) {
+            console.log(data);
             MAIN.set('transaction', data['transaction']);
+            MAIN.set('tnext', data['tnext']);
+            MAIN.set('tprev', data['tprev']);
         });
 	 }, 3000);
 
@@ -37,21 +41,38 @@ $(function() {
     });
 
     MAIN.on("page_prev", function(e) {
-        MAIN.set('cpage', MAIN.get('cpage')-1);
-        load_transaction(MAIN, trans_id, function(data) {
+        console.log("prev request : " + MAIN.get('tprev'));
+        if(MAIN.get('tprev') < 0) {
+            return;
+        }
+        MAIN.set('trans_id', MAIN.get('tprev'));
+        load_transaction(MAIN, MAIN.get('trans_id'), function(data) {
+            console.log(data);
             MAIN.set('transaction', data['transaction']);
+            MAIN.set('tnext', data['tnext']);
+            MAIN.set('tprev', data['tprev']);
         });
     });
     MAIN.on("page_nxt", function(e) {
-        MAIN.set('cpage', MAIN.get('cpage')+1);
-        load_transaction(MAIN, trans_id, function(data) {
+        console.log("prev request : " + MAIN.get('tnext'));
+        if(MAIN.get('tnext') < 0) {
+            return;
+        }
+        MAIN.set('trans_id', MAIN.get('tnext'));
+        load_transaction(MAIN, MAIN.get('trans_id'), function(data) {
+            console.log(data);
             MAIN.set('transaction', data['transaction']);
+            MAIN.set('tnext', data['tnext']);
+            MAIN.set('tprev', data['tprev']);
         });
     });
 
 
-    load_transaction(MAIN, trans_id, function(data) {
+    load_transaction(MAIN, MAIN.get('trans_id'), function(data) {
+        console.log(data);
         MAIN.set('transaction', data['transaction']);
+        MAIN.set('tnext', data['tnext']);
+        MAIN.set('tprev', data['tprev']);
     });
 
 

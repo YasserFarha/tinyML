@@ -59,7 +59,7 @@
        <a class="mdl-navigation__link" href={{=URL('dashboard', 'models')}}>
              <i class="fa fa-2x fa-cogs"></i> Models
        </a>
-       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'account', user_signature=True)}}">
+       <a class="mdl-navigation__link" href="{{=URL('dashboard', 'activity' )}}">
              <i class="fa fa-2x fa-line-chart"></i> Activity
        </a>
        <a class="mdl-navigation__link mdl-js-ripple-effect" href={{=URL('dashboard', 'create')}}>
@@ -90,81 +90,138 @@
         <br>
           <div class=" mdl-card flex-card mdl-shadow--2dp">
           <div class="mdl-card__title mdl-card--border">
-             <h1 class="mdl-card__title-text">Model Request # {% transaction.id %}</h1>
+             <h1 class="mdl-card__title-text">Request # {% transaction.id %}</h1>
           </div>
            <div class="mdl-card__supporting-text" style="padding: 4px">
             <div class="mdl-grid" style="padding-top: 0">
             <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
                 {% #transaction %}
-                  <h4> <small>Model </small> : {% model_name %}</h4>
-                  <h4> <small>Type </small> : {% tclass %}</h4>
-                  <h4> <small>Status </small> : 
-                    {% #if status == "active" %}
-                        <span class="label label-light-blue">
-                            <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-                        </span>
-                    {% /if %}
-                    {% #if status == "failed" %}
-                        <span class="label label-red">
-                            <i style="color: white" class="fa fa-2x fa-cog fa-exclamation"></i> {% status %}
-                        </span>
-                    {% /if %}
-                    {% #if status == "success" %}
-                        <span class="label label-green">
-                            <i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
-                        </span>
-                    {% /if %}
-                    </h4>
+
+                  <h5>
+                    <strong>{% tclass %}</strong> 
+                    request for model <a href="{{=URL('dashboard', 'model')}}/{% model %}"> {% model_name %}</a>.
+                  </h5>
+                  <p>Request Abstract : {% tresult %} </p>
                 
-                  <h4> <small>Output </small> : {% tresult_short %}</h4>
                 {% /transaction %}
-                <hr>
                </div>
              </div>
             </div>
+
             <div class="mdl-card__menu" >
                 <button data-board-id="{% board_id %}" id="prev_page"
                         class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="page_prev">
                       <i class="material-icons">arrow_back</i>
                 </button>
-                {% cpage %}
+                {% trans_id %}
                 <button data-board-id="{% board_id %}" id="nxt_page"
                         class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="page_nxt">
                       <i class="material-icons">arrow_forward</i>
                 </button>
                 <div class="mdl-tooltip" for="prev_page">
-                    <strong>prev page</strong>
+                    <strong>prev request</strong>
                 </div>
                 <div class="mdl-tooltip" for="nxt_page">
-                    <strong>next page</strong>
+                    <strong>next request</strong>
                 </div>
             </div>
+
+
+            <div class="mdl-card__actions mdl-card--border">
+            <div class="mdl-grid" style="padding-top: 0">
+              {% #transaction %}
+              <div class="mdl-cell mdl-cell--10-col mdl-cell--7-col-tablet mdl-cell--3-col-phone" style="margin-top:10px">
+                {% #if status == "active" %}
+                    <span class="label label-light-blue">
+                        <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+                    </span>
+                {% /if %}
+                {% #if status == "failed" %}
+                    <span class="label label-red">
+                        <i style="color: white" class="fa fa-2x fa-cog fa-exclamation"></i> {% status %}
+                    </span>
+                {% /if %}
+                {% #if status == "success" %}
+                    <span class="label label-green">
+                        <i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
+                    </span>
+                {% /if %}
+              </div>
+              <div class="mdl-cell mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--1-col-phone" style="margin:0px">
+                <button data-board-id="{% board_id %}" id="download_file"
+                        class="pull-right mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="download_file">
+                      <i class="material-icons">file_download</i>
+                </button>
+             </div>
+             {% /transaction %}
+           </div>
+           </div>
+
+            </div>
+            <div class="mdl-tooltip" for="download_file">
+                <strong>Download Request</strong>
             </div>
 
+        <br>
+
+          <div class=" mdl-card flex-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Input Payload</h1>
+          </div>
+           <div class="mdl-card__supporting-text" style="padding: 4px">
+            <div class="mdl-grid" style="padding-top: 0">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                {% #transaction %}
+                <ul class="list-unstyled" style="width:100%">
+                {% #each transaction.input_payload:i %}
+                <li><span>{% @key %}</span> - {% this %} </li>
+                {% /each %}
+                </ul>
+                {% /transaction %}
+            </div>
+            </div>
+          </div>
+          </div>
 
 
         <br>
 
           <div class=" mdl-card flex-card mdl-shadow--2dp">
           <div class="mdl-card__title mdl-card--border">
-             <h1 class="mdl-card__title-text">Details</h1>
+             <h1 class="mdl-card__title-text">Outputs</h1>
           </div>
            <div class="mdl-card__supporting-text" style="padding: 4px">
             <div class="mdl-grid" style="padding-top: 0">
             <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
                 {% #transaction %}
-                <h4> Output : </h4>
-                {% output_payload.output %}
-                <h4> Logs: </h4>
-                <ul class="list-unstyled">
-                {% #each transaction.output_payload.logs:i %}
-                    <li> {% i+1 %} <code>{% transaction.output_payload.logs[i] %}</code></li>
+                <ul class="list-unstyled" style="width:100%">
+                {% #each transaction.output_payload.output:i %}
+                <li>{% i+1 %}.) {% output_payload.output[i] %}</li>
                 {% /each %}
                 </ul>
                 {% /transaction %}
-                </div>
-                </div>
-                </div>
+            </div>
+            </div>
+          </div>
+          </div>
+
+        <br>
+
+
+
+          <div class=" mdl-card flex-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Logs</h1>
+          </div>
+                {% #transaction %}
+                <pre  class="pull-left" style="text-align: left">
+                <code>
+                {% #each transaction.output_payload.logs:i %}
+                    {% transaction.output_payload.logs[i] %}
+                {% /each %}
+                </code>
+                </pre>
+                {% /transaction %}
           </div>
           </div>
           </div>

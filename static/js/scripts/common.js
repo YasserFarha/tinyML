@@ -41,6 +41,7 @@ function load_transactions(MAIN, page, page_size, callback) {
         for(var i = 0; i < data['transactions'].length; i++) {
           data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8);
           data['transactions'][i]['output_payload'] = JSON.parse(data['transactions'][i]['output_payload']);
+          data['transactions'][i]['input_payload'] = JSON.parse(data['transactions'][i]['input_payload']);
         }
         callback(data);
       }
@@ -55,6 +56,7 @@ function load_transaction(MAIN, tid, callback) {
         if(data['transaction']) {
           data['transaction']['uuid_short'] = data['transaction']['uuid'].substring(0, 8)
           data['transaction']['output_payload'] = JSON.parse(data['transaction']['output_payload'])
+          data['transaction']['input_payload'] = JSON.parse(data['transaction']['input_payload'])
         }
         callback(data);
       }
@@ -68,6 +70,8 @@ function load_transactions_id(MAIN, id,  page, page_size, callback) {
       success: function (data) { 
         for(var i = 0; i < data['transactions'].length; i++) {
           data['transactions'][i]['uuid_short'] = data['transactions'][i]['uuid'].substring(0, 8)
+          data['transactions'][i]['output_payload'] = JSON.parse(data['transactions'][i]['output_payload']);
+          data['transactions'][i]['input_payload'] = JSON.parse(data['transactions'][i]['input_payload']);
         }
         callback(data);
       }

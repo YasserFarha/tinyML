@@ -13,9 +13,12 @@ $(function() {
             tdurl: tdurl,
             murl: murl,
             mdurl: mdurl,
+			mid: -1,
             cpage : 1
         },
     });
+
+
     setInterval(function() { 
         load_models(MAIN, 1, 6, function(data) { 
             for(var i = 0; i < data['models'].length; i++) {
@@ -26,10 +29,24 @@ $(function() {
         });
      }, 2000);
 
-    setInterval(function() { load_transactions(MAIN, MAIN.get('cpage'), 25, function(data) {
-            MAIN.set('transactions', data['transactions']);
-        });
-	 }, 3000);
+    setInterval(loadtrs, 3000);
+
+    function loadtrs() {
+        console.log("loadtrs" + MAIN.get('mid'));
+        if(MAIN.get('mid') > 0) {
+            console.log("MID DET loadtrs" + MAIN.get('mid'));
+            load_transactions_id(MAIN, parseInt(MAIN.get('mid')), MAIN.get('cpage'), 25, function(data) {
+                MAIN.set('transactions', data['transactions']);
+            });
+        }
+        else { 
+            console.log("NO MID DET loadtrs" + MAIN.get('mid'));
+            load_transactions(MAIN, MAIN.get('cpage'), 25, function(data) {
+                MAIN.set('transactions', data['transactions']);
+            });
+        }
+    }
+
 
     MAIN.on("clickrow", function(e) {
         id = $(e.node).data('href');
@@ -46,15 +63,11 @@ $(function() {
 
     MAIN.on("page_prev", function(e) {
         MAIN.set('cpage', MAIN.get('cpage')-1);
-        load_transactions(MAIN, MAIN.get('cpage'), 25, function(data) {  
-          MAIN.set('transactions', data['transactions']);
-        });
+        loadtrs();
     });
     MAIN.on("page_nxt", function(e) {
         MAIN.set('cpage', MAIN.get('cpage')+1);
-          load_transactions(MAIN, MAIN.get('cpage'), 25, function(data) {  
-            MAIN.set('transactions', data['transactions']);
-          });
+        loadtrs();
     });
 
 
@@ -66,9 +79,14 @@ $(function() {
         models = MAIN.get('models')
   });
 
-  load_transactions(MAIN, MAIN.get('cpage'), 25, function(data) {  
-    MAIN.set('transactions', data['transactions']);
-  });
+  var vars = getUrlVars();                                                                                                        
+
+  if(vars && vars['mid']) {
+	MAIN.set('mid', vars['mid']);
+  }
+
+
+  loadtrs();
 
 
 });

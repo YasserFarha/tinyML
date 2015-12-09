@@ -374,7 +374,7 @@
 					</div>
 
 						<hr>
-					 {% #if model.compiled || model.compiled == "True" %}
+					 {% #if model.compiled && model.status == "idle" %}
 						<div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
 						<div class="mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
 							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="train_model">
@@ -392,6 +392,26 @@
 						<div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
 						<br><br><br> <br>
 						<small style="padding-left:20px"> <span style="color: green">Info!</span> Your model is compiling, afterwards you can train it. </small>
+					  {% elseif model.status === "training"  %}
+						<div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<div class="mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="train_model" disabled>
+							Train	
+							</button>
+						</div>
+						<div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<br><br><br> <br>
+						<small style="padding-left:20px"> <span style="color: green">Info!</span> Your model is currently being trained. </small>
+					  {% elseif model.status === "predicting" || model.status == "evaluating" %}
+						<div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<div class="mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="train_model" disabled>
+							Train	
+							</button>
+						</div>
+						<div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<br><br><br> <br>
+						<small style="padding-left:20px"> <span style="color: green">Info!</span> Your model is currently being predicting or evaluating, wait for this task to finish first. </small>
 					  {% else %}
 						<div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
 						<div class="mdl-cell mdl-cell--8-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">

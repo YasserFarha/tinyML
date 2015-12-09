@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import uuid
 from sys import stderr
-import task_lib, json, csv
+import json, csv
 from werkzeug import secure_filename
 import os
 
@@ -87,7 +87,10 @@ def add_model():
 
         trs = db(db.transactions.uuid == trs['uuid']).select().first()
 
-        print scheduler.queue_task(task_lib.compile_model, pvars=dict(mid=model.id, tid=str(trs.id)), timeout=3600, retry_failed=5)
+        print scheduler.queue_task(compile_model,
+                                   pvars=dict(mid=model.id, tid=str(trs.id)),
+                                   timeout=3600,
+                                   retry_failed=5)
 
         return response.json(dict(model=model, transaction=trs))
     except Exception as e :
@@ -97,49 +100,56 @@ def add_model():
 
 @auth.requires_signature()
 def edit_model():
-    name = request.vars.get('name', '');
-    mclass = request.vars.get('mclass', '');
-    muuid = request.vars.get('uuid', uuid.uuid4());
-    arch = request.vars.get('arch');
-    model = db(db.models.uuid == muuid).select().first()
-    model.update_record(
-                name=name,
-                mclass=mclass,
-                compiled=False,
-                trained=False,
-                uuid=muuid,
-                arch=arch,
-                updated= datetime.datetime.now(),
-                status="compiling",
-                creator = auth.user_id)
+    try:
+        name = request.vars.get('name', '');
+        mclass = request.vars.get('mclass', '');
+        muuid = request.vars.get('uuid', uuid.uuid4());
+        arch = request.vars.get('arch');
+        model = db(db.models.uuid == muuid).select().first()
+        model.update_record(
+                    name=name,
+                    mclass=mclass,
+                    compiled=False,
+                    trained=False,
+                    uuid=muuid,
+                    arch=arch,
+                    updated= datetime.datetime.now(),
+                    status="compiling",
+                    creator = auth.user_id)
 
-    trs = {
-            "status": "active",
-            "tclass": "edit",
-            "uuid" : uuid.uuid4(),
-            "creator" : auth.user_id,
-            "model" : model,
-            "input_payload": json.dumps({
-                    "name" : name,
-                    "mclass" : mclass,
-                    "arch": json.loads(arch)
-            }),
-            "output_payload": json.dumps({
-                    "abstract": "Enqueing Recompilation Request...",
-                    "logs": [],
-                    "output": []
-            }),
-            "model_name" : model.name,
-            "model_name_short" : model.name_short,
-            }
+        trs = {
+                "status": "active",
+                "tclass": "edit",
+                "uuid" : uuid.uuid4(),
+                "creator" : auth.user_id,
+                "model" : model,
+                "input_payload": json.dumps({
+                        "name" : name,
+                        "mclass" : mclass,
+                        "arch": json.loads(arch)
+                }),
+                "output_payload": json.dumps({
+                        "abstract": "Enqueing Recompilation Request...",
+                        "logs": [],
+                        "output": []
+                }),
+                "model_name" : model.name,
+                "model_name_short" : model.name_short,
+                }
 
-    db['transactions'].insert(**trs)
+        db['transactions'].insert(**trs)
 
-    trs = db(db.transactions.uuid == trs['uuid']).select().first()
+        trs = db(db.transactions.uuid == trs['uuid']).select().first()
 
-    print scheduler.queue_task(task_lib.compile_model, pvars=dict(mid=model.id, tid=str(trs.id)), timeout=3600, retry_failed=5)
+        print scheduler.queue_task(compile_model,
+                                   pvars=dict(mid=model.id, tid=str(trs.id)),
+                                   timeout=3600,
+                                   retry_failed=5)
 
-    return response.json(dict(model=model, transaction=trs))
+        return response.json(dict(model=model, transaction=trs))
+    except Exception as e :
+        stderr.write(str(e))
+        return response.json(dict(model={}, transaction={}))
 
 @auth.requires_signature()
 def load_transactions():
@@ -176,35 +186,104 @@ def train_model():
     lbsfh = request.vars.get('labels_fh');
     inp = json.loads(inp) if inp else {}
     lbs = json.loads(lbs) if lbs else {}
+    mid = int(request.vars.get('model_id'));
+
+    print mid 
+    print "\n\n"
+
+    input_data = {} # processed input data
+    labels_data = {} # processed labels data
+
     if inp['upload'] :
-        if inp['save'] :
-            if not add_user_data_helper("inputs", inp['upload_name'], "", inpfh, auth.user_id) :
-                print "Input data couldn't be saved"
-            else:
-                print "Input data saved to account"
+        input_data  = add_user_data_helper("inputs", inp['upload_name'], "", inpfh, auth.user_id, inp.get('save', False))
     else :
         iid = inp['select_id']
-        ud = get_user_data_helper(iid, auth.user_id)    
-        print "Found user data" + str(ud)
+        input_data  = get_user_data_helper(iid, auth.user_id)    
         
     if lbs['upload'] :
-        print "uploading labels!\n"
-        # lbs['data'] = lbsfh
-        if lbs['save'] :
-            if not add_user_data_helper("labels", lbs['upload_name'], "", lbsfh, auth.user_id) :
-                print "Labels data couldn't be saved"
-            else:
-                print "Labels data saved to account"
+        labels_data = add_user_data_helper("labels", lbs['upload_name'], "", lbsfh, auth.user_id, lbs.get('save', False))
     else :
         iid = inp['select_id']
-        ud = get_user_data_helper(iid, auth.user_id)    
-        print "Found user data" + str(ud)
+        labels_data = get_user_data_helper(iid, auth.user_id)    
 
-        
+    if not input_data  :
+        print "Input data couldn't be saved"
+        return response.json(dict())
+    else:
+        print "Input data saved to account"
+
+    if not labels_data :
+        print "Labels data couldn't be saved"
+        return response.json(dict())
+    else:
+        print "Labels data saved to account"
+
     # make new transaction for training purposes
+    model = db(db.models.id == mid).select().first()
 
-    print inp
-    print lbs
+    arch = json.loads(model.arch)
+    if arch.get('num_inp') != input_data.get('ccount') :
+        print "Error Input : Row count doesn't match column count" + "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))
+        return response.json(dict(error="Column count of input file does not much input count of model." +
+                                "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))))
+    if arch.get('num_out') != labels_data.get('ccount') :
+        print "Error Labels : Row count doesn't match column count" + "(%s) vs (%s)"%(str(arch.get('num_out')), str(labels_data.get('ccount')))
+        return response.json(dict(error="Column count of input file does not much input count of model." +
+                                "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))))
+    model.update_record(
+                trained=False,
+                updated= datetime.datetime.now(),
+                status="training"
+    )
+
+    trs = {
+            "status": "active",
+            "tclass": "train",
+            "uuid" : uuid.uuid4(),
+            "creator" : auth.user_id,
+            "model" : model,
+            "input_payload": json.dumps({
+                "input_file" : {
+                    "name" : input_data.get('name', ""),
+                    "rcount" : input_data.get('rcount', -1),
+                    "lcount" : input_data.get('lcount', -1),
+                    "saved" : bool(input_data.get('id', None)),
+                    "id" : input_data.get('id', -1),
+                    "size_KB" : input_data.get('size_KB', -1)
+                },
+                "labels_file" : {
+                    "name" : labels_data.get('name'),
+                    "rcount" : labels_data.get('rcount', -1),
+                    "lcount" : labels_data.get('lcount', -1),
+                    "saved" : bool(labels_data.get('id', None)),
+                    "id" : labels_data.get('id', -1),
+                    "size_KB" : labels_data.get('size_KB', -1)
+                },
+                "nb_epoch": inp.get('nb_epoch', 128),
+                "batch_size": inp.get('nb_epoch', 128),
+                "valid_split": inp.get('valid_split', 0)/100.0,
+                "shuffle": inp.get("shuffle", "batch")
+            }),
+            "output_payload": json.dumps({
+                    "abstract": "Enqueing Training Request...",
+                    "logs": [],
+                    "output": []
+            }),
+            "model_name" : model.name,
+            "model_name_short" : model.name_short,
+    }
+
+    db['transactions'].insert(**trs)
+
+    trs = db(db.transactions.uuid == trs['uuid']).select().first()
+
+    print scheduler.queue_task(queue_train_model,
+                               pvars=dict(mid=model.id, tid=str(trs.id),
+                                          infh=input_data.get('payload'),
+                                          lbsfh=labels_data.get('payload')),
+                               timeout=3600,
+                               retry_failed=5)
+
     return response.json(dict(inp=inp))
 
 @auth.requires_signature()
@@ -234,7 +313,7 @@ def get_user_data_helper(iid, user_id) :
     user_data = db(db.user_uploads.downer == user_id and db.user_uploads.id == iid).select().first()
     return user_data
 
-def add_user_data_helper(dclass, name, desc, payload, creator) :
+def add_user_data_helper(dclass, name, desc, payload, creator, save=False) :
     if dclass not in ['inputs', 'labels'] :
         print "Invalid File Class, must be inputs or labels"
         return False
@@ -255,22 +334,33 @@ def add_user_data_helper(dclass, name, desc, payload, creator) :
         rcount = 0
         ccount = 0
         for line in reader :
-            ccount = len([x for x in line])
+            ccount = len([x for x in line])-1 #-1 for row counter
             rcount += 1
-        print "Making Insert!\n"
-        db['user_uploads'].insert(
-                dclass=dclass,
-                name=name,
-                description=desc,
-                payload=data,
-                extension=ext,
-                created_at=created_at,
-                size_KB=size_KB,
-                rcount=rcount, ccount=ccount,
-                downer=creator
-        )
-        print "Insert Success!\n"
-        return True
+        if save :
+            new_id = db['user_uploads'].insert(
+                    dclass=dclass,
+                    name=name,
+                    description=desc,
+                    payload=data,
+                    extension=ext,
+                    created_at=created_at,
+                    size_KB=size_KB,
+                    rcount=rcount, ccount=ccount,
+                    downer=creator
+            )
+            return db(db.user_uploads.id == new_id).select().first()
+        else :
+            return dict(
+                    dclass=dclass,
+                    name=name,
+                    description=desc,
+                    payload=data,
+                    extension=ext,
+                    created_at=created_at,
+                    size_KB=size_KB,
+                    rcount=rcount, ccount=ccount,
+                    downer=creator
+            )
     except Exception as e :
         stderr.write(str(e))
         return False

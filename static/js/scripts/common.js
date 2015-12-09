@@ -109,6 +109,7 @@ function request_train(MAIN, model_id, td, callback) {
   train_data.append("input_fh", td.input.data);
   train_data.append("labels", JSON.stringify(td.labels));
   train_data.append("labels_fh", td.labels.data);
+  train_data.append("model_id", model_id);
   console.log(train_data);
   var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function (){

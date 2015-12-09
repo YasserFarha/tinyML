@@ -147,6 +147,10 @@ $(function() {
             alert("Must select a valid input file name");
             return;
         }
+        tp.input.select_id = selinp.id;
+        tp.input.select_name = selinp.name;
+        tp.input.data = {};
+        tp.input.upload_name = "";
     }
 
     if(tp.labels.upload) {
@@ -168,6 +172,10 @@ $(function() {
             alert("Must select a valid input file name");
             return;
         }
+        tp.labels.select_id = selinp.id;
+        tp.labels.select_name = selinp.name;
+        tp.labels.data = {};
+        tp.labels.upload_name = "";
     }
 
     console.log(tp);

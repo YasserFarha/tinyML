@@ -276,9 +276,6 @@
 					</div>
 
 
-					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
-					<h4>Training Data</h4>
-					</div>
 					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="train-input-switch">
                             <input type="checkbox" id="train-input-switch" class="mdl-switch__input" checked={% input.upload %}>
@@ -308,10 +305,6 @@
                                 {% /if %}
                         </button>
                         <span class="mdl-checkbox__label">Save File to Account?</span>
-            
-                        {% #if input.save %}
-                        <input class="mdl-textfield__input " type="text" id="model_name_inp" pattern=".+"  value="" style="width:100%">
-                        {% /if %}
 
 						</div>
                         <div class="{% #if input.upload %} hidden {% /if %}">

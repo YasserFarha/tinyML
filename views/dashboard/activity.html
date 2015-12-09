@@ -106,7 +106,7 @@
                 {% #each transactions %}
                     <tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}/{% id %}">
                       <td class="mdl-data-table__cell--non-numeric">{% id %}</td>
-                      <td class="mdl-data-table__cell--non-numeric">{% model_name_short %}..</td>
+                      <td class="mdl-data-table__cell--non-numeric"><a href="{{=URL('dashboard', 'model')}}/{% model %}">{% model_name_short %}..</a></td>
                       <td class="mdl-data-table__cell--non-numeric">{% tclass %}</td>
                         {% #if status == "active" %}
                           <td class="mdl-data-table__cell--non-numeric">

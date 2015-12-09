@@ -7,7 +7,7 @@
 	<script language="JavaScript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 
     <!-- reactive -->
-	<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+	<script src="{{=URL('static', 'js/ractive.min.js')}}"></script>
 
     <!-- material design lite resources -->
     <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue_grey-red.min.css" />
@@ -183,6 +183,51 @@
         </div>
         <br>
 
+        <div class="flex-card mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title mdl-card--border">
+             <h1 class="mdl-card__title-text">Saved Files</h1>
+          </div>
+             <table class="table table-responsive mdl-data-table--selectable mdl-shadow--0dp">
+              <thead>
+                <tr>
+                  <th class="mdl-data-table__cell--non-numeric">#</th>
+                  <th class="mdl-data-table__cell--non-numeric">File Name</th>
+                  <th class="mdl-data-table__cell--non-numeric">Type</th>
+                  <th class="mdl-data-table__cell--non-numeric">Size</th>
+                  <th class="mdl-data-table__cell--non-numeric">Rows</th>
+                  <th class="mdl-data-table__cell--non-numeric">Columns</th>
+                  <th class="mdl-data-table__cell--non-numeric">Created</th>
+                </tr>
+              </thead>
+              <tbody>
+            {% #each saved_inputs: i %}
+              <tr>
+                <td>{% id %}</td>
+                <td>{% name %}</td>
+                <td>{% dclass %}</td>
+                <td>{% size_KB %} KB</td>
+                <td>{% rcount %}</td>
+                <td>{% ccount %}</td>
+                <td>{% created_at %}</td>
+              </tr>
+            {% /each %}
+            {% #each saved_labels: i %}
+              <tr>
+                <td>{% id %}</td>
+                <td>{% name %}</td>
+                <td>{% dclass %}</td>
+                <td>{% size_KB %} KB</td>
+                <td>{% rcount %}</td>
+                <td>{% ccount %}</td>
+                <td>{% created_at %}</td>
+              </tr>
+            {% /each %}
+            </tbody>
+          </table>
+          </div>
+
+        <br>
+
         </div>
 
         <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
@@ -263,9 +308,9 @@
             <label for="file-sel">Select File (.csv)</label>
 			<div class="input-group">
 				<span class="input-group-btn">
-					<button class="btn btn-primary btn-file">
+					<div class="btn btn-primary btn-file">
 						Browse&hellip; <input type="file" multiple>
-					</button>
+					</div>
 				</span>
 				<input type="text" id="filesel" class="form-control" readonly>
 			</div>
@@ -299,9 +344,10 @@ var logged_in = {{=logged_in }};
 var user_id = {{=user_id }};
 var murl = "{{=murl}}";
 var turl="{{=turl}}";
-var create_url = "{{=URL('dashboard', 'create', vars={'tab' : 'new'}) }}" 
-var models_url = "{{=URL('dashboard', 'models', vars={'page' : '1'}) }}" 
-var activity_url = "{{=URL('dashboard', 'activity', vars={'page' : '1'}) }}" 
+var create_url = "{{=URL('dashboard', 'create', vars={'tab' : 'new'}) }}"; 
+var models_url = "{{=URL('dashboard', 'models', vars={'page' : '1'}) }}";
+var activity_url = "{{=URL('dashboard', 'activity', vars={'page' : '1'}) }}" ;
+var user_data_url = "{{=user_data_url}}";
 </script>
 <script src="{{=URL('static', 'js/scripts/common.js')}}"></script>
 <script src="{{=URL('static', 'js/scripts/dashboard.js')}}"></script>

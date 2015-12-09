@@ -66,7 +66,7 @@ where n is the number of inputs for the model and m the number of outputs
 db.define_table('user_uploads', 
         Field('dclass', 'string'), # class such as training data, unlabeled data, etc.
         Field('name', 'string'),
-        Field('description', 'text'),
+        Field('description', 'text', default=""),
         Field('payload', 'blob'),
         Field('extension', 'string'), # either .csv or .txt
         Field('created_at', 'datetime'),

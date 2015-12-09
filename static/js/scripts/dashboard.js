@@ -9,6 +9,9 @@ $(function() {
             user_id: user_id,
             models : [],
             transactions: [],
+            saved_inputs: [],
+            saved_labels: [],
+            user_data_url: user_data_url,
             turl: turl,
             murl: murl
         },
@@ -29,6 +32,14 @@ $(function() {
                 setTimeout(plot_home, 100);
             MAIN.set('transactions', data['transactions']);
         });
+	 }, 3000);
+
+    setInterval(function() { 
+      get_all_user_data(MAIN, function(data) {
+        console.log(data);
+        MAIN.set('saved_inputs', data['inputs']);
+        MAIN.set('saved_labels', data['labels']);
+      });
 	 }, 3000);
 
     MAIN.on("clickrow", function(e) {
@@ -72,7 +83,8 @@ $(function() {
                 'rgb(2, 0, 128)'
             ]
            for(var j = 0; j < trs.length; j++) {
-                var d = new Date(trs[j].created_at);
+                var d = get_date(trs[j].created_at);
+                console.log(d);
                 d.setSeconds(d.getSeconds() + 30);
                 d.setSeconds(0);
                 times.push(d);
@@ -93,7 +105,7 @@ $(function() {
                }
                for(var j = 0; j < trs.length; j++) {
                     if(trs[j].model === models[i].id) {
-                        var d = new Date(trs[j].created_at);
+                        var d = get_date(trs[j].created_at);
                         d.setSeconds(d.getSeconds() + 30);
                         d.setSeconds(0);
                         var found = false;
@@ -130,6 +142,12 @@ $(function() {
 
   load_transactions(MAIN, 1, 8, function(data) {  
     MAIN.set('transactions', data['transactions']);
+  });
+
+  get_all_user_data(MAIN, function(data) {
+    console.log(data);
+    MAIN.set('saved_inputs', data['inputs']);
+    MAIN.set('saved_labels', data['labels']);
   });
 
   setTimeout(plot_home, 200); 

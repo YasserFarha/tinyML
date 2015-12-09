@@ -79,6 +79,53 @@ function load_transactions_id(MAIN, id,  page, page_size, callback) {
   );
 }
 
+function get_all_user_data(MAIN, callback) {
+  $.ajax(MAIN.get("user_data_url"),
+      { method: 'POST', data: {},
+      success: function (data) { 
+        new_data = {};
+        new_data['inputs'] = [];
+        new_data['labels'] = [];
+        for(var i = 0; i < data['user_data'].length; i++) {
+            if(data['user_data'][i].dclass === "inputs") {
+                new_data['inputs'].push(data['user_data'][i]);
+            }
+            else {
+                new_data['labels'].push(data['user_data'][i]);
+            }
+        }
+        callback(new_data);
+      }
+    }
+  );
+}
+
+function request_train(MAIN, model_id, td, callback) {
+  var train_data = new FormData();
+  train_data.append("batch_size", td.batch_size);
+  train_data.append("nb_epoch", td.nb_epoch);
+  train_data.append("valid_split", td.valid_split);
+  train_data.append("input", JSON.stringify(td.input));
+  train_data.append("input_fh", td.input.data);
+  train_data.append("labels", JSON.stringify(td.labels));
+  train_data.append("labels_fh", td.labels.data);
+  console.log(train_data);
+  var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function (){
+        if(xhr.readyState==4 && xhr.status==200){
+            callback(xhr.responseText);
+        } 
+    }
+    xhr.onload = function() {
+        if (xhr.status == 200) {
+            callback("");
+        } else {
+        }
+    };
+  xhr.open("POST", MAIN.get("train_url"), true);
+  xhr.send(train_data);
+}
+
 function isEmpty(object) { for(var i in object) { return false; } return true; } 
 
 function getUrlVars() {
@@ -103,3 +150,8 @@ function getUrlVars() {
     });
     return uuid;
   }
+
+  function get_date(d) {
+    var date1 = new Date(d.substr(0, 4), d.substr(5, 2) - 1, d.substr(8, 2), d.substr(11, 2), d.substr(14, 2), d.substr(17, 2));
+    return date1;
+   }

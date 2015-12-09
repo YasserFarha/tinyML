@@ -18,7 +18,11 @@ $(function() {
             mdurl: mdurl,
             saved_labels: [],
             saved_input: [],
-            turl: turl
+            turl: turl,
+            train_url:train_url,
+            eval_url:eval_url,
+            predict_url:predict_url,
+            user_data_url:user_data_url
         },
     });
 
@@ -36,13 +40,19 @@ $(function() {
         "max_batch_size": 1000,
         "input" : {
             "upload" : true,
-            "name" : "",
+            "size_KB": 0,
+            "upload_name" : "",
+            "select_ind" : 0,
+            "select_id" : 0,
             "save" : false,
             "data" : {}
         },
         "labels" : {
             "upload" : true,
-            "name" : "",
+            "size_KB": 0,
+            "upload_name" : "",
+            "select_ind" : 0,
+            "select_id" : 0,
             "save" : false,
             "data" : {}
         },
@@ -57,13 +67,19 @@ $(function() {
     return {
         "input" : {
             "upload" : true,
-            "name" : "",
+            "size_KB": 0,
+            "upload_name" : "",
+            "select_ind" : 0,
+            "select_id" : 0,
             "save" : false,
             "data" : {}
         },
         "labels" : {
             "upload" : true,
-            "name" : "",
+            "size_KB": 0,
+            "upload_name" : "",
+            "select_ind" : 0,
+            "select_id" : 0,
             "save" : false,
             "data" : {}
         },
@@ -77,7 +93,10 @@ $(function() {
     return {
         "input" : {
             "upload" : true,
-            "name" : "",
+            "size_KB": 0,
+            "upload_name" : "",
+            "select_ind" : 0,
+            "select_id" : 0,
             "save" : false,
             "data" : {}
         },
@@ -98,12 +117,63 @@ $(function() {
   }, 3000);
 
 
+  get_all_user_data(MAIN, function(data) {
+    console.log(data);
+    MAIN.set('saved_input', data['inputs']);
+    MAIN.set('saved_labels', data['labels']);
+  });
+
   MAIN.on("train_model", function(e) {
     var tp = MAIN.get('train_payload');
-    var tfiles = $("#train-input-file").prop('files');
-    var lfiles = $("#train-label-file").prop('files');
-    console.log(tfiles);
-    console.log(lfiles);
+    console.log(tp);
+    if(tp.input.upload) {
+        var tfiles = $("#train-input-file").prop('files');
+        console.log(tfiles);
+        console.log(lfiles);
+        var tfile = tfiles[0];
+        if(!tfile) {
+            alert("no input file selected");
+            return;
+        }
+        tp.input.size_KB = tfile.size/1000.0,
+        tp.input.upload_name=tfile.name,
+        tp.input.data = tfile
+    }
+    else {
+        var sind  = tp.input.select_ind;
+        var inputs = MAIN.get('saved_input');
+        var selinp = inputs[sind];
+        if(!selinp) {
+            alert("Must select a valid input file name");
+            return;
+        }
+    }
+
+    if(tp.labels.upload) {
+        var lfiles = $("#train-label-file").prop('files');
+        var lfile = lfiles[0];
+        if(!lfile) {
+            alert("no labels file selected");
+            return;
+        }
+        tp.labels.size_KB = lfile.size/1000.0,
+        tp.labels.upload_name=lfile.name,
+        tp.labels.data = tfile
+    }
+    else {
+        var sind = tp.labels.select_ind;
+        var labels = MAIN.get('saved_labels');
+        var selinp = labels[sind];
+        if(!selinp) {
+            alert("Must select a valid input file name");
+            return;
+        }
+    }
+
+    console.log(tp);
+    request_train(MAIN, MAIN.get('model_id'), tp, function(data) {
+        console.log(data);
+    });
 
   });
 
@@ -172,6 +242,20 @@ $(function() {
         if(type === "train-labels-box") {
             MAIN.set('train_payload.labels.save', !MAIN.get('train_payload.labels.save')); 
         }
+    });
+
+     $("#train-input-file").change(function (){
+       var fileName = $(this).val();
+       var file = $(this).prop('files')[0];
+       var fname = file.name;
+       if(fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2) !== "csv") {
+            alert("Not a CSV File");
+            $(this).val(null);
+        }
+     });
+
+    MAIN.observe('train_payload', function() {
+            console.log(MAIN.get('train_payload'));
     });
 
 

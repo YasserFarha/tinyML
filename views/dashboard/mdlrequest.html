@@ -7,7 +7,7 @@
 	<script language="JavaScript" type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 
     <!-- reactive -->
-	<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+    <script src="{{=URL('static', 'js/ractive.min.js')}}"></script>
 
     <!-- material design lite resources -->
     <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue_grey-red.min.css" />
@@ -213,15 +213,15 @@
           <div class="mdl-card__title mdl-card--border">
              <h1 class="mdl-card__title-text">Logs</h1>
           </div>
+           <div style="font-size: 12px; padding: 10px">
                 {% #transaction %}
-                <pre  class="pull-left" style="text-align: left">
-                <code>
+                <ul class="list-unstyled fat">
                 {% #each transaction.output_payload.logs:i %}
-                    {% transaction.output_payload.logs[i] %}
+                <li><code> {% transaction.output_payload.logs[i] %} </code></li>
                 {% /each %}
-                </code>
-                </pre>
+                </ul>
                 {% /transaction %}
+          </div>
           </div>
           </div>
           </div>

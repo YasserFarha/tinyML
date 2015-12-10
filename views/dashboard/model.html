@@ -441,42 +441,120 @@
 						<br>
 					</div>
 
-					<div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+                           <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="eval-input-switch">
+                            <input type="checkbox" id="eval-input-switch" class="mdl-switch__input" checked={% input.upload %}>
+                            <span class="mdl-switch__label"> 
+                                {% #if input.upload %} Upload Inputs {% else %} Saved Inputs {% /if %}
+                            </span>
+                           </label>
+                            <br>
+                            <br>
+                        <div class="{% #if !input.upload %} hidden {% /if %}">
 						<label for="file-sel">Select Inputs (.csv)</label>                                                                      
 						<div class="input-group">
 							<span class="input-group-btn">
 								<div class="btn btn-primary btn-file">
-									Browse&hellip; <input type="file" >
+									Browse&hellip; <input type="file" class="file" id="eval-input-file" >
 								</div>
 							</span>
-							<input type="text" id="filesel" class="form-control" readonly>
+							<input type="text" id="eval-input-sel" class="form-control" readonly>
 						</div>
+                        <br>
+                        <button data-box-name="eval-input-box"
+                                class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="checkBox">
+                                {% #if input.save %}
+                                <i id="layer_check_{% uuid %}" class="fa fa-1x fa-check-square"></i>
+                                {% else %}
+                                <i id="layer_check_{% uuid %}" class="fa fa-1x fa-square-o"></i>
+                                {% /if %}
+                        </button>
+                        <span class="mdl-checkbox__label">Save File to Account?</span>
+
+						</div>
+                        <div class="{% #if input.upload %} hidden {% /if %}">
+                           <label for="name-sel">Saved Input Data</label>                                                                                   
+                            {% #if saved_input %}
+                            <div class="form-group">
+                              <select value="{%  eval_payload.input.select_ind %}" data-model-id="{% current_edit.uuid %}"
+                                     class="form-control" id="name-sel">
+                                {% #saved_input:i %}
+                                <option value="{% i %}">{% name %}</option>
+                                {% /saved_input %}
+                              </select>
+                            </div>
+                            {% else %}
+                            <p><small> You don't have any saved input files, try uploading one and checking the 'save'
+                            box to save the input file to your account.</small></p>
+                            {% /if %}
+						</div>
+					<br>
 					</div>
+					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+                           <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="eval-label-switch">
+                            <input type="checkbox" id="eval-label-switch" class="mdl-switch__input" checked={% labels.upload %}>
+                            <span class="mdl-switch__label"> 
+                                {% #if labels.upload %} Upload Labels {% else %} Saved Labels {% /if %}
+                            </span>
+                           </label>
+                            <br>
+                            <br>
+                        <div class="{% #if !labels.upload %} hidden {% /if %}">
+                            <label for="eval-label-file">Select Labels (.csv)</label>                                                                      
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <div class="btn btn-primary btn-file">
+                                        Browse&hellip; <input type="file" class="file" id="eval-label-file">
+                                    </div>
+                                </span>
+                                <input type="text" id="eval-labels-sel" class="form-control" readonly>
+                            </div>
+                            <br>
+                            <button data-box-name="eval-labels-box"
+                                    class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="checkBox">
+                                    {% #if labels.save %}
+                                    <i id="layer_check_{% uuid %}" class="fa fa-1x fa-check-square"></i>
+                                    {% else %}
+                                    <i id="layer_check_{% uuid %}" class="fa fa-1x fa-square-o"></i>
+                                    {% /if %}
+                            </button>
+                            <span class="mdl-checkbox__label">Save File to Account?</span>
+						</div>
+                        <div class="{% #if labels.upload %} hidden {% /if %}">
+                           <label for="name-sel">Saved Label Data</label>                                                                                   
+                            {% #if saved_labels %}
+                            <div class="form-group">
+                              <select value="{% eval_payload.labels.select_ind %}" class="form-control" id="label-file-sel">
+                                {% #saved_labels:i %}
+                                <option value="{% i %}">{% name %}</option>
+                                {% /saved_labels %}
+                              </select>
+                            </div>
+                            {% else %}
+                            <p><small> You don't have any saved label data, try uploading a file and checking the 'save' box to
+                             save the file to your account. </small></p>
+                            {% /if %}
+                        </div>
+                    <br>
+                </div>
 
 					 {% #if model.trained || model.trained == "True" %}
-						<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="train_model">
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="eval_model">
 								Evaluate	
 							</button>
 						</div>
-						<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-							<button data-id="layer_sel_{% uuid %}" 
-									class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll">
-									Clear
-							</button>
-						</div>
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
 					  {% else %}
-						<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
 							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" disabled>
 								Evaluate	
 							</button>
 						</div>
-						<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-							<button data-id="layer_sel_{% uuid %}" 
-									class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll">
-									Clear
-							</button>
-						</div>
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
 						<br><br><br> <br>
 						<small style="padding-left:20px"> <span style="color: blue">Info!</span> Model must be trained before evaluation can occur. </small>
 						{% /if %}

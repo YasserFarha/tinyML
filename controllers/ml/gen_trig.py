@@ -10,22 +10,22 @@ import numpy as np
 import pandas as pd
 
 def fn(xt) :
-  return np.sin(xt) #+ 2*np.cos(np.multiply(2.1, xt)) - 1.4*np.cos(3.4*np.sin(np.multiply(xt, xt)))
+  return np.sin(xt) + 2*np.cos(np.multiply(2.1, xt)) - 1.4*np.cos(3.4*np.sin(np.multiply(xt, xt)))
 
-xt = np.random.rand(20000, 1)
-xt = np.multiply(xt, 10)
-yt = fn(xt)
+# xt = np.random.rand(20000, 1)
+# xt = np.multiply(xt, 10)
+# yt = fn(xt)
+# 
+# dx = pd.DataFrame(xt)
+# dy = pd.DataFrame(yt)
+# 
+# dx.to_csv("/home/jhallard/linux/tinyML/trig_v1_input.csv")
+# dy.to_csv("/home/jhallard/linux/tinyML/trig_v1_labels.csv")
+# 
+# sys.exit(0)
 
-dx = pd.DataFrame(xt)
-dy = pd.DataFrame(yt)
-
-dx.to_csv("/home/jhallard/linux/tinyML/sin_data_input.csv")
-dy.to_csv("/home/jhallard/linux/tinyML/sin_data_labels.csv")
-
-sys.exit(0)
-
-dx = pd.read_csv("/home/jhallard/linux/tinyML/testXX.csv")
-dy = pd.read_csv("/home/jhallard/linux/tinyML/testYY.csv")
+dx = pd.read_csv("/home/jhallard/linux/tinyML/trig_v1_input.csv")
+dy = pd.read_csv("/home/jhallard/linux/tinyML/trig_v1_labels.csv")
 X = dx.values.copy()
 X = X[:, -1:]
 print str(X)

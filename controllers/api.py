@@ -24,6 +24,8 @@ def load_models():
         pb = int(page-1)*(int(page_size))
         pe = int(page)*(int(page_size))
         trs = db(db.models.creator == auth.user_id).select(orderby=~db.models.created_at, limitby=(pb, pe))
+        for t in trs :
+            del t['weights']
         return response.json(dict(models=trs))
     except Exception as e :
         stderr.write(str(e))
@@ -35,6 +37,7 @@ def load_model():
         trs = db(db.models.id == iid).select().first()
         if not auth or not trs or not auth.user_id == trs.creator :
             raise HTTP(404,"Prohibited")
+        del trs['weights']
         return response.json(dict(model=trs))
     except Exception as e :
         stderr.write(str(e))
@@ -58,6 +61,7 @@ def add_model():
                     uuid=muuid,
                     arch=arch,
                     compiled=False,
+                    weights=None,
                     status="compiling",
                     creator = auth.user_id)
 
@@ -92,7 +96,9 @@ def add_model():
                                    timeout=3600,
                                    retry_failed=5)
 
-        return response.json(dict(model=model, transaction=trs))
+        md2 = model
+        del md2['weights']
+        return response.json(dict(model=md2, transaction=trs))
     except Exception as e :
         stderr.write(str(e))
         return response.json(dict(model={}, transaction={}))
@@ -113,6 +119,7 @@ def edit_model():
                     trained=False,
                     uuid=muuid,
                     arch=arch,
+                    weights=None,
                     updated= datetime.datetime.now(),
                     status="compiling",
                     creator = auth.user_id)
@@ -146,7 +153,9 @@ def edit_model():
                                    timeout=3600,
                                    retry_failed=5)
 
-        return response.json(dict(model=model, transaction=trs))
+        md2 = model
+        del md2['weights']
+        return response.json(dict(model=md2, transaction=trs))
     except Exception as e :
         stderr.write(str(e))
         return response.json(dict(model={}, transaction={}))
@@ -187,6 +196,11 @@ def train_model():
     inp = json.loads(inp) if inp else {}
     lbs = json.loads(lbs) if lbs else {}
     mid = int(request.vars.get('model_id'));
+
+    nb_epoch = int(request.vars.get('nb_epoch'))
+    valid_split = int(request.vars.get('valid_split', 0))/100.0
+    batch_size = int(request.vars.get('batch_size'))
+
 
     print mid 
     print "\n\n"
@@ -259,10 +273,10 @@ def train_model():
                     "id" : labels_data.get('id', -1),
                     "size_KB" : labels_data.get('size_KB', -1)
                 },
-                "nb_epoch": inp.get('nb_epoch', 128),
-                "batch_size": inp.get('nb_epoch', 128),
-                "valid_split": inp.get('valid_split', 0)/100.0,
-                "shuffle": inp.get("shuffle", "batch")
+                "nb_epoch": nb_epoch,
+                "batch_size": batch_size,
+                "valid_split": valid_split,
+                "shuffle": "batch"
             }),
             "output_payload": json.dumps({
                     "abstract": "Enqueing Training Request...",
@@ -281,8 +295,9 @@ def train_model():
                                pvars=dict(mid=model.id, tid=str(trs.id),
                                           infh=input_data.get('payload'),
                                           lbsfh=labels_data.get('payload')),
-                               timeout=3600,
-                               retry_failed=5)
+                                   timeout=7200,
+                                   retry_failed=5
+                               )
 
     return response.json(dict(inp=inp))
 
@@ -336,6 +351,9 @@ def add_user_data_helper(dclass, name, desc, payload, creator, save=False) :
         for line in reader :
             ccount = len([x for x in line])-1 #-1 for row counter
             rcount += 1
+        if db(db.user_uploads.name == name).select().first() :
+            saved = False
+            print "This file already exists for this account"
         if save :
             new_id = db['user_uploads'].insert(
                     dclass=dclass,

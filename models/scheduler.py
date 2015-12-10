@@ -12,7 +12,7 @@ from keras.models import model_from_json
 from keras.layers.core import Dense, Dropout, Activation, TimeDistributedDense, AutoEncoder
 from keras.layers.convolutional import Convolution1D
 from keras.optimizers import SGD
-import theano, sys, json, datetime, uuid
+import theano, sys, json, datetime, uuid, os
 from sys import stderr, stdout
 from cStringIO import StringIO
 
@@ -28,12 +28,12 @@ dbmodel = {}
 dbt = {}
 
 def load_data(fh, train=True):
-    f = StringIO(str(fh))
     try :
+        f = StringIO(str(fh))
         df = pd.read_csv(f)
         X = df.values.copy()
         if train:
-            np.random.shuffle(X)  # https://youtu.be/uyUXoap67N8
+            # np.random.shuffle(X)  # https://youtu.be/uyUXoap67N8
             stderr.write(str(X))
             return X[:, -1:]
         else:
@@ -43,12 +43,12 @@ def load_data(fh, train=True):
         logstr(dbt, str(e))
         return []
 
-def logheader(trs) :
+def logheader(trs, instr) :
     global output_payload
     global tlogs
     global dbmodel
     global dbt
-    lstr = ["Model Compilation Request : %s" % trs.model_name]
+    lstr = [instr + " : %s" % trs.model_name]
     lstr.append("Started at : " +str(datetime.datetime.now())[:-3])
     lstr.append("-"*80)
     tlogs = lstr + tlogs
@@ -59,13 +59,13 @@ def logheader(trs) :
     )
     db.commit()
 
-def logfooter(trs) :
+def logfooter(trs, instr) :
     global output_payload
     global tlogs
     global dbmodel
     global dbt
     lstr = ["-"*80]
-    lstr.append("Model Compilation Request : %s" % trs.model_name)
+    lstr.append(instr + " : %s" % trs.model_name)
     lstr.append("Finished at : " +str(datetime.datetime.now())[:-3])
     tlogs = tlogs + lstr
     stderr.write(str(lstr)+"\n")
@@ -89,6 +89,162 @@ def logstr(trs, x) :
     )
     db.commit()
 
+def load_weights(dbmodel, dbt, model) :
+    if not dbmodel.weights :
+        return model
+    stderr.write("Loading Weights")
+    wtsfn = dbmodel.name+str(dbt.id)+".h5"
+    with open(wtsfn, 'w') as wfh :
+        wfh.write(dbmodel.weights)
+
+    model.load_weights(wtsfn)
+    os.remove(wtsfn)
+    return model
+
+def save_weights(dbmodel, dbt, model) :
+    stderr.write("Saving Weights")
+    wtsfn = dbmodel.name+str(dbt.id)+".h5"
+    model.save_weights(wtsfn, overwrite=True)
+    wtstxt = None
+    with open(wtsfn, 'r') as wfh :
+        wtstxt = wfh.read()
+
+    os.remove(wtsfn)
+    dbmodel.update_record(
+            weights = wtstxt
+    )
+    db.commit()
+    return dbmodel
+
+
+class LossHistory(keras.callbacks.Callback):
+    global dbt
+
+    def on_epoch_begin(self, epoch, log={}):
+        self.losses = []
+
+    def on_epoch_end(self, epoch, logs={}):
+        totall = 0
+        totala = 0
+        stderr.write(str(logs))
+        for x in self.losses :
+            # stderr.write(str(x))
+            totall += x.get('loss')
+            totala += x.get('accuracy')
+        totall = float(totall)/len(self.losses)
+        totala = float(totala)/len(self.losses)
+        self.epochs.append({"avg_loss" : round(totall, 5), "avg_acc" : round(totala, 5),
+                            "val_loss" : round(logs['val_loss'], 5), "val_acc" : round(logs['val_acc'], 5)})
+
+    def on_train_begin(self, logs={}):
+        self.epochs = []
+        self.losses = []
+
+    def on_batch_end(self, batch, logs={}):
+        # stderr.write(str(logs))
+        self.losses.append({"loss" : logs.get('loss'), "accuracy" : logs.get('acc')})
+
+
+def queue_train_model(mid, tid, infh, lbsfh) :
+    global output_payload
+    global tlogs
+    global dbmodel
+    global dbt
+    output_payload['abstract'] = "Executing Training Sequence..."
+    try :
+        dbmodel = db(db.models.id == mid).select().first()
+        dbt = db(db.transactions.id == int(tid)).select().first()
+
+        logheader(dbt, "Model Training Request")
+        logstr(dbt, "Attempting Model Training, ID (%s)"%str(mid));
+
+        ipl = json.loads(dbt['input_payload'])
+        nb_epoch = ipl.get('nb_epoch')
+        batch_size = ipl.get('batch_size')
+        valid_split = ipl.get('valid_split')
+        shuffle = ipl.get('shuffle')
+
+
+        model = model_from_json(dbmodel.arch_json)
+        model = load_weights(dbmodel, dbt, model)
+
+
+        logstr(dbt, "Model Loaded Successfully");
+        stderr.write(model.to_json())
+
+        X = load_data(infh, train=True)
+        labels = load_data(lbsfh, train=True)
+
+        losscb = LossHistory()
+
+        stderr.write("Starting Model Fit.\n")
+        model.fit(X, labels,
+                  nb_epoch=int(nb_epoch), 
+                  batch_size=int(batch_size),
+                  validation_split=float(valid_split),
+                  shuffle="batch",
+                  show_accuracy=True,
+                  verbose=0,
+                  callbacks=[losscb])
+        stderr.write("Finished Model Fit.\n")
+        # TODO add weight to model if weights are saved
+
+        stderr.write(str([str(x) for x in losscb.epochs]))
+
+        save_weights(dbmodel, dbt, model)
+
+        dbmodel.update_record(
+            status = "idle",
+            updated_at = datetime.datetime.now(),
+            trained = True
+       ) 
+
+        logstr(dbt, "Transaction Success Saved in DB");
+        logstr(dbt, "Training Session Succeeded (%s)" % str(dbmodel.name))
+        logfooter(dbt, "Model Training Request Succeeded")
+        stderr.write("About to Exit!\n\n")
+        dbt.update_record(
+            status = "success",
+            finished_at = datetime.datetime.now(),
+            output_payload = json.dumps({
+					"abstract": "Training Session Complete",
+                    "logs": tlogs,
+                    "output": ["model was successfully loaded, trained, and saved for future use."],
+                    "epochs" : [x for x in losscb.epochs],
+                    "loss_history" : [str(x) for x in losscb.losses]
+            })
+		)
+        db.commit()
+        return True
+    except Exception as e :
+        dbmodel = db(db.models.id == mid).select().first()
+        dbt = db(db.transactions.id == int(tid)).select().first()
+        logstr(dbt, "Training Failed : %s" % str(e))
+        dbmodel.update_record(
+            status = "idle",
+            updated_at = datetime.datetime.now(),
+            trained = False
+        ) 
+        db.commit()
+        logstr(dbt, "Exception while Training Model (%s)" % str(dbmodel.name))
+
+        logstr(dbt, "Error noted and Transaction marked as failed");
+
+        logstr(dbt, "Transaction Failure Saved in DB");
+        logfooter(dbt, "Model Training Request Failed")
+        dbt.update_record(
+            status = "failed",
+            finished_at = datetime.datetime.now(),
+            output_payload = json.dumps({
+					"abstract": "Error While Training. (%s)" % (str(e)),
+                    "logs": tlogs,
+                    "output": ["Error was experienced while training model (%s)."%(dbmodel.name), "Full error output:  (%s)."%(str(e))],
+                    "epochs" : [],
+                    "loss_history" : []
+            })
+		)
+        db.commit()
+
 
 def compile_model(mid, tid) :
     global output_payload
@@ -100,7 +256,7 @@ def compile_model(mid, tid) :
         dbmodel = db(db.models.id == mid).select().first()
         dbt = db(db.transactions.id == int(tid)).select().first()
 
-        logheader(dbt)
+        logheader(dbt, "Model Compilation Request")
         logstr(dbt, "Attempting Model Compilation, ID (%s)"%str(mid));
 
         arch = json.loads(dbmodel.arch)
@@ -121,7 +277,12 @@ def compile_model(mid, tid) :
             logstr(dbt, "Last Layer Added")
 
         logstr(dbt, "Compiling Model....")
-        mdl.compile(loss=arch['lossfn'], optimizer=arch['optimizer'])
+
+        lossfnstr = arch['lossfn']
+        if arch['lossfn'] == 'rmse' :
+            lossfnstr = 'root_mean_squared_error'
+
+        mdl.compile(loss=lossfnstr, optimizer=arch['optimizer'])
         logstr(dbt, "Model Compiled Successfully.")
 
         logstr(dbt, "Updating Model and Transaction Records.")
@@ -146,7 +307,7 @@ def compile_model(mid, tid) :
             output_payload = json.dumps(output_payload)
 		)
 
-        logfooter(dbt)
+        logfooter(dbt, "Model Compilation Request Succeeded")
 
         db.commit()
         return True
@@ -167,7 +328,7 @@ def compile_model(mid, tid) :
         logstr(dbt, "Error noted and Transaction marked as failed");
 
         logstr(dbt, "Transaction Failure Saved in DB");
-        logfooter(dbt)
+        logfooter(dbt, "Model Compilation Request Failed")
         dbt.update_record(
             status = "failed",
             finished_at = datetime.datetime.now(),
@@ -190,7 +351,7 @@ def add_layer(mdl, ld, arch, first=False, last=False) :
     num_out = arch['num_out']
     if ld['type'] == 'dense' :
         if first : mdl.add(Dense(ld['nodes'], input_dim=num_inp, init=ld['init']))
-        if last : mdl.add(Dense(output_dim=num_out,init=ld['init']))
+        elif last : mdl.add(Dense(output_dim=num_out,init=ld['init']))
         else :  mdl.add(Dense(ld['nodes'], init=ld['init']))
             
 
@@ -231,116 +392,4 @@ def add_layer(mdl, ld, arch, first=False, last=False) :
     return mdl
 
 
-
-class LogCallback(keras.callbacks.Callback):
-    global dbt
-    def on_train_begin(self, logs={}):
-        logstr(dbt, "Beginning Training Sequence.")
-        stderr.write(str(logs))
-
-    def on_batch_end(self, batch, logs={}):
-        logstr(dbt, "Training Batch Completed")
-        logstr(dbt, "loss : %s"%str(logs.get('loss')))
-        stderr.write(str(logs))
-        stderr.write(str(batch))
-
-class LossHistory(keras.callbacks.Callback):
-    global dbt
-    def on_train_begin(self, logs={}):
-        self.losses = []
-
-    def on_batch_end(self, batch, logs={}):
-        self.losses.append(logs.get('loss'))
-
-
-def queue_train_model(mid, tid, infh, lbsfh) :
-    global output_payload
-    global tlogs
-    global dbmodel
-    global dbt
-    output_payload['abstract'] = "Executing Training Sequence..."
-    try :
-        dbmodel = db(db.models.id == mid).select().first()
-        dbt = db(db.transactions.id == int(tid)).select().first()
-
-        logheader(dbt)
-        logstr(dbt, "Attempting Model Training, ID (%s)"%str(mid));
-
-        ipl = json.loads(dbt['input_payload'])
-        nb_epoch = ipl.get('nb_epoch')
-        batch_size = ipl.get('batch_size')
-        valid_split = ipl.get('valid_split')
-        shuffle = ipl.get('shuffle')
-        
-        model = model_from_json(dbmodel.arch_json)
-
-        logstr(dbt, "Model Loaded Successfully");
-        stderr.write(model.to_json())
-
-        X = load_data(infh, train=True)
-        labels = load_data(lbsfh, train=True)
-
-        stderr.write(str(X))
-        stderr.write(str(labels))
-
-        logcb = LogCallback()
-        losscb = LossHistory()
-
-        model.fit(X, labels,
-                  nb_epoch=int(nb_epoch), 
-                  batch_size=int(batch_size),
-                   validation_split=float(valid_split),
-                   callbacks=[losscb])
-        # TODO add weight to model if weights are saved
-
-        dbmodel.update_record(
-            status = "idle",
-            updated_at = datetime.datetime.now(),
-            trained = True
-       ) 
-        db.commit()
-        logstr(dbt, "Training Session Succeeded (%s)" % str(dbmodel.name))
-
-
-        logstr(dbt, "Transaction Success Saved in DB");
-        logfooter(dbt)
-        dbt.update_record(
-            status = "success",
-            finished_at = datetime.datetime.now(),
-            output_payload = json.dumps({
-					"abstract": "Training Session Complete",
-                    "logs": tlogs,
-                    "output": ["model was successfully loaded, trained, and saved for future use."],
-                    "loss_history" : [str(x) for x in losscb.losses]
-            })
-		)
-        db.commit()
-        return True
-
-    except Exception as e :
-        dbmodel = db(db.models.id == mid).select().first()
-        dbt = db(db.transactions.id == int(tid)).select().first()
-        logstr(dbt, "Training Failed : %s" % str(e))
-        dbmodel.update_record(
-            status = "idle",
-            updated_at = datetime.datetime.now(),
-            trained = False
-       ) 
-        db.commit()
-        logstr(dbt, "Exception while Training Model (%s)" % str(dbmodel.name))
-
-        logstr(dbt, "Error noted and Transaction marked as failed");
-
-        logstr(dbt, "Transaction Failure Saved in DB");
-        logfooter(dbt)
-        dbt.update_record(
-            status = "failed",
-            finished_at = datetime.datetime.now(),
-            output_payload = json.dumps({
-					"abstract": "Error While Training. (%s)" % (str(e)),
-                    "logs": tlogs,
-                    "output": ["Error was experienced while training model (%s)."%(dbmodel.name), "Full error output:  (%s)."%(str(e))]
-            })
-		)
-        db.commit()
 

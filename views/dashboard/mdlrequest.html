@@ -98,8 +98,8 @@
                 {% #transaction %}
 
                   <h5>
-                    <strong>{% tclass %}</strong> 
-                    request for model <a href="{{=URL('dashboard', 'model')}}/{% model %}"> {% model_name %}</a>.
+                    Request Type - <strong>{% tclass %}</strong> <br>
+                    Model -<strong> <a href="{{=URL('dashboard', 'model')}}/{% model %}"> {% model_name %}</a>.</strong>
                   </h5>
                   <p>Request Abstract : {% tresult %} </p>
                 
@@ -125,36 +125,34 @@
                     <strong>next request</strong>
                 </div>
             </div>
-
-
             <div class="mdl-card__actions mdl-card--border">
-            <div class="mdl-grid" style="padding-top: 0">
-              {% #transaction %}
-              <div class="mdl-cell mdl-cell--10-col mdl-cell--7-col-tablet mdl-cell--3-col-phone" style="margin-top:10px">
-                {% #if status == "active" %}
-                    <span class="label label-light-blue">
-                        <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
-                    </span>
-                {% /if %}
-                {% #if status == "failed" %}
-                    <span class="label label-red">
-                        <i style="color: white" class="fa fa-2x fa-cog fa-exclamation"></i> {% status %}
-                    </span>
-                {% /if %}
-                {% #if status == "success" %}
-                    <span class="label label-green">
-                        <i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
-                    </span>
-                {% /if %}
-              </div>
-              <div class="mdl-cell mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--1-col-phone" style="margin:0px">
-                <button data-board-id="{% board_id %}" id="download_file"
-                        class="pull-right mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="download_file">
-                      <i class="material-icons">file_download</i>
-                </button>
-             </div>
-             {% /transaction %}
-           </div>
+                <div class="mdl-grid" style="padding-top: 0">
+                  {% #transaction %}
+                  <div class="mdl-cell mdl-cell--10-col mdl-cell--7-col-tablet mdl-cell--3-col-phone" style="margin-top:10px">
+                    {% #if status == "active" %}
+                        <span class="label label-light-blue">
+                            <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+                        </span>
+                    {% /if %}
+                    {% #if status == "failed" %}
+                        <span class="label label-red">
+                            <i style="color: white" class="fa fa-2x fa-cog fa-exclamation"></i> {% status %}
+                        </span>
+                    {% /if %}
+                    {% #if status == "success" %}
+                        <span class="label label-green">
+                            <i style="color: white" class="fa fa-2x fa-check"></i> {% status %}
+                        </span>
+                    {% /if %}
+                  </div>
+                  <div class="mdl-cell mdl-cell--2-col mdl-cell--1-col-tablet mdl-cell--1-col-phone" style="margin:0px">
+                    <button data-board-id="{% board_id %}" id="download_file"
+                            class="pull-right mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="download_file">
+                          <i class="material-icons">file_download</i>
+                    </button>
+                 </div>
+                 {% /transaction %}
+               </div>
            </div>
 
             </div>
@@ -174,7 +172,10 @@
                 {% #transaction %}
                 <ul class="list-unstyled" style="width:100%">
                 {% #each transaction.input_payload:i %}
-                <li><span>{% @key %}</span> - {% this %} </li>
+                <strong>{% @key %} : </strong>
+                    {% #each this %}
+                        <li>{% @key %} - {% this %} </li>
+                    {% /each %}
                 {% /each %}
                 </ul>
                 {% /transaction %}
@@ -195,10 +196,24 @@
             <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
                 {% #transaction %}
                 <ul class="list-unstyled" style="width:100%">
-                {% #each transaction.output_payload.output:i %}
-                <li>{% i+1 %}.) {% output_payload.output[i] %}</li>
-                {% /each %}
+                    {% #each output_payload.output:i %}
+                        <li>{% i+1 %}.) {% output_payload.output[i] %}</li>
+                    {% /each %}
                 </ul>
+                {% #if tclass == "train" %}
+                <table class="table table-responsive mdl-shadow--1dp">
+                  <tbody>
+                {% #each output_payload.epochs:i %}
+                    <tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}/{% id %}">
+                        <td><strong>{% i+1 %}</strong></td>
+                        {% #each this %}
+                        <td>{% @key %}.) {% this %}</td>
+                        {% /each %}
+                    </tr>
+                {% /each %}
+                </tbody>
+                </table>
+                {% /if %}
                 {% /transaction %}
             </div>
             </div>

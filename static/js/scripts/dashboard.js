@@ -84,7 +84,6 @@ $(function() {
             ]
            for(var j = 0; j < trs.length; j++) {
                 var d = get_date(trs[j].created_at);
-                console.log(d);
                 d.setSeconds(d.getSeconds() + 30);
                 d.setSeconds(0);
                 times.push(d);
@@ -110,7 +109,6 @@ $(function() {
                         d.setSeconds(0);
                         var found = false;
                         for(var k = 0; k < pdata.x.length; k++) {
-                            console.log(d);console.log(pdata.x[k]);console.log("\n");
                             if(pdata.x[k].getTime() === d.getTime()) {
                                 console.log("inner");
                                 pdata.y[k] += 1;
@@ -126,7 +124,6 @@ $(function() {
                } 
                data.push(pdata);
             }
-            console.log(data);
             Plotly.newPlot(TESTER, data,
             layout, {showLink : false});
         })

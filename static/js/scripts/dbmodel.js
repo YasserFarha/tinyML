@@ -162,7 +162,7 @@ $(function() {
         }
         tp.labels.size_KB = lfile.size/1000.0,
         tp.labels.upload_name=lfile.name,
-        tp.labels.data = tfile
+        tp.labels.data = lfile
     }
     else {
         var sind = tp.labels.select_ind;
@@ -249,6 +249,12 @@ $(function() {
         }
         if(type === "train-labels-box") {
             MAIN.set('train_payload.labels.save', !MAIN.get('train_payload.labels.save')); 
+        }
+        if(type === "eval-input-box") {
+            MAIN.set('eval_payload.input.save', !MAIN.get('eval_payload.input.save')); 
+        }
+        if(type === "eval-labels-box") {
+            MAIN.set('eval_payload.labels.save', !MAIN.get('eval_payload.labels.save')); 
         }
     });
 

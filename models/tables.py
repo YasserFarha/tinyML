@@ -24,7 +24,7 @@ db.define_table('models',
         Field('arch_json', 'blob'), # raw model architecture in full json rep
 	Field('compiled', 'boolean', default=False),
 	Field('trained', 'boolean', default=False),
-        Field('weights', 'text'), # hd5 file describing the weight for the current model
+        Field('weights', 'blob'), # hd5 file describing the weight for the current model
         Field('arch', 'blob')) # json describing layers in short-syntax, convenient for UI stuff
 
 """

@@ -132,7 +132,7 @@ $(function() {
 			MAIN.set('transaction', trs);
 		}
 		if(trs.tclass == "train") {
-			if(MAIN.get('opage')*MAIN.get('opsize') >= trs.output_payload.epochs.length)  {
+			if((MAIN.get('opage')-1)*MAIN.get('opsize') >= trs.output_payload.epochs.length)  {
 				MAIN.set('opage', MAIN.get('opage')-1);
 				return;
 			}

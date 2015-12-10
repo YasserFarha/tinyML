@@ -12,15 +12,19 @@ import pandas as pd
 def fn(xt) :
   return np.sin(xt) #+ 2*np.cos(np.multiply(2.1, xt)) - 1.4*np.cos(3.4*np.sin(np.multiply(xt, xt)))
 
-xt = np.random.rand(200, 1)
+def fnew(xt) :
+  yt = np.asarray([2.4,-2.3, 1.3, 10.2, -7.2, 1.2, -5.0])
+  return np.dot(xt, yt)
+
+xt = np.random.rand(20000, 7)
 xt = np.multiply(xt, 10)
-yt = fn(xt)
+yt = fnew(xt)
 
 dx = pd.DataFrame(xt)
 dy = pd.DataFrame(yt)
 
-dx.to_csv("/home/jhallard/linux/tinyML/sin_small_input.csv")
-dy.to_csv("/home/jhallard/linux/tinyML/sin_small_labels.csv")
+dx.to_csv("/home/jhallard/linux/tinyML/large_linear_input.csv")
+dy.to_csv("/home/jhallard/linux/tinyML/large_linear_labels.csv")
 
 sys.exit(0)
 

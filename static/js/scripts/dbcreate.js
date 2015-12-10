@@ -271,6 +271,12 @@ $(function() {
             num_inp : 3,
             num_out: 1,
             optimizer : "sgd",
+			optimizer_args : {
+				"lr" : 0.01,
+				"momentum" : 0,
+				"decay" : 0,
+				"nesterov" : false
+			},
             lossfn : "mse"
         }
     }

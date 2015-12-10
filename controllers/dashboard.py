@@ -88,7 +88,27 @@ def mdlrequest():
     except :
         redirect(URL('dashboard', 'index'))
 
+def account():
+    try:
+        if not auth.user_id :
+            redirect(URL('default', 'index'))
+        return dict(logged_in=("true" if auth.user_id != None else "false"),
+                    user_id=auth.user_id if auth.user_id else -1,
+                    user_data_url=user_data_url,
+                    turl=turl, mdurl=mdurl, murl=murl, tdurl=tdurl)
+    except :
+        redirect(URL('dashboard', 'index'))
 
+def tutorials():
+    try:
+        if not auth.user_id :
+            redirect(URL('default', 'index'))
+        return dict(logged_in=("true" if auth.user_id != None else "false"),
+                    user_id=auth.user_id if auth.user_id else -1,
+                    user_data_url=user_data_url,
+                    turl=turl, mdurl=mdurl, murl=murl, tdurl=tdurl)
+    except :
+        redirect(URL('dashboard', 'index'))
 
 def do_logout() :
     redirect(URL('default', 'user', args=['logout']))

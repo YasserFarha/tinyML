@@ -95,30 +95,42 @@
            <div class="mdl-card__supporting-text" style="padding: 4px">
             <div class="mdl-grid" style="padding-top: 0">
             <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                <div class="mdl-grid" style="padding-top: 0">
                 {% #transaction %}
-                 <span style="font-size:24px"><u>{% tclass %}</u> request for
+                   <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--12-col-phone">
+                   <span style="font-size:24px"><u>{% tclass %}</u> request for
                     <strong> <a href="{{=URL('dashboard', 'model')}}/{% model %}"> {% model_name %}</a>.</strong>
-                </span>
-                    <br>
-                    <br>
-                  <p>Abstract : <span style="font-size:18px">"{% tresult %}"</span> </p>
-                  <p>Created : {% created_at %} </p>
+                   </span>
+                   </div>
+                   <br>
+                   <div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--12-col-phone">
+                   Abstract : <span style="font-size:18px">"{% tresult %}"</span>
+                   </div>
+                   <br>
+                   <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--12-col-phone">
+                    Created : {% created_at %}
+                   </div>
+                   <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--12-col-phone">
                   {% #if finished_at %}
-                  <p>Finished : {% finished_at %} </p>
+                   Finished : {% finished_at %}
+                  {% else %}
+                   Finished : <small> still running ... </small>
                   {% /if %}
+                   </div>
                 {% /transaction %}
+               </div>
                </div>
              </div>
             </div>
 
             <div class="mdl-card__menu" >
                 <button data-board-id="{% board_id %}" id="prev_page"
-                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="page_prev">
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="trs_prev">
                       <i class="material-icons">arrow_back</i>
                 </button>
                 {% trans_id %}
                 <button data-board-id="{% board_id %}" id="nxt_page"
-                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="page_nxt">
+                        class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="trs_nxt">
                       <i class="material-icons">arrow_forward</i>
                 </button>
                 <div class="mdl-tooltip" for="prev_page">
@@ -166,99 +178,196 @@
         <br>
 
           <div class=" mdl-card flex-card mdl-shadow--2dp">
-          <div class="mdl-card__title mdl-card--border">
-             <h1 class="mdl-card__title-text">Input Payload</h1>
-          </div>
+            <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+              <div class="mdl-tabs__tab-bar">
+                  <a id="input-payload-tab" href="#input-payload-panel" on-click="set_input_panel" class="mdl-tabs__tab">Input Payload</a>
+                  <a id="output-payload-tab" href="#output-payload-panel" on-click="set_output_panel" class="mdl-tabs__tab">Output Payload</a>
+                  <a id="logs-tab" href="#logs-panel" on-click="set_logs_panel" class="mdl-tabs__tab">Logs</a>
+              </div>
            <div class="mdl-card__supporting-text" style="padding: 4px">
             <div class="mdl-grid" style="padding-top: 0">
             <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                <div class="mdl-tabs__panel" id="input-payload-panel">
                 {% #transaction %}
                 {% #if tclass == "train" %}
+                    {% #input_payload %}
+                    <div class="mdl-grid" style="padding-top: 0">
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+                      <h5> Training Parameters </h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong># Epochs</strong> : {% nb_epoch %}</li>
+                        <li><strong>Batch-Size</strong> : {% batch_size %}</li>
+                        <li><strong>Validation Split</strong> : {% valid_split %}</li>
+                        </ul>
+                    </div>
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+                      {% #input_file %}
+                      <h5> Input File </h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong>Name</strong> : {% name %}</li>
+                        <li><strong>Size</strong> : {% size_KB %}KB</li>
+                        <li><strong>Entries</strong> : {% rcount %}</li>
+                        <li><strong>Columns</strong> : {% ccount %}</li>
+                        </ul>
+                      {% /input_file %}
+                    </div>
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+                      {% #labels_file %}
+                      <h5> Labels File </h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong>Name</strong> : {% name %}</li>
+                        <li><strong>Size</strong> : {% size_KB %}KB</li>
+                        <li><strong>Entries</strong> : {% rcount %}</li>
+                        <li><strong>Columns</strong> : {% ccount %}</li>
+                        </ul>
+                      {% /labels_file %}
+                    </div>
+                    </div>
+                    {% /input_payload %}
+                {% elseif tclass == "evaluate" %}
+                    {% #input_payload %}
+                    <div class="mdl-grid" style="padding-top: 0">
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+                      <h5> Evaluation Parameters </h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong>Batch-Size</strong> : {% batch_size %}</li>
+                        </ul>
+                    </div>
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+                      {% #input_file %}
+                      <h5> Input File </h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong>Name</strong> : {% name %}</li>
+                        <li><strong>Size</strong> : {% size_KB %}KB</li>
+                        <li><strong>Entries</strong> : {% rcount %}</li>
+                        <li><strong>Columns</strong> : {% ccount %}</li>
+                        </ul>
+                      {% /input_file %}
+                    </div>
+                    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+                      {% #labels_file %}
+                      <h5> Labels File </h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong>Name</strong> : {% name %}</li>
+                        <li><strong>Size</strong> : {% size_KB %}KB</li>
+                        <li><strong>Entries</strong> : {% rcount %}</li>
+                        <li><strong>Columns</strong> : {% ccount %}</li>
+                        </ul>
+                      {% /labels_file %}
+                    </div>
+                    </div>
+    
+                    {% /input_payload %}
+                {% elseif tclass == "predict" %}
+                    {% #input_payload %}
+                    <div class="mdl-grid" style="padding-top: 0">
+                    <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+                      <h5> Prediction Parameters </h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong>Batch-Size</strong> : {% batch_size %}</li>
+                        </ul>
+                    </div>
+                    <div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+                      {% #input_file %}
+                      <h5> Input File </h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong>Name</strong> : {% name %}</li>
+                        <li><strong>Size</strong> : {% size_KB %}KB</li>
+                        <li><strong>Entries</strong> : {% rcount %}</li>
+                        <li><strong>Columns</strong> : {% ccount %}</li>
+                        </ul>
+                      {% /input_file %}
+                    </div>
+                    </div>
+                    {% /input_payload %}
+                {% else %}
+                    {% #input_payload %}
+                        <h5>Compilation Parameters</h5>
+                        <ul class="list" style="width:100%">
+                        <li><strong>Name</strong> : {% name %}</li>
+                        <li><strong>Class</strong> : {% mclass %}</li>
+                        </ul>
+                    {% /input_payload %}
                 {% /if %}
-                <ul class="list-unstyled" style="width:100%">
-                {% #each transaction.input_payload:i %}
-                <strong>{% @key %} : </strong>
-                    {% #each this %}
-                        <li>{% @key %} - {% this %} </li>
-                    {% /each %}
-                {% /each %}
-                </ul>
                 {% /transaction %}
+                </div>
+                </div>
+                <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                    <div class="mdl-tabs__panel" id="output-payload-panel">
+                        {% #transaction %}
+                        <ul class="list-unstyled" style="width:100%">
+                            {% #each output_payload.output:i %}
+                                <li>{% i+1 %}.) {% output_payload.output[i] %}</li>
+                            {% /each %}
+                        </ul>
+                        <hr>
+                        {% #if tclass=="train" || tclass=="predict" %}
+                            <button id="prev_page" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="opage_prev">
+                                  <i class="material-icons">arrow_back</i>
+                            </button>
+                            {% opage %}
+                            <button id="nxt_page" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="opage_nxt">
+                                  <i class="material-icons">arrow_forward</i>
+                            </button>
+                            <div class="mdl-tooltip" for="prev_page">
+                                <strong>prev request</strong>
+                            </div>
+                            <div class="mdl-tooltip" for="nxt_page">
+                                <strong>next request</strong>
+                            </div>
+                        {% /if %}
+                        {% #if tclass == "train" %}
+                            <table style="width:100%" class="fat table  table-responsive mdl-shadow--1dp">
+                              <tbody>
+                            {% #each output_payload.epochs_short:i %}
+                                <tr class='clickable-row' >
+                                    <td><strong>{% (opage-1)*opsize + i+1 %}</strong></td>
+                                    {% #each this %}
+                                    <td>{% @key %}.) {% this %}</td>
+                                    {% /each %}
+                                </tr>
+                            {% /each %}
+                            </tbody>
+                            </table>
+                        {% elseif tclass == "evaluate" %}
+                        {% elseif tclass == "predict" %}
+                            <table class="fat table  table-responsive mdl-shadow--1dp">
+                              <tbody>
+                            {% #each output_payload.predictions_short:i %}
+                                <tr>
+                                    <td><strong>{% (opage-1)*opsize + i+1 %}</strong></td>
+                                    <td>{% output_payload.predictions_short[i] %}</td>
+                                </tr>
+                            {% /each %}
+                            </tbody>
+                            </table>
+                        {% else %}
+                        {% /if %}
+                        {% /transaction %}
+                    </div>
+                </div>
+                <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
+                    <div class="mdl-tabs__panel" id="logs-panel">
+                        <div style="font-size: 12px; padding: 10px">
+                        {% #transaction %}
+                            <ul class="list-unstyled fat">
+                            {% #each transaction.output_payload.logs:i %}
+                                <li><code> {% transaction.output_payload.logs[i] %} </code></li>
+                            {% /each %}
+                            </ul>
+                        {% /transaction %}
+                        </div>
+                    </div>
+                </div>
             </div>
-            </div>
           </div>
-          </div>
+        </div>
 
 
-        <br>
+        </div>
+       </div>
 
-          <div class=" mdl-card flex-card mdl-shadow--2dp">
-          <div class="mdl-card__title mdl-card--border">
-             <h1 class="mdl-card__title-text">Outputs</h1>
-          </div>
-           <div class="mdl-card__supporting-text" style="padding: 4px">
-            <div class="mdl-grid" style="padding-top: 0">
-            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
-                {% #transaction %}
-                <ul class="list-unstyled" style="width:100%">
-                    {% #each output_payload.output:i %}
-                        <li>{% i+1 %}.) {% output_payload.output[i] %}</li>
-                    {% /each %}
-                </ul>
-                {% #if tclass == "train" %}
-                <table class="table table-responsive mdl-shadow--1dp">
-                  <tbody>
-                {% #each output_payload.epochs:i %}
-                    <tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}/{% id %}">
-                        <td><strong>{% i+1 %}</strong></td>
-                        {% #each this %}
-                        <td>{% @key %}.) {% this %}</td>
-                        {% /each %}
-                    </tr>
-                {% /each %}
-                </tbody>
-                </table>
-                {% /if %}
-                {% #if tclass == "predict" %}
-                <table class="table table-responsive mdl-shadow--1dp">
-                  <tbody>
-                {% #each output_payload.predictions:i %}
-                    <tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}/{% id %}">
-                        <td><strong>{% i+1 %}</strong></td>
-                        <td>{% output_payload.predictions[i] %}</td>
-                    </tr>
-                {% /each %}
-                </tbody>
-                </table>
-                {% /if %}
-                {% /transaction %}
-            </div>
-            </div>
-          </div>
-          </div>
-
-        <br>
-
-
-
-          <div class=" mdl-card flex-card mdl-shadow--2dp">
-          <div class="mdl-card__title mdl-card--border">
-             <h1 class="mdl-card__title-text">Logs</h1>
-          </div>
-           <div style="font-size: 12px; padding: 10px">
-                {% #transaction %}
-                <ul class="list-unstyled fat">
-                {% #each transaction.output_payload.logs:i %}
-                <li><code> {% transaction.output_payload.logs[i] %} </code></li>
-                {% /each %}
-                </ul>
-                {% /transaction %}
-          </div>
-          </div>
-          </div>
-          </div>
-
-        </div> <!-- end inner grid -->
+     </div> <!-- end inner grid -->
 
   </main>
 </div>

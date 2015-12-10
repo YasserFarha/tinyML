@@ -260,7 +260,7 @@ def train_model():
                 "input_file" : {
                     "name" : input_data.get('name', ""),
                     "rcount" : input_data.get('rcount', -1),
-                    "lcount" : input_data.get('lcount', -1),
+                    "ccount" : input_data.get('ccount', -1),
                     "saved" : bool(input_data.get('id', None)),
                     "id" : input_data.get('id', -1),
                     "size_KB" : input_data.get('size_KB', -1)
@@ -268,7 +268,7 @@ def train_model():
                 "labels_file" : {
                     "name" : labels_data.get('name'),
                     "rcount" : labels_data.get('rcount', -1),
-                    "lcount" : labels_data.get('lcount', -1),
+                    "ccount" : labels_data.get('ccount', -1),
                     "saved" : bool(labels_data.get('id', None)),
                     "id" : labels_data.get('id', -1),
                     "size_KB" : labels_data.get('size_KB', -1)
@@ -374,7 +374,7 @@ def eval_model():
                 "input_file" : {
                     "name" : input_data.get('name', ""),
                     "rcount" : input_data.get('rcount', -1),
-                    "lcount" : input_data.get('lcount', -1),
+                    "ccount" : input_data.get('ccount', -1),
                     "saved" : bool(input_data.get('id', None)),
                     "id" : input_data.get('id', -1),
                     "size_KB" : input_data.get('size_KB', -1)
@@ -382,7 +382,7 @@ def eval_model():
                 "labels_file" : {
                     "name" : labels_data.get('name'),
                     "rcount" : labels_data.get('rcount', -1),
-                    "lcount" : labels_data.get('lcount', -1),
+                    "ccount" : labels_data.get('ccount', -1),
                     "saved" : bool(labels_data.get('id', None)),
                     "id" : labels_data.get('id', -1),
                     "size_KB" : labels_data.get('size_KB', -1)
@@ -460,7 +460,7 @@ def predict_model():
                 "input_file" : {
                     "name" : input_data.get('name', ""),
                     "rcount" : input_data.get('rcount', -1),
-                    "lcount" : input_data.get('lcount', -1),
+                    "ccount" : input_data.get('ccount', -1),
                     "saved" : bool(input_data.get('id', None)),
                     "id" : input_data.get('id', -1),
                     "size_KB" : input_data.get('size_KB', -1)
@@ -468,7 +468,7 @@ def predict_model():
                 "batch_size": batch_size
             }),
             "output_payload": json.dumps({
-                    "abstract": "Enqueing Evaluation Request...",
+                    "abstract": "Enqueing Prediction Request...",
                     "logs": [],
                     "output": []
             }),

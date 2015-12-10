@@ -303,7 +303,7 @@
                     <table class="table table-responsive mdl-shadow--1dp">
                       <tbody>
                     {% #added_transactions:i %}
-						<tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}/{% id %}">
+						<tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}?tid={% id %}">
                         <td class="mdl-data-table__cell--non-numeric">
                             {% id %}
                         </td>

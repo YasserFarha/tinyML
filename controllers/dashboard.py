@@ -81,7 +81,7 @@ def mdlrequest():
     try:
         if not auth.user_id :
             redirect(URL('default', 'index'))
-        iid = int(request.args(0))
+        iid = int(request.vars.get('tid'))
         return dict(logged_in=("true" if auth.user_id != None else "false"),
                     user_id=auth.user_id if auth.user_id else -1,
                     trans_id=iid, turl=turl, mdurl=mdurl, murl=murl, tdurl=tdurl)

@@ -178,6 +178,7 @@ function request_predict(MAIN, model_id, td, callback) {
 
 function isEmpty(object) { for(var i in object) { return false; } return true; } 
 
+//had for a long time 
 function getUrlVars() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
@@ -188,6 +189,7 @@ function getUrlVars() {
   }
 
 
+// got from professor during assignment 3
   function genuuid(){
     var d = new Date().getTime();
     if(window.performance && typeof window.performance.now === "function"){
@@ -201,7 +203,35 @@ function getUrlVars() {
     return uuid;
   }
 
+// got from stack over-flow
   function get_date(d) {
     var date1 = new Date(d.substr(0, 4), d.substr(5, 2) - 1, d.substr(8, 2), d.substr(11, 2), d.substr(14, 2), d.substr(17, 2));
     return date1;
    }
+
+// see http://snippetrepo.com/snippets/change-url-parameter-without-reloading-page
+// for the two function below
+function getURLParameter(name) {
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+    }
+
+function changeUrlParam (param, value) {
+        var currentURL = window.location.href+'&';
+        var change = new RegExp('('+param+')=(.*)&', 'g');
+        var newURL = currentURL.replace(change, '$1='+value+'&');
+
+        if (getURLParameter(param) !== null){
+            try {
+                window.history.replaceState('', '', newURL.slice(0, - 1) );
+            } catch (e) {
+                console.log(e);
+            }
+        } else {
+            var currURL = window.location.href;
+            if (currURL.indexOf("?") !== -1){
+                window.history.replaceState('', '', currentURL.slice(0, - 1) + '&' + param + '=' + value);
+            } else {
+                window.history.replaceState('', '', currentURL.slice(0, - 1) + '?' + param + '=' + value);
+            }
+        }
+    }

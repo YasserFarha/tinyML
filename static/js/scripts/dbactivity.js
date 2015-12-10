@@ -29,20 +29,28 @@ $(function() {
         });
      }, 2000);
 
-    setInterval(loadtrs, 3000);
+    setInterval(loadtrs(function(data) {}), 3000);
 
-    function loadtrs() {
+    function loadtrs(callback) {
         console.log("loadtrs" + MAIN.get('mid'));
         if(MAIN.get('mid') > 0) {
-            console.log("MID DET loadtrs" + MAIN.get('mid'));
             load_transactions_id(MAIN, parseInt(MAIN.get('mid')), MAIN.get('cpage'), 25, function(data) {
-                MAIN.set('transactions', data['transactions']);
+                if(data['transactions'].length > 0) {
+                    MAIN.set('transactions', data['transactions']);
+                }
+                else {
+                    callback(data) // # on fail reset page value
+                }
             });
         }
         else { 
-            console.log("NO MID DET loadtrs" + MAIN.get('mid'));
             load_transactions(MAIN, MAIN.get('cpage'), 25, function(data) {
-                MAIN.set('transactions', data['transactions']);
+                if(data['transactions'].length > 0) {
+                    MAIN.set('transactions', data['transactions']);
+                }
+                else {
+                    callback(data) // # on fail reset page value
+                }
             });
         }
     }
@@ -62,12 +70,14 @@ $(function() {
     });
 
     MAIN.on("page_prev", function(e) {
+        if(MAIN.get('cpage') <= 1)
+            return 
         MAIN.set('cpage', MAIN.get('cpage')-1);
-        loadtrs();
+        loadtrs(function() { MAIN.set('cpage', MAIN.get('cpage')+1); });
     });
     MAIN.on("page_nxt", function(e) {
         MAIN.set('cpage', MAIN.get('cpage')+1);
-        loadtrs();
+        loadtrs(function() { MAIN.set('cpage', MAIN.get('cpage')-1); });
     });
 
 
@@ -86,7 +96,7 @@ $(function() {
   }
 
 
-  loadtrs();
+  loadtrs(function() {});
 
 
 });

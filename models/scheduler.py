@@ -244,6 +244,177 @@ def queue_train_model(mid, tid, infh, lbsfh) :
             })
 		)
         db.commit()
+        
+
+def queue_eval_model(mid, tid, infh, lbsfh) :
+    global output_payload
+    global tlogs
+    global dbmodel
+    global dbt
+    output_payload['abstract'] = "Executing Evaluation Sequence..."
+    try :
+        dbmodel = db(db.models.id == mid).select().first()
+        dbt = db(db.transactions.id == int(tid)).select().first()
+
+        logheader(dbt, "Model Evaluation Request")
+        logstr(dbt, "Attempting Model Evaluation, ID (%s)"%str(mid));
+
+        ipl = json.loads(dbt['input_payload'])
+        batch_size = ipl.get('batch_size')
+
+
+        model = model_from_json(dbmodel.arch_json)
+        model = load_weights(dbmodel, dbt, model)
+
+        logstr(dbt, "Model Loaded Successfully");
+        stderr.write(model.to_json())
+
+        X = load_data(infh, train=True)
+        labels = load_data(lbsfh, train=True)
+
+        stderr.write("Starting Model Fit.\n")
+        (loss, acc) = model.evaluate(X, labels,
+                                    batch_size=int(batch_size),
+                                    show_accuracy=True,
+                                    verbose=0)
+        stderr.write("Finished Model Fit.\n")
+        # TODO add weight to model if weights are saved
+
+        dbmodel.update_record(
+            status = "idle",
+            updated_at = datetime.datetime.now(),
+       ) 
+
+        logstr(dbt, "Transaction Success Saved in DB");
+        logstr(dbt, "Evaluation Session Succeeded (%s)" % str(dbmodel.name))
+        logfooter(dbt, "Model Evaluation Request Succeeded")
+        stderr.write("About to Exit!\n\n")
+        dbt.update_record(
+            status = "success",
+            finished_at = datetime.datetime.now(),
+            output_payload = json.dumps({
+					"abstract": "Evaluation Session Complete",
+                    "logs": tlogs,
+                    "output": ["model was successfully loaded, evaluated, and saved for future use.",
+                              "The total loss over the data was : %s"%str(loss),
+                              "The total accuracy over the data was : %s"%str(acc)],
+                    "accuracy" : acc,
+                    "loss": loss
+            })
+		)
+        db.commit()
+        return True
+    except Exception as e :
+        dbmodel = db(db.models.id == mid).select().first()
+        dbt = db(db.transactions.id == int(tid)).select().first()
+        logstr(dbt, "Training Failed : %s" % str(e))
+        dbmodel.update_record(
+            status = "idle",
+            updated_at = datetime.datetime.now(),
+        ) 
+        db.commit()
+        logstr(dbt, "Exception while Evaluating Model (%s)" % str(dbmodel.name))
+
+        logstr(dbt, "Error noted and Transaction marked as failed");
+
+        logstr(dbt, "Transaction Failure Saved in DB");
+        logfooter(dbt, "Model Evaluating Request Failed")
+        dbt.update_record(
+            status = "success",
+            finished_at = datetime.datetime.now(),
+            output_payload = json.dumps({
+					"abstract": "Error During Evaluation.",
+                    "logs": tlogs,
+                    "output": ["Error was experienced while evaluating model (%s)."%(dbmodel.name), "Full error output:  (%s)."%(str(e))],
+                    "accuracy" : acc,
+                    "loss": loss
+            })
+		)
+        db.commit()
+
+
+
+def queue_predict_model(mid, tid, infh) :
+    global output_payload
+    global tlogs
+    global dbmodel
+    global dbt
+    output_payload['abstract'] = "Executing Prediction Sequence..."
+    try :
+        dbmodel = db(db.models.id == mid).select().first()
+        dbt = db(db.transactions.id == int(tid)).select().first()
+
+        logheader(dbt, "Model Prediction Request")
+        logstr(dbt, "Attempting Model Prediction, ID (%s)"%str(mid));
+
+        ipl = json.loads(dbt['input_payload'])
+        batch_size = ipl.get('batch_size')
+
+        model = model_from_json(dbmodel.arch_json)
+        model = load_weights(dbmodel, dbt, model)
+
+        logstr(dbt, "Model Loaded Successfully");
+        stderr.write(model.to_json())
+
+        X = load_data(infh, train=True)
+
+        stderr.write("Starting Model Predict.\n")
+        predictions = model.predict(X, batch_size=int(batch_size), verbose=0)
+        stderr.write("Finished Model Predict.\n")
+
+        stderr.write(str(predictions))
+
+        dbmodel.update_record(
+            status = "idle",
+            updated_at = datetime.datetime.now(),
+       ) 
+
+        logstr(dbt, "Transaction Success Saved in DB");
+        logstr(dbt, "Prediction Session Succeeded (%s)" % str(dbmodel.name))
+        logfooter(dbt, "Model Prediction Request Succeeded")
+        stderr.write("About to Exit!\n\n")
+        dbt.update_record(
+            status = "success",
+            finished_at = datetime.datetime.now(),
+            output_payload = json.dumps({
+					"abstract": "Prediction Session Complete",
+                    "logs": tlogs,
+                    "output": ["model was successfully loaded and used to generate predictions."],
+                    "predictions" : predictions.tolist()
+            })
+		)
+        db.commit()
+        return True
+    except Exception as e :
+        dbmodel = db(db.models.id == mid).select().first()
+        dbt = db(db.transactions.id == int(tid)).select().first()
+        logstr(dbt, "Training Failed : %s" % str(e))
+        dbmodel.update_record(
+            status = "idle",
+            updated_at = datetime.datetime.now(),
+        ) 
+        db.commit()
+        logstr(dbt, "Exception while Predicting Model (%s)" % str(dbmodel.name))
+
+        logstr(dbt, "Error noted and Transaction marked as failed");
+
+        logstr(dbt, "Transaction Failure Saved in DB");
+        logfooter(dbt, "Model Predicting Request Failed")
+        dbt.update_record(
+            status = "failed",
+            finished_at = datetime.datetime.now(),
+            output_payload = json.dumps({
+					"abstract": "Error During Prediction.",
+                    "logs": tlogs,
+                    "output": ["Error was experienced while predicting for model (%s)."%(dbmodel.name), "Full error output:  (%s)."%(str(e))],
+                    "predictions" : []
+            })
+		)
+        db.commit()
+
+
+
+
 
 
 def compile_model(mid, tid) :

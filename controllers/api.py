@@ -201,10 +201,6 @@ def train_model():
     valid_split = int(request.vars.get('valid_split', 0))/100.0
     batch_size = int(request.vars.get('batch_size'))
 
-
-    print mid 
-    print "\n\n"
-
     input_data = {} # processed input data
     labels_data = {} # processed labels data
 
@@ -217,20 +213,20 @@ def train_model():
     if lbs['upload'] :
         labels_data = add_user_data_helper("labels", lbs['upload_name'], "", lbsfh, auth.user_id, lbs.get('save', False))
     else :
-        iid = inp['select_id']
+        iid = lbs['select_id']
         labels_data = get_user_data_helper(iid, auth.user_id)    
 
     if not input_data  :
-        print "Input data couldn't be saved"
+        print "Input data couldn't be processed"
         return response.json(dict())
     else:
-        print "Input data saved to account"
+        print "Input data Processed"
 
     if not labels_data :
-        print "Labels data couldn't be saved"
+        print "Labels data couldn't be Processed"
         return response.json(dict())
     else:
-        print "Labels data saved to account"
+        print "Labels data Processed"
 
     # make new transaction for training purposes
     model = db(db.models.id == mid).select().first()
@@ -238,12 +234,16 @@ def train_model():
     arch = json.loads(model.arch)
     if arch.get('num_inp') != input_data.get('ccount') :
         print "Error Input : Row count doesn't match column count" + "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))
-        return response.json(dict(error="Column count of input file does not much input count of model." +
+        return response.json(dict(error="Column count of input file does not match input count of model." +
                                 "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))))
     if arch.get('num_out') != labels_data.get('ccount') :
         print "Error Labels : Row count doesn't match column count" + "(%s) vs (%s)"%(str(arch.get('num_out')), str(labels_data.get('ccount')))
-        return response.json(dict(error="Column count of input file does not much input count of model." +
+        return response.json(dict(error="Column count of input file does not match input count of model." +
                                 "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))))
+
+    if labels_data.get('rcount') != input_data.get('rcount') :
+        print "Error Labels : Input Row count doesn't match Labels Row count" + "(%s) vs (%s)"%(str(input_data.get('rcount')), str(labels_data.get('rcount')))
+        return response.json(dict(error="row count of input file does not match row count of label file."))
     model.update_record(
                 trained=False,
                 updated= datetime.datetime.now(),
@@ -301,6 +301,194 @@ def train_model():
 
     return response.json(dict(inp=inp))
 
+
+
+@auth.requires_signature()
+def eval_model():
+    inp = request.vars.get('input');
+    lbs = request.vars.get('labels');
+    inpfh = request.vars.get('input_fh');
+    lbsfh = request.vars.get('labels_fh');
+    inp = json.loads(inp) if inp else {}
+    lbs = json.loads(lbs) if lbs else {}
+    mid = int(request.vars.get('model_id'));
+
+    batch_size = int(request.vars.get('batch_size'))
+
+    input_data = {} # processed input data
+    labels_data = {} # processed labels data
+
+    if inp['upload'] :
+        input_data  = add_user_data_helper("inputs", inp['upload_name'], "", inpfh, auth.user_id, inp.get('save', False))
+    else :
+        iid = inp['select_id']
+        input_data  = get_user_data_helper(iid, auth.user_id)    
+        
+    if lbs['upload'] :
+        labels_data = add_user_data_helper("labels", lbs['upload_name'], "", lbsfh, auth.user_id, lbs.get('save', False))
+    else :
+        iid = lbs['select_id']
+        labels_data = get_user_data_helper(iid, auth.user_id)    
+
+    if not input_data  :
+        print "Input data couldn't be processed"
+        return response.json(dict())
+    else:
+        print "Input data Processed"
+
+    if not labels_data :
+        print "Labels data couldn't be Processed"
+        return response.json(dict())
+    else:
+        print "Labels data Processed"
+
+    # make new transaction for evaluation purposes
+    model = db(db.models.id == mid).select().first()
+
+    arch = json.loads(model.arch)
+    if arch.get('num_inp') != input_data.get('ccount') :
+        print "Error Input : Row count doesn't match column count" + "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))
+        return response.json(dict(error="Column count of input file does not match input count of model." +
+                                "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))))
+    if arch.get('num_out') != labels_data.get('ccount') :
+        print "Error Labels : Row count doesn't match column count" + "(%s) vs (%s)"%(str(arch.get('num_out')), str(labels_data.get('ccount')))
+        return response.json(dict(error="Column count of input file does not match input count of model." +
+                                "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))))
+
+    if labels_data.get('rcount') != input_data.get('rcount') :
+        print "Error Labels : Input Row count doesn't match Labels Row count" + "(%s) vs (%s)"%(str(input_data.get('rcount')), str(labels_data.get('rcount')))
+        return response.json(dict(error="row count of input file does not match row count of label file."))
+
+    model.update_record(
+                updated= datetime.datetime.now(),
+                status="evaluating"
+    )
+
+    trs = {
+            "status": "active",
+            "tclass": "evaluate",
+            "uuid" : uuid.uuid4(),
+            "creator" : auth.user_id,
+            "model" : model,
+            "input_payload": json.dumps({
+                "input_file" : {
+                    "name" : input_data.get('name', ""),
+                    "rcount" : input_data.get('rcount', -1),
+                    "lcount" : input_data.get('lcount', -1),
+                    "saved" : bool(input_data.get('id', None)),
+                    "id" : input_data.get('id', -1),
+                    "size_KB" : input_data.get('size_KB', -1)
+                },
+                "labels_file" : {
+                    "name" : labels_data.get('name'),
+                    "rcount" : labels_data.get('rcount', -1),
+                    "lcount" : labels_data.get('lcount', -1),
+                    "saved" : bool(labels_data.get('id', None)),
+                    "id" : labels_data.get('id', -1),
+                    "size_KB" : labels_data.get('size_KB', -1)
+                },
+                "batch_size": batch_size
+            }),
+            "output_payload": json.dumps({
+                    "abstract": "Enqueing Evaluation Request...",
+                    "logs": [],
+                    "output": []
+            }),
+            "model_name" : model.name,
+            "model_name_short" : model.name_short,
+    }
+
+    db['transactions'].insert(**trs)
+
+    trs = db(db.transactions.uuid == trs['uuid']).select().first()
+
+    print scheduler.queue_task(queue_eval_model,
+                               pvars=dict(mid=model.id, tid=str(trs.id),
+                                          infh=input_data.get('payload'),
+                                          lbsfh=labels_data.get('payload')),
+                                   timeout=7200,
+                                   retry_failed=5
+                               )
+
+    return response.json(dict(inp=inp))
+
+
+@auth.requires_signature()
+def predict_model():
+    inp = request.vars.get('input');
+    inpfh = request.vars.get('input_fh');
+    inp = json.loads(inp) if inp else {}
+    mid = int(request.vars.get('model_id'));
+
+    batch_size = int(request.vars.get('batch_size'))
+
+    input_data = {} # processed input data
+
+    if inp['upload'] :
+        input_data  = add_user_data_helper("inputs", inp['upload_name'], "", inpfh, auth.user_id, inp.get('save', False))
+    else :
+        iid = inp['select_id']
+        input_data  = get_user_data_helper(iid, auth.user_id)    
+        
+    if not input_data  :
+        print "Input data couldn't be processed"
+        return response.json(dict())
+    else:
+        print "Input data Processed"
+
+
+    # make new transaction for prediction purposes
+    model = db(db.models.id == mid).select().first()
+
+    arch = json.loads(model.arch)
+    if arch.get('num_inp') != input_data.get('ccount') :
+        print "Error Input : Row count doesn't match column count" + "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))
+        return response.json(dict(error="Column count of input file does not match input count of model." +
+                                "(%s) vs (%s)"%(str(arch.get('num_inp')), str(input_data.get('ccount')))))
+    model.update_record(
+                updated= datetime.datetime.now(),
+                status="predicting"
+    )
+
+    trs = {
+            "status": "active",
+            "tclass": "predict",
+            "uuid" : uuid.uuid4(),
+            "creator" : auth.user_id,
+            "model" : model,
+            "input_payload": json.dumps({
+                "input_file" : {
+                    "name" : input_data.get('name', ""),
+                    "rcount" : input_data.get('rcount', -1),
+                    "lcount" : input_data.get('lcount', -1),
+                    "saved" : bool(input_data.get('id', None)),
+                    "id" : input_data.get('id', -1),
+                    "size_KB" : input_data.get('size_KB', -1)
+                },
+                "batch_size": batch_size
+            }),
+            "output_payload": json.dumps({
+                    "abstract": "Enqueing Evaluation Request...",
+                    "logs": [],
+                    "output": []
+            }),
+            "model_name" : model.name,
+            "model_name_short" : model.name_short,
+    }
+
+    db['transactions'].insert(**trs)
+
+    trs = db(db.transactions.uuid == trs['uuid']).select().first()
+
+    print scheduler.queue_task(queue_predict_model,
+                               pvars=dict(mid=model.id, tid=str(trs.id),
+                                          infh=input_data.get('payload')),
+                                   timeout=7200,
+                                   retry_failed=5
+                               )
+
+    return response.json(dict(inp=inp))
+
 @auth.requires_signature()
 def get_user_data() :
     iid = int(request.args.get(0))
@@ -325,6 +513,7 @@ def add_user_data() :
     pass
 
 def get_user_data_helper(iid, user_id) :
+    print "data_helper, id = " + str(iid)
     user_data = db(db.user_uploads.downer == user_id and db.user_uploads.id == iid).select().first()
     return user_data
 

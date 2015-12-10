@@ -93,6 +93,19 @@
 		  </div>
 		  <div class="modal-body">
 			<p>Use this tab to upload inputs and labels which will be used to train your model.</p>
+            <p><strong> Inputs </strong> - The input file must have the same number of data-columns as your model
+            has input nodes, and the label file must have the same number of data-columns as your model has output nodes.
+            The input and label files must have the same number of row, for they correspond to each-other in a one-to-one
+            manner. </p>
+            <p><strong> Training Parameters </strong> - You can customize the batch-size, number of epochs, and validation holdout.
+            Each of these is described below.
+            <ul>
+            <li> Epochs - An epoch is a single run of the entire training data-set to train the wieghts, followed by a small evaluation
+                    on a subset of the given data. In general, the more epochs you run the more accurate your model will be.</li>
+            <li> Batch Size - This is the number of items that are processed before the weights are updated. </li>
+            <li> Validation Holdout - This is the percent of the input/label data pairs that will put aside during each epoch
+                for validation purposes. </li>
+            </ul>
 		  </div>
 		</div>
 	  </div>
@@ -182,6 +195,11 @@
 
 		   <div class="mdl-card__actions mdl-card--border">
 				 {% #if status == "predicting" %}
+					<span class="label label-blue">                                                                           
+						 <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+					</span>
+				  {% /if %}
+				 {% #if status == "evaluating" %}
 					<span class="label label-blue">                                                                           
 						 <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
 					</span>
@@ -308,11 +326,11 @@
 
 						</div>
                         <div class="{% #if input.upload %} hidden {% /if %}">
-                           <label for="name-sel">Saved Input Data</label>                                                                                   
+                           <label for="train-input-name-sel">Saved Input Data</label>                                                                                   
                             {% #if saved_input %}
                             <div class="form-group">
                               <select value="{%  train_payload.input.select_ind %}" data-model-id="{% current_edit.uuid %}"
-                                     class="form-control" id="name-sel">
+                                     class="form-control" id="train-input-name-sel">
                                 {% #saved_input:i %}
                                 <option value="{% i %}">{% name %}</option>
                                 {% /saved_input %}
@@ -356,10 +374,10 @@
                             <span class="mdl-checkbox__label">Save File to Account?</span>
 						</div>
                         <div class="{% #if labels.upload %} hidden {% /if %}">
-                           <label for="name-sel">Saved Label Data</label>                                                                                   
+                           <label for="train-label-name-sel">Saved Label Data</label>                                                                                   
                             {% #if saved_labels %}
                             <div class="form-group">
-                              <select value="{% train_payload.labels.select_ind %}" class="form-control" id="label-file-sel">
+                              <select value="{% train_payload.labels.select_ind %}" class="form-control" id="train-label-name-sel">
                                 {% #saved_labels:i %}
                                 <option value="{% i %}">{% name %}</option>
                                 {% /saved_labels %}
@@ -474,11 +492,10 @@
 
 						</div>
                         <div class="{% #if input.upload %} hidden {% /if %}">
-                           <label for="name-sel">Saved Input Data</label>                                                                                   
+                           <label for="eval-input-name-sel">Saved Input Data</label>                                                                                   
                             {% #if saved_input %}
                             <div class="form-group">
-                              <select value="{%  eval_payload.input.select_ind %}" data-model-id="{% current_edit.uuid %}"
-                                     class="form-control" id="name-sel">
+                              <select value="{% eval_payload.input.select_ind %}" class="form-control" id="eval-input-name-sel">
                                 {% #saved_input:i %}
                                 <option value="{% i %}">{% name %}</option>
                                 {% /saved_input %}
@@ -492,14 +509,13 @@
 					<br>
 					</div>
 					<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
-                           <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="eval-label-switch">
-                            <input type="checkbox" id="eval-label-switch" class="mdl-switch__input" checked={% labels.upload %}>
-                            <span class="mdl-switch__label"> 
-                                {% #if labels.upload %} Upload Labels {% else %} Saved Labels {% /if %}
-                            </span>
-                           </label>
-                            <br>
-                            <br>
+                        <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="eval-label-switch">
+                          <input type="checkbox" id="eval-label-switch" class="mdl-switch__input" checked={% labels.upload %}>
+                          <span class="mdl-switch__label"> 
+                            {% #if labels.upload %} Upload Labels {% else %} Saved Labels {% /if %}
+                          </span>
+                        </label>
+                        <br> <br>
                         <div class="{% #if !labels.upload %} hidden {% /if %}">
                             <label for="eval-label-file">Select Labels (.csv)</label>                                                                      
                             <div class="input-group">
@@ -522,10 +538,10 @@
                             <span class="mdl-checkbox__label">Save File to Account?</span>
 						</div>
                         <div class="{% #if labels.upload %} hidden {% /if %}">
-                           <label for="name-sel">Saved Label Data</label>                                                                                   
+                           <label for="eval-label-name-sel">Saved Label Data</label>                                                                                   
                             {% #if saved_labels %}
                             <div class="form-group">
-                              <select value="{% eval_payload.labels.select_ind %}" class="form-control" id="label-file-sel">
+                              <select value="{% eval_payload.labels.select_ind %}" class="form-control" id="eval-label-name-sel">
                                 {% #saved_labels:i %}
                                 <option value="{% i %}">{% name %}</option>
                                 {% /saved_labels %}
@@ -539,10 +555,18 @@
                     <br>
                 </div>
 
-					 {% #if model.trained || model.trained == "True" %}
+					 {% #if model.trained  && model.status == "idle"  %}
                         <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
 						<div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
 							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="eval_model">
+								Evaluate	
+							</button>
+						</div>
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+					 {% elseif model.trained && (model.status == "evaluating" || model.status == "predicting" )  %}
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="eval_model" disabled>
 								Evaluate	
 							</button>
 						</div>
@@ -575,42 +599,80 @@
 						<br>
 					</div>
 
-					<div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
+					<div class="mdl-cell mdl-cell--12-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+                           <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="predict-input-switch">
+                            <input type="checkbox" id="predict-input-switch" class="mdl-switch__input" checked={% input.upload %}>
+                            <span class="mdl-switch__label"> 
+                                {% #if input.upload %} Upload Inputs {% else %} Saved Inputs {% /if %}
+                            </span>
+                           </label>
+                            <br>
+                            <br>
+                        <div class="{% #if !input.upload %} hidden {% /if %}">
 						<label for="file-sel">Select Inputs (.csv)</label>                                                                      
 						<div class="input-group">
 							<span class="input-group-btn">
 								<div class="btn btn-primary btn-file">
-									Browse&hellip; <input type="file" >
+									Browse&hellip; <input type="file" class="file" id="predict-input-file" >
 								</div>
 							</span>
-							<input type="text" id="filesel" class="form-control" readonly>
+							<input type="text" id="predict-input-sel" class="form-control" readonly>
 						</div>
+                        <br>
+                        <button data-box-name="predict-input-box"
+                                class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" on-click="checkBox">
+                                {% #if input.save %}
+                                <i id="layer_check_{% uuid %}" class="fa fa-1x fa-check-square"></i>
+                                {% else %}
+                                <i id="layer_check_{% uuid %}" class="fa fa-1x fa-square-o"></i>
+                                {% /if %}
+                        </button>
+                        <span class="mdl-checkbox__label">Save File to Account?</span>
+
+						</div>
+                        <div class="{% #if input.upload %} hidden {% /if %}">
+                           <label for="predict-input-name-sel">Saved Input Data</label>                                                                                   
+                            {% #if saved_input %}
+                            <div class="form-group">
+                              <select value="{% predict_payload.input.select_ind %}" class="form-control" id="predict-input-name-sel">
+                                {% #saved_input:i %}
+                                <option value="{% i %}">{% name %}</option>
+                                {% /saved_input %}
+                              </select>
+                            </div>
+                            {% else %}
+                            <p><small> You don't have any saved input files, try uploading one and checking the 'save'
+                            box to save the input file to your account.</small></p>
+                            {% /if %}
+						</div>
+   					<br>
 					</div>
 
-					 {% #if model.trained || model.trained == "True" %}
-						<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="train_model">
-								Predict	
+
+					 {% #if model.trained  && model.status == "idle"  %}
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="predict_model">
+							  Predict	
 							</button>
 						</div>
-						<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-							<button data-id="layer_sel_{% uuid %}" 
-									class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll">
-									Clear
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+					 {% elseif model.trained && (model.status == "evaluating" || model.status == "predicting" )  %}
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
+							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" on-click="predict_model" disabled>
+							Predict	
 							</button>
 						</div>
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
 					  {% else %}
-						<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
+						<div class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--4-col-phone">
 							<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent fat" disabled>
-								Predict	
+								Evaluate	
 							</button>
 						</div>
-						<div class="mdl-cell mdl-cell--6-col mdl-cell--4-col-tablet mdl-cell--2-col-phone">
-							<button data-id="layer_sel_{% uuid %}" 
-									class="mdl-button mdl-js-button mdl-js-ripple-effect fat" on-click="clearAll">
-									Clear
-							</button>
-						</div>
+                        <div class="mdl-cell mdl-cell--2-col mdl-cell--0-col-tablet mdl-cell--0-col-phone"></div>
 						<br><br><br> <br>
 						<small style="padding-left:20px"> <span style="color: blue">Info!</span> Model must be trained before prediction can occur. </small>
 						{% /if %}

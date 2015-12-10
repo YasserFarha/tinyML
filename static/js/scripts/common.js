@@ -127,6 +127,55 @@ function request_train(MAIN, model_id, td, callback) {
   xhr.send(train_data);
 }
 
+
+function request_eval(MAIN, model_id, td, callback) {
+  var eval_data = new FormData();
+  eval_data.append("batch_size", td.batch_size);
+  eval_data.append("input", JSON.stringify(td.input));
+  eval_data.append("input_fh", td.input.data);
+  eval_data.append("labels", JSON.stringify(td.labels));
+  eval_data.append("labels_fh", td.labels.data);
+  eval_data.append("model_id", model_id);
+  console.log(eval_data);
+  var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function (){
+        if(xhr.readyState==4 && xhr.status==200){
+            callback(xhr.responseText);
+        } 
+    }
+    xhr.onload = function() {
+        if (xhr.status == 200) {
+            callback("");
+        } else {
+        }
+    };
+  xhr.open("POST", MAIN.get("eval_url"), true);
+  xhr.send(eval_data);
+}
+
+function request_predict(MAIN, model_id, td, callback) {
+  var predict_data = new FormData();
+  predict_data.append("batch_size", td.batch_size);
+  predict_data.append("input", JSON.stringify(td.input));
+  predict_data.append("input_fh", td.input.data);
+  predict_data.append("model_id", model_id);
+  console.log(predict_data);
+  var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function (){
+        if(xhr.readyState==4 && xhr.status==200){
+            callback(xhr.responseText);
+        } 
+    }
+    xhr.onload = function() {
+        if (xhr.status == 200) {
+            callback("");
+        } else {
+        }
+    };
+  xhr.open("POST", MAIN.get("predict_url"), true);
+  xhr.send(predict_data);
+}
+
 function isEmpty(object) { for(var i in object) { return false; } return true; } 
 
 function getUrlVars() {

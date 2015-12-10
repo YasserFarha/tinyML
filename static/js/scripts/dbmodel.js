@@ -36,7 +36,7 @@ $(function() {
 
   function default_tpayload() {
     return {
-        "max_epochs": 256,
+        "max_epochs": 1000,
         "max_batch_size": 1000,
         "input" : {
             "upload" : true,
@@ -84,7 +84,6 @@ $(function() {
             "data" : {}
         },
         "max_batch_size": 1000,
-        "labels" : {},
         "batch_size": 128
     }
   }
@@ -121,6 +120,107 @@ $(function() {
     console.log(data);
     MAIN.set('saved_input', data['inputs']);
     MAIN.set('saved_labels', data['labels']);
+    console.log(data);
+  });
+
+
+  MAIN.on("predict_model", function(e) {
+    var tp = MAIN.get('predict_payload');
+    console.log(tp);
+    if(tp.input.upload) {
+        var tfiles = $("#predict-input-file").prop('files');
+        var tfile = tfiles[0];
+        if(!tfile) {
+            alert("no input file selected");
+            return;
+        }
+        tp.input.size_KB = tfile.size/1000.0,
+        tp.input.upload_name=tfile.name,
+        tp.input.data = tfile
+    }
+    else {
+        var sind  = tp.input.select_ind;
+        var inputs = MAIN.get('saved_input');
+        var selinp = inputs[sind];
+        if(!selinp) {
+            alert("Must select a valid input file name");
+            return;
+        }
+        tp.input.select_id = selinp.id;
+        tp.input.select_name = selinp.name;
+        tp.input.data = {};
+        tp.input.upload_name = "";
+    }
+
+    request_predict(MAIN, MAIN.get('model_id'), tp, function(data) {
+        console.log(data);
+        if(JSON.parse(data).hasOwnProperty('error')){
+            alert(JSON.parse(data).error);
+        }
+    });
+
+  });
+
+  MAIN.on("eval_model", function(e) {
+    var tp = MAIN.get('eval_payload');
+    console.log(tp);
+    if(tp.input.upload) {
+        var tfiles = $("#eval-input-file").prop('files');
+        var tfile = tfiles[0];
+        if(!tfile) {
+            alert("no input file selected");
+            return;
+        }
+        tp.input.size_KB = tfile.size/1000.0,
+        tp.input.upload_name=tfile.name,
+        tp.input.data = tfile
+    }
+    else {
+        var sind  = tp.input.select_ind;
+        var inputs = MAIN.get('saved_input');
+        var selinp = inputs[sind];
+        if(!selinp) {
+            alert("Must select a valid input file name");
+            return;
+        }
+        tp.input.select_id = selinp.id;
+        tp.input.select_name = selinp.name;
+        tp.input.data = {};
+        tp.input.upload_name = "";
+    }
+
+    if(tp.labels.upload) {
+        var lfiles = $("#eval-label-file").prop('files');
+        var lfile = lfiles[0];
+        if(!lfile) {
+            alert("no labels file selected");
+            return;
+        }
+        tp.labels.size_KB = lfile.size/1000.0,
+        tp.labels.upload_name=lfile.name,
+        tp.labels.data = lfile
+    }
+    else {
+        var sind = tp.labels.select_ind;
+        var labels = MAIN.get('saved_labels');
+        var selinp = labels[sind];
+        if(!selinp) {
+            alert("Must select a valid input file name");
+            return;
+        }
+        tp.labels.select_id = selinp.id;
+        tp.labels.select_name = selinp.name;
+        tp.labels.data = {};
+        tp.labels.upload_name = "";
+    }
+
+    request_eval(MAIN, MAIN.get('model_id'), tp, function(data) {
+        console.log(data);
+        if(JSON.parse(data).hasOwnProperty('error')){
+            alert(JSON.parse(data).error);
+        }
+    });
+
   });
 
   MAIN.on("train_model", function(e) {
@@ -128,8 +228,6 @@ $(function() {
     console.log(tp);
     if(tp.input.upload) {
         var tfiles = $("#train-input-file").prop('files');
-        console.log(tfiles);
-        console.log(lfiles);
         var tfile = tfiles[0];
         if(!tfile) {
             alert("no input file selected");
@@ -178,9 +276,11 @@ $(function() {
         tp.labels.upload_name = "";
     }
 
-    console.log(tp);
     request_train(MAIN, MAIN.get('model_id'), tp, function(data) {
         console.log(data);
+        if(data['error']) {
+            alert(data['error']);       
+        }
     });
 
   });
@@ -214,7 +314,7 @@ $(function() {
     });
 
   var vars = getUrlVars();                                                                                                        
-  if(vars['tab'] && vars['tab'] === 'train' || vars['tab'] === 'predict') {
+  if(vars['tab'] && vars['tab'] === 'train' || vars['tab'] === 'eval' || vars['tab'] === 'predict') {
     MAIN.set('current_tab', vars['tab']);
   }
 
@@ -256,20 +356,56 @@ $(function() {
         if(type === "eval-labels-box") {
             MAIN.set('eval_payload.labels.save', !MAIN.get('eval_payload.labels.save')); 
         }
+        if(type === "predict-input-box") {
+            MAIN.set('predict_payload.input.save', !MAIN.get('predict_payload.input.save')); 
+        }
+        if(type === "predict-labels-box") {
+            MAIN.set('predict_payload.labels.save', !MAIN.get('predict_payload.labels.save')); 
+        }
     });
 
+     $("#train-label-file").change(function (){
+         validate_file(this);
+     });
+
      $("#train-input-file").change(function (){
-       var fileName = $(this).val();
-       var file = $(this).prop('files')[0];
+         validate_file(this);
+     });
+     $("#eval-label-file").change(function (){
+         validate_file(this);
+     });
+
+     $("#eval-input-file").change(function (){
+         validate_file(this);
+     });
+     $("#predict-label-file").change(function (){
+         validate_file(this);
+     });
+
+     $("#predict-input-file").change(function (){
+         validate_file(this);
+     });
+     
+     function validate_file(node) {
+       var fileName = $(node).val();
+       var file = $(node).prop('files')[0];
        var fname = file.name;
        if(fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2) !== "csv") {
             alert("Not a CSV File");
-            $(this).val(null);
+            $(node).val(null);
         }
-     });
+     }
+
 
     MAIN.observe('train_payload', function() {
             console.log(MAIN.get('train_payload'));
+    });
+    MAIN.observe('predict_payload', function() {
+            console.log(MAIN.get('predict_payload'));
+    });
+
+    MAIN.observe('eval_payload', function() {
+            console.log(MAIN.get('eval_payload'));
     });
 
 

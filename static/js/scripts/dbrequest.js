@@ -8,7 +8,7 @@ $(function() {
             logged_in: logged_in,
             user_id: user_id,
             models : [],
-            transaction: [],
+            transaction: {},
             trans_id: trans_id,
             turl: turl,
             tdurl: tdurl,

@@ -96,13 +96,16 @@
             <div class="mdl-grid" style="padding-top: 0">
             <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
                 {% #transaction %}
-
-                  <h5>
-                    Request Type - <strong>{% tclass %}</strong> <br>
-                    Model -<strong> <a href="{{=URL('dashboard', 'model')}}/{% model %}"> {% model_name %}</a>.</strong>
-                  </h5>
-                  <p>Request Abstract : {% tresult %} </p>
-                
+                 <span style="font-size:24px"><u>{% tclass %}</u> request for
+                    <strong> <a href="{{=URL('dashboard', 'model')}}/{% model %}"> {% model_name %}</a>.</strong>
+                </span>
+                    <br>
+                    <br>
+                  <p>Abstract : <span style="font-size:18px">"{% tresult %}"</span> </p>
+                  <p>Created : {% created_at %} </p>
+                  {% #if finished_at %}
+                  <p>Finished : {% finished_at %} </p>
+                  {% /if %}
                 {% /transaction %}
                </div>
              </div>
@@ -170,6 +173,8 @@
             <div class="mdl-grid" style="padding-top: 0">
             <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-phone">
                 {% #transaction %}
+                {% #if tclass == "train" %}
+                {% /if %}
                 <ul class="list-unstyled" style="width:100%">
                 {% #each transaction.input_payload:i %}
                 <strong>{% @key %} : </strong>
@@ -209,6 +214,18 @@
                         {% #each this %}
                         <td>{% @key %}.) {% this %}</td>
                         {% /each %}
+                    </tr>
+                {% /each %}
+                </tbody>
+                </table>
+                {% /if %}
+                {% #if tclass == "predict" %}
+                <table class="table table-responsive mdl-shadow--1dp">
+                  <tbody>
+                {% #each output_payload.predictions:i %}
+                    <tr class='clickable-row' on-click="clickrow" data-href="{{=URL('dashboard', 'mdlrequest')}}/{% id %}">
+                        <td><strong>{% i+1 %}</strong></td>
+                        <td>{% output_payload.predictions[i] %}</td>
                     </tr>
                 {% /each %}
                 </tbody>

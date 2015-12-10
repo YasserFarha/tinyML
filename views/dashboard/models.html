@@ -108,6 +108,11 @@
 						 <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
 					</span>
 				  {% /if %}
+				 {% #if status == "evaluating" %}
+					<span class="label label-blue">                                                                           
+						 <i style="color: white" class="fa fa-2x fa-cog fa-spin"></i> {% status %}
+					</span>
+				  {% /if %}
 				  {% #if status == "idle" %}
 					<span class="label label-green">
 						<i style="color: white" class="fa fa-2x fa-check"></i> {% status %}

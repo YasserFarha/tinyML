@@ -50,7 +50,7 @@ def add_model():
         mclass = request.vars.get('mclass', '');
         muuid = request.vars.get('uuid', uuid.uuid4());
         arch = request.vars.get('arch');
-        if db(db.models.creator == auth.user_id and db.models.name == name).select().first() :
+        if db((db.models.creator == auth.user_id) & (db.models.name == name)).select().first() :
             raise HTTP(400,"Model name exists already.")
 
         db['models'].insert(
@@ -169,7 +169,7 @@ def load_transactions():
     pe = int(page)*(int(page_size))
 
     if mid >= 0 :
-        trs = db(db.transactions.creator == auth.user_id and db.transactions.model == mid).select(orderby=~db.transactions.created_at, limitby=(pb, pe))
+        trs = db((db.transactions.creator == auth.user_id) & (db.transactions.model == mid)).select(orderby=~db.transactions.created_at, limitby=(pb, pe))
     else :
         trs = db(db.transactions.creator == auth.user_id).select(orderby=~db.transactions.created_at, limitby=(pb, pe))
     return response.json(dict(transactions=trs))
@@ -180,11 +180,12 @@ def load_transaction():
     if not tid :
         raise HTTP(404,"Transaction not found or innaccesable.")
         
-    tr = db(db.transactions.creator == auth.user_id and db.transactions.id == int(tid)).select().first()
-    trn = db(db.transactions.creator == auth.user_id and db.transactions.id > int(tid)).select().first()
-    trp = db(db.transactions.creator == auth.user_id and db.transactions.id < int(tid)).select(orderby=~db.transactions.id).first()
+    tr = db((db.transactions.creator == auth.user_id) & (db.transactions.id == int(tid))).select().first()
+    trn = db((db.transactions.creator == auth.user_id) & (db.transactions.id > int(tid))).select().first()
+    trp = db((db.transactions.creator == auth.user_id) & (db.transactions.id < int(tid))).select(orderby=~db.transactions.id).first()
     trn = trn.id if trn else -1
     trp = trp.id if trp else -1
+
     return response.json(dict(transaction=tr, tnext=trn, tprev=trp))
 
 @auth.requires_signature()
@@ -500,7 +501,7 @@ def get_all_user_data() :
     dclass = request.vars.get('dclass', None)
     user_data = []
     if dclass :
-        user_data = db(db.user_uploads.downer == auth.user_id and db.user_uploads.dclass == dclass).select(orderby=~db.user_uploads.created_at)
+        user_data = db((db.user_uploads.downer == auth.user_id) & (db.user_uploads.dclass == dclass)).select(orderby=~db.user_uploads.created_at)
     else :
         user_data = db(db.user_uploads.downer == auth.user_id).select(orderby=~db.user_uploads.created_at)
     return response.json({"user_data": [{
@@ -514,7 +515,7 @@ def add_user_data() :
 
 def get_user_data_helper(iid, user_id) :
     print "data_helper, id = " + str(iid)
-    user_data = db(db.user_uploads.downer == user_id and db.user_uploads.id == iid).select().first()
+    user_data = db((db.user_uploads.downer == user_id) & (db.user_uploads.id == iid)).select().first()
     return user_data
 
 def add_user_data_helper(dclass, name, desc, payload, creator, save=False) :

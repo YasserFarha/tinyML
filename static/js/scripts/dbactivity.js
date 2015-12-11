@@ -19,6 +19,12 @@ $(function() {
     });
 
 
+  var vars = getUrlVars();                                                                                                        
+
+  if(vars && vars['mid']) {
+	MAIN.set('mid', vars['mid']);
+  }
+
     setInterval(function() { 
         load_models(MAIN, 1, 6, function(data) { 
             for(var i = 0; i < data['models'].length; i++) {
@@ -88,12 +94,6 @@ $(function() {
         MAIN.set('models', data['models']);
         models = MAIN.get('models')
   });
-
-  var vars = getUrlVars();                                                                                                        
-
-  if(vars && vars['mid']) {
-	MAIN.set('mid', vars['mid']);
-  }
 
 
   loadtrs(function() {});

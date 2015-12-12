@@ -36,7 +36,7 @@ $(function() {
 
   function default_tpayload() {
     return {
-        "max_epochs": 1000,
+        "max_epochs": 10000,
         "max_batch_size": 1000,
         "input" : {
             "upload" : true,

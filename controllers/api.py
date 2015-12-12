@@ -531,44 +531,44 @@ def add_user_data_helper(dclass, name, desc, payload, creator, save=False) :
     file_length_bytes = payload.file.tell()
     size_KB= file_length_bytes/1000.0
     created_at = datetime.datetime.now()
-    try :
-        payload.file.seek(0)
-        dialect = csv.Sniffer().sniff(payload.file.read(1024))
-        payload.file.seek(0)
-        reader = csv.reader(payload.file, dialect)
-        rcount = 0
-        ccount = 0
-        for line in reader :
-            ccount = len([x for x in line])-1 #-1 for row counter
-            rcount += 1
-        if db(db.user_uploads.name == name).select().first() :
-            saved = False
-            print "This file already exists for this account"
-        if save :
-            new_id = db['user_uploads'].insert(
-                    dclass=dclass,
-                    name=name,
-                    description=desc,
-                    payload=data,
-                    extension=ext,
-                    created_at=created_at,
-                    size_KB=size_KB,
-                    rcount=rcount, ccount=ccount,
-                    downer=creator
-            )
-            return db(db.user_uploads.id == new_id).select().first()
-        else :
-            return dict(
-                    dclass=dclass,
-                    name=name,
-                    description=desc,
-                    payload=data,
-                    extension=ext,
-                    created_at=created_at,
-                    size_KB=size_KB,
-                    rcount=rcount, ccount=ccount,
-                    downer=creator
-            )
-    except Exception as e :
-        stderr.write(str(e))
-        return False
+    # try :
+    payload.file.seek(0)
+    dialect = csv.Sniffer().sniff(payload.file.read(1024))
+    payload.file.seek(0)
+    reader = csv.reader(payload.file, dialect)
+    rcount = 0
+    ccount = 0
+    for line in reader :
+	ccount = len([x for x in line])-1 #-1 for row counter
+	rcount += 1
+    if db(db.user_uploads.name == name).select().first() :
+	saved = False
+	print "This file already exists for this account"
+    if save :
+	new_id = db['user_uploads'].insert(
+		dclass=dclass,
+		name=name,
+		description=desc,
+		payload=data,
+		extension=ext,
+		created_at=created_at,
+		size_KB=size_KB,
+		rcount=rcount, ccount=ccount,
+		downer=creator
+	)
+	return db(db.user_uploads.id == new_id).select().first()
+    else :
+	return dict(
+		dclass=dclass,
+		name=name,
+		description=desc,
+		payload=data,
+		extension=ext,
+		created_at=created_at,
+		size_KB=size_KB,
+		rcount=rcount, ccount=ccount,
+		downer=creator
+	)
+    # except Exception as e :
+        # stderr.write(str(e))
+        # return False

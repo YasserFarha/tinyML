@@ -35,10 +35,10 @@ def load_data(fh, train=True):
         if train:
             # np.random.shuffle(X)  # https://youtu.be/uyUXoap67N8
             stderr.write(str(X))
-            return X[:, -1:]
+            return X[:, 1:]
         else:
             stderr.write(str(X))
-            return X[:, -1:]
+            return X[:, 1:]
     except Exception as e :
         logstr(dbt, str(e))
         return []

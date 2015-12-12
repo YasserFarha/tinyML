@@ -16,7 +16,7 @@ def fnew(xt) :
   yt = np.asarray([2.4,-2.3, 1.3, 10.2, -7.2, 1.2, -5.0])
   return np.dot(xt, yt)
 
-xt = np.random.rand(20000, 7)
+xt = np.random.rand(5000, 7)
 xt = np.multiply(xt, 10)
 yt = fnew(xt)
 
@@ -26,22 +26,24 @@ dy = pd.DataFrame(yt)
 dx.to_csv("/home/jhallard/linux/tinyML/large_linear_input.csv")
 dy.to_csv("/home/jhallard/linux/tinyML/large_linear_labels.csv")
 
-sys.exit(0)
+# sys.exit(0)
 
-dx = pd.read_csv("/home/jhallard/linux/tinyML/testXX.csv")
-dy = pd.read_csv("/home/jhallard/linux/tinyML/testYY.csv")
+dx = pd.read_csv("/home/jhallard/linux/tinyML/large_linear_input.csv")
+dy = pd.read_csv("/home/jhallard/linux/tinyML/large_linear_labels.csv")
+print dx
+print dy
 X = dx.values.copy()
-X = X[:, -1:]
+X = X[:, 1:]
 print str(X)
 
 Y = dy.values.copy()
-Y = Y[:, -1:]
+Y = Y[:, 1:]
 print str(Y)
 
 model = Sequential()
-model.add(Dense(output_dim=18, input_dim=1))
+model.add(Dense(output_dim=18, input_dim=7))
 model.add(Activation('relu'))
-model.add(Dense(output_dim=64, init='uniform', input_dim=15))
+model.add(Dense(output_dim=64, init='uniform'))
 # model.add(Dropout(0.1))
 model.add(Activation('relu'))
 # model.add(Dropout(0.1))
